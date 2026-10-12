@@ -3,7 +3,7 @@ import { Button } from '../components/Button'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
 import { SectionLabel } from '../components/SectionLabel'
-import { brand, categories, images } from '../data/site'
+import { brand, categories, photos } from '../data/site'
 
 export function Contact() {
   const [sent, setSent] = useState(false)
@@ -24,7 +24,7 @@ export function Contact() {
 
   return (
     <section id="contact" className="relative overflow-hidden bg-graphite" aria-labelledby="contact-title">
-      <img src={images.resortPanorama} alt="" className="grade absolute inset-0 h-full w-full object-cover opacity-20" loading="lazy" />
+      <img src={photos.resortTropical} alt="" className="grade absolute inset-0 h-full w-full object-cover opacity-20" loading="lazy" />
       <div className="absolute inset-0 bg-gradient-to-b from-graphite via-graphite/90 to-graphite" />
       <div className="relative mx-auto grid max-w-[1600px] gap-16 px-5 py-28 md:px-10 md:py-40 lg:grid-cols-12">
         <div className="lg:col-span-5">

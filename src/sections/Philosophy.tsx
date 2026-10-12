@@ -4,7 +4,7 @@ import { FadeIn } from '../components/FadeIn'
 import { MaskImage } from '../components/MaskImage'
 import { RevealText } from '../components/RevealText'
 import { SectionLabel } from '../components/SectionLabel'
-import { images, textures } from '../data/site'
+import { photos, textures } from '../data/site'
 
 export function Philosophy() {
   const ref = useRef<HTMLElement>(null)
@@ -61,7 +61,7 @@ export function Philosophy() {
         {/* asymmetric editorial composition */}
         <div className="mt-24 grid grid-cols-12 gap-4 md:mt-36 md:gap-6">
           <div className="col-span-12 md:col-span-5">
-            <MaskImage src={images.drawingLounge} alt="Gallery-like living room with a cognac leather lounge chair beneath architectural line drawings" className="aspect-[4/5]" />
+            <MaskImage src={photos.livingRoom} alt="Contemporary living room with a sculptural sofa and natural materials" className="aspect-[4/5]" />
             <p className="eyebrow mt-4 text-ink/50">From line to living space</p>
           </div>
           <div className="col-span-7 md:col-span-3 md:mt-48">
@@ -69,7 +69,7 @@ export function Philosophy() {
             <p className="eyebrow mt-4 text-ink/50">Calacatta, honed</p>
           </div>
           <div className="col-span-5 mt-24 md:col-span-4 md:mt-0">
-            <MaskImage src={images.atelier} alt="Terracotta façade with a dark timber shopfront and studio interior" className="aspect-[3/5]" from="top" delay={0.2} />
+            <MaskImage src={photos.livingGallery} alt="Double-height contemporary living space with large windows" className="aspect-[3/5]" from="top" delay={0.2} />
           </div>
         </div>
 

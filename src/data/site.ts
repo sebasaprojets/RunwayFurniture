@@ -18,6 +18,28 @@ import linen from '../assets/materials/linen.jpg'
 import boucle from '../assets/materials/boucle.jpg'
 import bronze from '../assets/materials/bronze.jpg'
 import glass from '../assets/materials/glass.jpg'
+import { photo } from './remote'
+
+/** Modern editorial photography (remote, with the supplied images as offline fallbacks). */
+export const photos = {
+  hotelSuite: photo('1582719478250-c89cae4dc85b', grotto),
+  hotelRoom: photo('1590490360182-c33d57733427', grotto),
+  hotelBedroom: photo('1631049307264-da0ec9d70304', grotto),
+  resortPool: photo('1566073771259-6a8506099945', resortPanorama),
+  resortLoungers: photo('1571896349842-33c89424de2d', resortSunset),
+  resortBeach: photo('1520250497591-112f2f40a3f4', coastPool),
+  resortTropical: photo('1540541338287-41700207dee6', resortSunset),
+  villaPool: photo('1600585154340-be6161a56a0c', coastDeck),
+  villaDusk: photo('1600596542815-ffad4c1539a9', coastPool),
+  villaModern: photo('1613490493576-7fde63acd811', coastDeck),
+  livingRoom: photo('1618221195710-dd6b41faaea6', drawingLounge),
+  livingGallery: photo('1600607687939-ce8a6c25118c', drawingLounge),
+  livingDining: photo('1600210492486-724fe5c67fb0', atelier),
+  lounge: photo('1586023492125-27b2c045efd7', drawingLounge),
+  sofa: photo('1555041469-a586c61ea9bc', drawingLounge),
+  sofaRoom: photo('1567016432779-094069958ea5', drawingLounge),
+  restaurant: photo('1517248135467-4c7edcad34c4', atelier),
+}
 
 export const images = {
   grotto,
@@ -62,12 +84,12 @@ export const brand = {
 export const heroVideo: { src: string; poster?: string } | null = null
 
 export const navItems = [
-  { label: 'Projects', href: '#projects', image: grotto },
-  { label: 'Collections', href: '#materials', image: drawingLounge },
-  { label: 'Hospitality', href: '#hospitality', image: resortPanorama },
-  { label: 'Residential', href: '#projects', image: coastDeck },
+  { label: 'Projects', href: '#projects', image: photos.villaPool },
+  { label: 'Collections', href: '#materials', image: photos.livingRoom },
+  { label: 'Hospitality', href: '#hospitality', image: photos.resortPool },
+  { label: 'Residential', href: '#projects', image: photos.villaDusk },
   { label: 'About', href: '#founder', image: founderDeck },
-  { label: 'Contact', href: '#contact', image: atelier },
+  { label: 'Contact', href: '#contact', image: photos.restaurant },
 ]
 
 export type Category =
@@ -104,103 +126,102 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    slug: 'grotto-suite',
-    title: 'The Grotto Suite',
+    slug: 'horizon-suites',
+    title: 'Horizon Suites',
     category: 'Luxury Hospitality',
-    summary: 'A bathing suite carved into the cliff, suspended over open water on structural glass.',
+    summary: 'Five-star guest suites where every piece is drawn for rest, light and quiet.',
     concept:
-      'Raw limestone is left untouched while every object placed within it is resolved to the millimetre — a dialogue between the geological and the crafted.',
+      'A calm, layered palette of linen, oak and stone lets the view and the light do the work — the furniture frames the experience rather than competing with it.',
     narrative:
-      'Low stone benches, a monolithic marble tub surround and travertine side tables are scaled to the cave rather than to the room. Warm grazing light is concealed in the rock, so the furniture reads as if lit by the sea itself.',
-    materials: ['marble', 'travertine', 'linen', 'bronze'],
-    furniture: ['Monolith marble tub surround', 'Travertine pedestal tables', 'Teak and linen bath stool', 'Brushed bronze towel valet'],
-    cover: grotto,
-    gallery: [grotto, resortPanorama, coastPool],
+      'Upholstered headboards, custom bedside joinery, lounge chairs and writing desks are designed as one family, specified for the durability of hospitality and the comfort of a private home.',
+    materials: ['oak', 'linen', 'marble', 'bronze'],
+    furniture: ['Upholstered bed & headboard wall', 'Floating oak bedside joinery', 'Reading lounge chair', 'Writing desk with bronze details'],
+    cover: photos.hotelSuite,
+    gallery: [photos.hotelRoom, photos.hotelBedroom, photos.lounge],
     isConcept: true,
   },
   {
-    slug: 'shoreline-residence',
-    title: 'Shoreline Residence',
+    slug: 'coastal-resort',
+    title: 'Coastal Resort',
     category: 'Resorts & Destinations',
-    summary: 'Infinity edges, dark timber decking and frameless glass opening onto a Caribbean bay.',
+    summary: 'Pool decks, palms and horizon lines — outdoor living designed for the tropics.',
     concept:
-      'The house steps down towards the water in thin horizontal planes; furniture is kept low so that nothing interrupts the horizon line.',
+      'Furniture is kept low and horizontal so nothing interrupts the line between pool, sea and sky.',
     narrative:
-      'Weathered ipe decking, outdoor upholstery in performance linen and sculpted loungers that hold the light at the end of the day. Every piece is specified to live outside — salt, sun and humidity included.',
-    materials: ['walnut', 'linen', 'glass', 'bronze'],
-    furniture: ['Low teak loungers', 'Performance linen daybeds', 'Stone-top outdoor dining', 'Frameless glass balustrade detailing'],
-    cover: coastDeck,
-    gallery: [coastDeck, coastPool, resortSunset],
+      'Teak loungers, performance-linen daybeds and stone-top tables are specified to live outside — salt, sun and humidity included — and to glow at golden hour.',
+    materials: ['walnut', 'linen', 'travertine', 'bronze'],
+    furniture: ['Teak sun loungers', 'Performance linen daybeds', 'Stone-top side tables', 'Poolside parasols'],
+    cover: photos.resortPool,
+    gallery: [photos.resortLoungers, photos.resortBeach, photos.resortTropical],
     isConcept: true,
   },
   {
-    slug: 'maison-blanche',
-    title: 'Maison Blanche',
+    slug: 'villa-moderna',
+    title: 'Villa Moderna',
     category: 'Private Residences',
-    summary: 'A gallery-like living room where a single lounge chair carries the entire composition.',
+    summary: 'A contemporary villa where indoor and outdoor living become one continuous space.',
     concept:
-      'An architectural white box drawn first as lines, then furnished as an exhibition: few pieces, each one placed with intent.',
+      'Large glass openings, pale stone and warm timber — the interior is furnished as an extension of the architecture and the landscape.',
     narrative:
-      'Lacquered low storage runs the full length of the wall, while sculpted drum tables and a cognac leather lounge chair add warmth and weight to the pale envelope.',
-    materials: ['leather', 'oak', 'boucle', 'marble'],
-    furniture: ['Cognac leather lounge chair', 'Lacquered floating credenza', 'Drum coffee tables', 'Bouclé ottoman'],
-    cover: drawingLounge,
-    gallery: [drawingLounge, atelier, coastDeck],
+      'Deep sofas, sculptural lounge chairs and monolithic stone tables are scaled to double-height volumes, with outdoor pieces echoing the same lines around the pool.',
+    materials: ['travertine', 'oak', 'boucle', 'glass'],
+    furniture: ['Modular lounge sofa', 'Monolithic stone coffee table', 'Sculptural lounge chairs', 'Outdoor dining set'],
+    cover: photos.villaPool,
+    gallery: [photos.villaDusk, photos.villaModern, photos.livingGallery],
     isConcept: true,
   },
   {
-    slug: 'atelier-rosso',
-    title: 'Atelier Rosso',
+    slug: 'atelier-dining',
+    title: 'Atelier Dining',
     category: 'Commercial & Lifestyle Spaces',
-    summary: 'A terracotta storefront for a design studio — the street becomes the window display.',
+    summary: 'A restaurant and lounge interior with warm light, rich timber and tailored seating.',
     concept:
-      'A single bold volume in terracotta frames a dark timber shopfront; inside, shelving and work tables are treated as one continuous joinery piece.',
+      'Banquettes, dining chairs and bar stools are designed as one continuous joinery language, tuned for long evenings and full rooms.',
     narrative:
-      'Blackened oak, raw plaster and a pendant suspended at exactly the height of the eye-line. The furniture plan is designed to be read from the pavement as much as from within.',
-    materials: ['walnut', 'oak', 'bronze', 'travertine'],
-    furniture: ['Continuous oak shelving wall', 'Blackened work tables', 'Single cone pendant', 'Leather studio seating'],
-    cover: atelier,
-    gallery: [atelier, drawingLounge, grotto],
+      'Walnut, leather and brushed bronze under warm, low lighting — robust enough for daily service, refined enough to define the atmosphere of the space.',
+    materials: ['walnut', 'leather', 'bronze', 'marble'],
+    furniture: ['Custom banquette seating', 'Walnut dining chairs', 'Marble-top tables', 'Bronze bar stools'],
+    cover: photos.restaurant,
+    gallery: [photos.livingDining, photos.lounge],
     isConcept: true,
   },
   {
-    slug: 'sunset-lounge',
-    title: 'Sunset Pool Lounge',
+    slug: 'tropical-retreat',
+    title: 'Tropical Retreat',
     category: 'Luxury Hospitality',
-    summary: 'An oceanfront lounge for golden hour — deep sofas, low tables and lanterns on stone.',
-    concept:
-      'Seating is arranged to face the sun, not each other. The pool, the terrace and the sea are read as one continuous surface.',
+    summary: 'A resort retreat where pool, garden and pavilion are furnished as one landscape.',
+    concept: 'Seating is arranged to face the view, not each other — every chair is a front-row seat to the landscape.',
     narrative:
-      'Deep modular sofas in sand-coloured performance fabric, black stone low tables and loungers that line the pool edge like a procession towards the horizon.',
-    materials: ['linen', 'travertine', 'bronze', 'glass'],
-    furniture: ['Deep modular lounge sofas', 'Black stone low tables', 'Poolside loungers & parasols', 'Bronze lanterns'],
-    cover: resortSunset,
-    gallery: [resortPanorama, resortSunset, coastPool],
+      'Woven loungers, deep outdoor sofas and lanterns on stone, chosen to soften the architecture and hold the warmth of the evening light.',
+    materials: ['linen', 'travertine', 'bronze', 'oak'],
+    furniture: ['Woven pool loungers', 'Deep outdoor sofas', 'Stone low tables', 'Bronze lanterns'],
+    cover: photos.resortTropical,
+    gallery: [photos.resortBeach, photos.resortLoungers],
     isConcept: true,
   },
   {
-    slug: 'arc-lounge-chair',
-    title: 'Arc Lounge Chair',
+    slug: 'arc-lounge-collection',
+    title: 'Arc Lounge Collection',
     category: 'Bespoke Furniture',
-    summary: 'A sculptural lounge chair developed from first sketch to final upholstery.',
+    summary: 'Sculptural sofas and lounge chairs developed from first sketch to final upholstery.',
     concept:
-      'One continuous curve, drawn by hand, defines the shell, the arm and the base. Proportion is tuned to each project rather than fixed.',
+      'One continuous curve defines the shell, the arm and the base. Proportions are tuned to each project rather than fixed.',
     narrative:
-      'Configured in oak, walnut or bronze with leather, linen or bouclé upholstery. Explore it in the bespoke studio below — each finish is a real option of the demonstration piece.',
+      'Configured in oak, walnut or bronze with leather, linen or bouclé upholstery. Explore the demonstration chair in the bespoke studio below — each finish is a real option.',
     materials: ['oak', 'walnut', 'leather', 'boucle'],
-    furniture: ['Lounge chair', 'Matching ottoman', 'Custom dimensions on request'],
-    cover: drawingLounge,
-    gallery: [drawingLounge, atelier],
+    furniture: ['Lounge chair', 'Three-seat sofa', 'Matching ottoman', 'Custom dimensions on request'],
+    cover: photos.sofa,
+    gallery: [photos.sofaRoom, photos.livingRoom],
     isConcept: true,
   },
 ]
 
 export const hospitalityScenes = [
-  { title: 'Suites', caption: 'Natural stone, warm grazing light and water beneath your feet.', image: grotto },
-  { title: 'Resorts', caption: 'Furniture that faces the horizon and holds the last light of the day.', image: resortPanorama },
-  { title: 'Lounges', caption: 'Deep seating and low tables composed for long conversations.', image: resortSunset },
-  { title: 'Destinations', caption: 'Architecture, landscape and interior read as one continuous view.', image: coastDeck },
-  { title: 'Retail & Lifestyle', caption: 'Spaces designed to be read from the street as much as from within.', image: atelier },
+  { title: 'Suites', caption: 'Calm, layered rooms designed for rest, light and quiet.', image: photos.hotelSuite },
+  { title: 'Resorts', caption: 'Furniture that faces the horizon and holds the last light of the day.', image: photos.resortPool },
+  { title: 'Lounges', caption: 'Deep seating and low tables composed for long conversations.', image: photos.livingGallery },
+  { title: 'Destinations', caption: 'Architecture, landscape and interior read as one continuous view.', image: photos.villaModern },
+  { title: 'Dining', caption: 'Restaurants and bars with warm light, rich timber and tailored seating.', image: photos.restaurant },
 ]
 
 export type Material = {
