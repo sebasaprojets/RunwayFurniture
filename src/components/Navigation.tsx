@@ -58,7 +58,7 @@ export function Navigation({ ready }: { ready: boolean }) {
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={ready ? { opacity: 1, y: hidden && !open ? -110 : 0 } : {}}
-        transition={{ duration: 0.9, ease: easeLuxe, delay: ready && !scrolled ? 1.6 : 0 }}
+        transition={{ duration: 0.9, ease: easeLuxe, delay: ready && !scrolled ? 0.6 : 0 }}
         className="fixed inset-x-0 top-0 z-50"
       >
         <div
