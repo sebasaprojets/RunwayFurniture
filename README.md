@@ -35,9 +35,11 @@ Photos in `src/assets/img` were supplied by the client and enhanced (denoise →
 contrast → sharpen → subtle grade). Material textures in `src/assets/materials` are procedurally generated.
 For the best result, replace them with the original high-resolution files.
 
-## Deploy
+## Deploy (GitHub Pages)
 
-`/docs` contains the production build. Either:
+`/docs` contains the production build (run `npm run build` to regenerate it).
 
-- **GitHub Pages (Actions):** Settings → Pages → Source: *GitHub Actions* (workflow in `.github/workflows/deploy.yml`), or
-- **GitHub Pages (branch):** Settings → Pages → Deploy from branch → `/docs` folder.
+Settings → Pages → Build and deployment → Source: **Deploy from a branch** →
+branch `claude/peaceful-mccarthy-q9z9bm` (or `main` after merging), folder **`/docs`** → Save.
+
+The site is then served at https://sebasaprojets.github.io/RunwayFurniture/
