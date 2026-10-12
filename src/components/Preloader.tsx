@@ -1,9 +1,9 @@
 import { AnimatePresence, motion, useAnimationControls } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
-import { brand } from '../data/site'
+import { brand, textures } from '../data/site'
+import { BRAND_SERIF, BrandMark } from './BrandMark'
 import { easeCine, easeLuxe } from '../lib/motion'
 
-const SERIF = 'Instrument Serif, Georgia, serif'
 
 /**
  * Opening title sequence, directed like a film's main titles:
@@ -49,16 +49,16 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
     const start = performance.now()
     let raf = 0
     const tick = (now: number) => {
-      const p = Math.min(1, (now - start) / 3600)
+      const p = Math.min(1, (now - start) / 5200)
       setCount(Math.round((1 - Math.pow(1 - p, 3)) * 100))
       if (p < 1) raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     const timers = [
-      setTimeout(() => setCredit(0), 2100),
-      setTimeout(() => setCredit(1), 2900),
-      setTimeout(() => setCredit(2), 3700),
-      setTimeout(startDive, 4500),
+      setTimeout(() => setCredit(0), 3300),
+      setTimeout(() => setCredit(1), 4100),
+      setTimeout(() => setCredit(2), 4900),
+      setTimeout(startDive, 5800),
     ]
     const skip = () => startDive()
     window.addEventListener('keydown', skip)
@@ -76,7 +76,6 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
       </AnimatePresence>
     )
 
-  const letters = 'RUNWAY'.split('')
 
   return (
     <AnimatePresence>
@@ -90,13 +89,31 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
           {/* Black frame with an R-shaped aperture that scales open during the dive */}
           <svg className="absolute inset-0 h-full w-full" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden>
             <defs>
+              <radialGradient id="atelier-ground" cx="0.62" cy="0.45" r="0.85">
+                <stop offset="0" stopColor="#3a2a1c" />
+                <stop offset="0.45" stopColor="#1f1711" />
+                <stop offset="1" stopColor="#0c0907" />
+              </radialGradient>
+              <radialGradient id="atelier-glow" cx="0.78" cy="0.28" r="0.5">
+                <stop offset="0" stopColor="#d9a866" stopOpacity="0.28" />
+                <stop offset="1" stopColor="#d9a866" stopOpacity="0" />
+              </radialGradient>
+              <linearGradient id="blind" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#ffd9a0" stopOpacity="0.16" />
+                <stop offset="0.6" stopColor="#ffd9a0" stopOpacity="0.05" />
+                <stop offset="1" stopColor="#ffd9a0" stopOpacity="0" />
+              </linearGradient>
+              <radialGradient id="atelier-vignette" cx="0.5" cy="0.5" r="0.75">
+                <stop offset="0.55" stopColor="#000" stopOpacity="0" />
+                <stop offset="1" stopColor="#000" stopOpacity="0.65" />
+              </radialGradient>
               <mask id="intro-aperture" maskUnits="userSpaceOnUse" x="0" y="0" width="1600" height="900">
                 <rect width="1600" height="900" fill="white" />
                 <motion.text
                   x="800"
                   y="560"
                   textAnchor="middle"
-                  fontFamily={SERIF}
+                  fontFamily={BRAND_SERIF}
                   fontSize="300"
                   fill="black"
                   style={{ transformBox: 'view-box', transformOrigin: '782px 470px' }}
@@ -108,14 +125,58 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
                 </motion.text>
               </mask>
             </defs>
-            <motion.rect
-              width="1600"
-              height="900"
-              fill="#0A0A0A"
+            <motion.g
               mask="url(#intro-aperture)"
               animate={dive}
               variants={{ dive: { opacity: [1, 1, 0], transition: { duration: 2.1, times: [0, 0.75, 1] } } }}
-            />
+            >
+              {/* warm atelier ground: espresso → bronze glow, with a whisper of travertine */}
+              <rect width="1600" height="900" fill="url(#atelier-ground)" />
+              <image href={textures.travertine} width="1600" height="900" preserveAspectRatio="xMidYMid slice" opacity="0.07" style={{ mixBlendMode: 'soft-light' }} />
+              <rect width="1600" height="900" fill="url(#atelier-glow)" />
+
+              {/* golden-hour light falling through blinds, drifting slowly */}
+              <motion.g
+                initial={{ x: -260, opacity: 0 }}
+                animate={{ x: 120, opacity: 1 }}
+                transition={{ duration: 7, ease: 'easeOut' }}
+                style={{ mixBlendMode: 'screen' }}
+              >
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <rect key={i} x={760 + i * 92} y="-200" width="46" height="1400" fill="url(#blind)" transform="skewX(-28)" opacity={0.55 - i * 0.05} />
+                ))}
+              </motion.g>
+
+              {/* architectural drawing drawing itself — arches, floor grid, a lounge chair in elevation */}
+              <g fill="none" stroke="#c9a66b" strokeWidth="0.8" strokeOpacity="0.32">
+                {[
+                  'M 160 900 L 160 360 A 150 150 0 0 1 460 360 L 460 900',
+                  'M 200 900 L 200 370 A 110 110 0 0 1 420 370 L 420 900',
+                  'M 1140 900 L 1140 330 A 170 170 0 0 1 1480 330 L 1480 900',
+                  'M 0 760 L 1600 760',
+                  'M 800 470 L 0 900 M 800 470 L 300 900 M 800 470 L 620 900 M 800 470 L 980 900 M 800 470 L 1300 900 M 800 470 L 1600 900',
+                  'M 0 820 L 1600 820 M 0 880 L 1600 880',
+                  'M 1210 700 C 1190 640 1196 560 1236 510 C 1244 502 1258 504 1258 516 C 1242 580 1244 640 1266 690 Z M 1206 702 C 1260 712 1340 702 1392 680 C 1404 676 1408 686 1398 692 C 1344 722 1260 730 1210 718 Z M 1300 724 L 1300 752 M 1300 752 L 1230 772 M 1300 752 L 1370 772',
+                  'M 1100 140 L 1100 300 M 1094 140 L 1106 140 M 1094 300 L 1106 300',
+                  'M 120 120 L 520 120 M 120 114 L 120 126 M 520 114 L 520 126',
+                ].map((d, i) => (
+                  <motion.path
+                    key={i}
+                    d={d}
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 3.2, ease: easeLuxe, delay: 0.3 + i * 0.22 }}
+                  />
+                ))}
+                <motion.circle cx="1100" cy="220" r="60" strokeDasharray="4 6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 2 }} />
+              </g>
+              <g fill="#c9a66b" fillOpacity="0.45" fontFamily="Manrope Variable, sans-serif" fontSize="11" letterSpacing="3">
+                <motion.text x="120" y="104" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2, duration: 1.5 }}>ELEVATION A — LOBBY ARCADE</motion.text>
+                <motion.text x="1120" y="226" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.6, duration: 1.5 }}>Ø 1200</motion.text>
+                <motion.text x="1212" y="800" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3, duration: 1.5 }}>ARC LOUNGE CHAIR — 1:20</motion.text>
+              </g>
+              <rect width="1600" height="900" fill="url(#atelier-vignette)" />
+            </motion.g>
           </svg>
 
           {/* atmosphere: grain + a slow warm light leak */}
@@ -136,7 +197,7 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
             transition={{ duration: 0.6, ease: easeLuxe }}
           >
             {/* architectural hairline frame */}
-            <svg className="absolute h-[62vmin] w-[62vmin] text-gold/50" viewBox="0 0 100 100" aria-hidden>
+            <svg className="absolute h-[78vmin] w-[78vmin] text-gold/50" viewBox="0 0 100 100" aria-hidden>
               {[
                 'M 2 14 L 2 2 L 14 2',
                 'M 86 2 L 98 2 L 98 14',
@@ -169,89 +230,11 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
               />
             </svg>
 
-            {/* Gilded monogram */}
-            <motion.svg
-              viewBox="0 0 200 220"
-              className="relative h-[24vmin] max-h-48 min-h-28 w-auto drop-shadow-[0_8px_40px_rgba(184,154,106,0.25)]"
-              initial={{ opacity: 0, scale: 1.12, filter: 'blur(14px)' }}
-              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-              transition={{ duration: 2, ease: easeLuxe, delay: 0.6 }}
-              aria-hidden
-            >
-              <defs>
-                <linearGradient id="gold-metal" x1="0" y1="0" x2="0.35" y2="1">
-                  <stop offset="0" stopColor="#f6e7c1" />
-                  <stop offset="0.22" stopColor="#c9a66b" />
-                  <stop offset="0.45" stopColor="#7d5a32" />
-                  <stop offset="0.58" stopColor="#d9bd84" />
-                  <stop offset="0.75" stopColor="#a07d4a" />
-                  <stop offset="1" stopColor="#5e4224" />
-                </linearGradient>
-                <linearGradient id="gold-sheen" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stopColor="#fff" stopOpacity="0" />
-                  <stop offset="0.5" stopColor="#fffaf0" stopOpacity="0.95" />
-                  <stop offset="1" stopColor="#fff" stopOpacity="0" />
-                </linearGradient>
-                <clipPath id="r-clip">
-                  <text x="100" y="186" textAnchor="middle" fontFamily={SERIF} fontSize="230">
-                    R
-                  </text>
-                </clipPath>
-              </defs>
-              {/* engraved depth: dark offset + bevel highlight */}
-              <text x="101.5" y="188" textAnchor="middle" fontFamily={SERIF} fontSize="230" fill="#000" opacity="0.6">
-                R
-              </text>
-              <text x="100" y="186" textAnchor="middle" fontFamily={SERIF} fontSize="230" fill="url(#gold-metal)">
-                R
-              </text>
-              <text x="99.4" y="185.2" textAnchor="middle" fontFamily={SERIF} fontSize="230" fill="none" stroke="#fff5dc" strokeOpacity="0.35" strokeWidth="0.6">
-                R
-              </text>
-              {/* travelling specular highlight */}
-              <g clipPath="url(#r-clip)">
-                <motion.rect
-                  y="-20"
-                  width="70"
-                  height="260"
-                  fill="url(#gold-sheen)"
-                  transform="skewX(-18)"
-                  initial={{ x: -120 }}
-                  animate={{ x: 320 }}
-                  transition={{ duration: 1.8, ease: 'easeInOut', delay: 1.9, repeat: 1, repeatDelay: 1.2 }}
-                  style={{ mixBlendMode: 'overlay' }}
-                />
-              </g>
-            </motion.svg>
-
-            {/* wordmark */}
-            <div className="relative mt-6 flex font-display text-3xl text-bone md:text-5xl" aria-label="Runway">
-              {letters.map((l, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, filter: 'blur(10px)', letterSpacing: '0.9em', y: 6 }}
-                  animate={{ opacity: 1, filter: 'blur(0px)', letterSpacing: '0.38em', y: 0 }}
-                  transition={{ duration: 1.6, ease: easeLuxe, delay: 1.3 + i * 0.07 }}
-                >
-                  {l}
-                </motion.span>
-              ))}
-            </div>
-            <div className="relative mt-5 flex items-center gap-4">
-              <motion.span className="h-px bg-gradient-to-r from-transparent to-gold/70" initial={{ width: 0 }} animate={{ width: 64 }} transition={{ duration: 1.4, ease: easeLuxe, delay: 1.9 }} />
-              <motion.span
-                className="eyebrow text-[0.6rem] text-gold"
-                initial={{ opacity: 0, letterSpacing: '0.7em' }}
-                animate={{ opacity: 1, letterSpacing: '0.42em' }}
-                transition={{ duration: 1.6, ease: easeLuxe, delay: 2 }}
-              >
-                Furniture International
-              </motion.span>
-              <motion.span className="h-px bg-gradient-to-l from-transparent to-gold/70" initial={{ width: 0 }} animate={{ width: 64 }} transition={{ duration: 1.4, ease: easeLuxe, delay: 1.9 }} />
-            </div>
+            {/* Brand lockup — hairline-drawn R floods with polished gold, then the wordmark settles */}
+            <BrandMark animate delay={0.5} pillars className="relative text-[clamp(78px,13vmin,128px)]" />
 
             {/* opening credits */}
-            <div className="absolute bottom-[16vh] h-6 overflow-hidden text-center">
+            <div className="absolute bottom-[14vh] h-7 overflow-hidden text-center">
               <AnimatePresence mode="wait">
                 {credit >= 0 && (
                   <motion.p

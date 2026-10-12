@@ -90,7 +90,7 @@ function ProjectCard({
       transition={{ duration: 0.9, ease: easeLuxe, delay: index * 0.05 }}
       className={placement.cell}
     >
-      <button onClick={() => onOpen(p)} className="group block w-full text-left" aria-label={`Open project: ${p.title}`}>
+      <button onClick={() => onOpen(p)} data-cursor="View" className="group block w-full text-left" aria-label={`Open project: ${p.title}`}>
         <motion.div layoutId={`cover-${p.slug}`} className={`relative overflow-hidden bg-graphite ${placement.ratio}`}>
           <img
             src={p.cover}

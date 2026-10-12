@@ -1,5 +1,6 @@
 import { ArrowUp } from 'lucide-react'
 import { motion } from 'motion/react'
+import { BRAND_SERIF } from '../components/BrandMark'
 import { brand, navItems } from '../data/site'
 import { easeLuxe } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
@@ -51,7 +52,8 @@ export function Footer() {
         whileInView={{ y: '0%', opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1.6, ease: easeLuxe }}
-        className="display mt-10 text-center text-[25vw] leading-[0.8] tracking-[0.04em] text-bone/[0.92] select-none"
+        className="mt-10 text-center text-[19vw] leading-[0.85] font-medium tracking-[0.06em] text-bone/[0.92] select-none"
+        style={{ fontFamily: BRAND_SERIF }}
         aria-hidden
       >
         RUNWAY

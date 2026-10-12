@@ -130,3 +130,12 @@
     scroll-behavior: auto !important;
   }
 }
+
+@media (pointer: fine) {
+  html.has-cursor,
+  html.has-cursor a,
+  html.has-cursor button,
+  html.has-cursor label {
+    cursor: none;
+  }
+}

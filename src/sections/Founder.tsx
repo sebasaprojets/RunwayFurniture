@@ -85,23 +85,6 @@ export function Founder() {
           </div>
         </div>
 
-        {/* wide editorial frame */}
-        <div className="mt-28 grid gap-6 md:mt-40 md:grid-cols-12">
-          <MaskImage
-            src={images.founderDeck}
-            alt={`${brand.founder.name} on a timber deck overlooking a Caribbean bay between two infinity pools`}
-            className="aspect-[4/3] md:col-span-8 md:aspect-[16/10]"
-            imgClassName="object-[50%_35%]"
-          />
-          <div className="flex flex-col justify-end md:col-span-3 md:col-start-10">
-            <FadeIn>
-              <p className="eyebrow text-mineral/50">Since {brand.since}</p>
-              <p className="mt-4 font-display text-3xl leading-snug text-bone">
-                From Montreal and Singapore to the Caribbean, the United States, Europe and Asia.
-              </p>
-            </FadeIn>
-          </div>
-        </div>
       </div>
     </section>
   )

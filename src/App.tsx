@@ -5,7 +5,11 @@ import { Preloader } from './components/Preloader'
 import { projects, type Project } from './data/site'
 import { usePrefersReducedMotion } from './lib/motion'
 import { initSmoothScroll, lockScroll, ScrollTrigger } from './lib/scroll'
+import { CustomCursor } from './components/CustomCursor'
+import { ScrollProgress } from './components/ScrollProgress'
 import { Bespoke } from './sections/Bespoke'
+import { CinemaReveal } from './sections/CinemaReveal'
+import { FounderFilm } from './sections/FounderFilm'
 import { Contact } from './sections/Contact'
 import { Footer } from './sections/Footer'
 import { Founder } from './sections/Founder'
@@ -66,17 +70,21 @@ export default function App() {
       <a href="#main" className="sr-only z-[200] rounded bg-bone px-4 py-2 text-ink focus:not-sr-only focus:fixed focus:top-4 focus:left-4">
         Skip to content
       </a>
+      <CustomCursor />
+      <ScrollProgress />
       <Preloader onDone={onReady} onReveal={onReveal} reduced={reduced} />
       <Navigation ready={ready} />
       <main id="main">
         <Hero ready={ready} revealed={revealed} reduced={reduced} />
         <Statement />
         <Philosophy />
+        <CinemaReveal />
         <Projects onOpen={open} />
         <Hospitality />
         <Bespoke />
         <Materials />
         <Founder />
+        <FounderFilm />
         <Global />
         <Contact />
       </main>

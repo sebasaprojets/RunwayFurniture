@@ -36,6 +36,11 @@ export function Hospitality() {
           },
         },
       })
+      gsap.to(sectionRef.current!.querySelector('[data-bgword]'), {
+        xPercent: -35,
+        ease: 'none',
+        scrollTrigger: { trigger: sectionRef.current, start: 'top top', end: () => `+=${distance()}`, scrub: 1 },
+      })
       track.querySelectorAll<HTMLElement>('[data-pan]').forEach((img) => {
         gsap.fromTo(
           img,
@@ -63,6 +68,14 @@ export function Hospitality() {
   return (
     <section ref={sectionRef} id="hospitality" className="relative overflow-hidden bg-graphite" aria-labelledby="hospitality-title">
       <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
+      <div
+        data-bgword
+        className="display pointer-events-none absolute top-1/2 left-0 hidden -translate-y-1/2 text-[24vw] whitespace-nowrap text-transparent uppercase min-[900px]:block"
+        style={{ WebkitTextStroke: '1px rgba(184,154,106,.14)' }}
+        aria-hidden
+      >
+        Destinations · Hospitality
+      </div>
       <div
         ref={trackRef}
         className="relative flex h-auto snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 py-24 min-[900px]:h-[100svh] min-[900px]:snap-none min-[900px]:items-center min-[900px]:gap-[4vw] min-[900px]:overflow-visible min-[900px]:px-[6vw] min-[900px]:py-0 motion-reduce:min-[900px]:overflow-x-auto"
