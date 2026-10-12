@@ -72,7 +72,7 @@ export const brand = {
   ],
   regions: ['Canada', 'Caribbean', 'USA', 'Europe', 'Asia'],
   founder: {
-    name: 'Roberto Castillo',
+    name: 'Roberto Castle',
     role: 'Founder · Director · Designer',
     quote: 'Your lifestyle is my source of inspiration.',
   },

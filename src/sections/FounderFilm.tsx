@@ -45,7 +45,7 @@ export function FounderFilm() {
           ))}
         </p>
         <div data-sign className="mt-8">
-          <p className="font-script text-5xl text-gold md:text-6xl">Roberto Castillo</p>
+          <p className="font-script text-5xl text-gold md:text-6xl">Roberto Castle</p>
           <p className="eyebrow mt-3 text-mineral/70">{brand.founder.role}</p>
         </div>
       </div>

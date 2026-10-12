@@ -76,7 +76,7 @@ export function Founder() {
             <FadeIn delay={0.15}>
               <div className="mt-12 border-t border-bone/10 pt-8">
                 <p className="font-script text-6xl leading-none text-gold md:text-7xl" aria-hidden>
-                  Roberto Castillo
+                  Roberto Castle
                 </p>
                 <p className="mt-4 font-display text-2xl text-bone">{brand.founder.name}</p>
                 <p className="eyebrow mt-2 text-mineral/60">{brand.founder.role}</p>
