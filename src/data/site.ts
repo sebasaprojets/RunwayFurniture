@@ -78,6 +78,7 @@ export const films = [
     /** HD version on YouTube (from the Drive material); the WhatsApp copy was 480p. */
     youtube: 'p2-C_48G3Zk',
     src: '',
+    srcWebm: '',
     poster: './media/runway-film.jpg',
     duration: '',
   },
@@ -89,6 +90,7 @@ export const films = [
     },
     youtube: undefined as string | undefined,
     src: './media/showroom.mp4',
+    srcWebm: './media/showroom.webm',
     poster: './media/showroom.jpg',
     duration: '1:10',
   },

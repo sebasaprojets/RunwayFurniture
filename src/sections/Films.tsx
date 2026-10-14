@@ -20,6 +20,8 @@ function Film({ film }: { film: (typeof films)[number] }) {
             title={tx(film.title)}
             allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
             allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
             className="absolute inset-0 h-full w-full"
           />
         ) : film.youtube ? (
@@ -27,7 +29,6 @@ function Film({ film }: { film: (typeof films)[number] }) {
         ) : (
         <video
           ref={ref}
-          src={film.src}
           poster={film.poster}
           preload="none"
           playsInline
@@ -35,7 +36,10 @@ function Film({ film }: { film: (typeof films)[number] }) {
           onEnded={() => setPlaying(false)}
           className="h-full w-full object-cover"
           aria-label={tx(film.title)}
-        />
+        >
+          {film.srcWebm && <source src={film.srcWebm} type="video/webm" />}
+          <source src={film.src} type="video/mp4" />
+        </video>
         )}
         {!playing && (
           <button
@@ -61,7 +65,7 @@ function Film({ film }: { film: (typeof films)[number] }) {
             <a
               href={`https://www.youtube.com/watch?v=${film.youtube}`}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="eyebrow mt-3 inline-flex items-center gap-1.5 text-gold/80 transition-colors hover:text-gold"
             >
               {t('Watch on YouTube', 'Ver en YouTube')} <ArrowUpRight className="size-3.5" strokeWidth={1.5} />
