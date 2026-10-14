@@ -1,7 +1,6 @@
 import { animate, motion, useInView, useScroll, useTransform, type MotionValue } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { brand } from '../data/site'
-import { useCalmScroll } from '../lib/motion'
 import { useLang } from '../i18n'
 
 const manifesto = {
@@ -64,11 +63,10 @@ export function Statement() {
 }
 
 function Word({ children, progress, range, accent }: { children: string; progress: MotionValue<number>; range: [number, number]; accent?: boolean }) {
-  const calm = useCalmScroll()
   const opacity = useTransform(progress, range, [0.12, 1])
   const y = useTransform(progress, range, [8, 0])
   return (
-    <motion.span style={calm ? undefined : { opacity, y }} className={`mr-[0.25em] inline-block ${accent ? 'text-gold italic' : 'text-bone'}`}>
+    <motion.span style={{ opacity, y }} className={`mr-[0.25em] inline-block ${accent ? 'text-gold italic' : 'text-bone'}`}>
       {children}
     </motion.span>
   )
