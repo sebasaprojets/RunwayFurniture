@@ -6,12 +6,15 @@ import { projects, type Project } from './data/site'
 import { useCalmScroll, usePrefersReducedMotion } from './lib/motion'
 import { initSmoothScroll, lockScroll, ScrollTrigger } from './lib/scroll'
 import { ScrollProgress } from './components/ScrollProgress'
+import { CinemaReveal } from './sections/CinemaReveal'
 import { Clients } from './sections/Clients'
 import { Collections } from './sections/Collections'
 import { Films } from './sections/Films'
 import { Contact } from './sections/Contact'
 import { Footer } from './sections/Footer'
 import { Founder } from './sections/Founder'
+import { FounderFilm } from './sections/FounderFilm'
+import { Global } from './sections/Global'
 import { Hero } from './sections/Hero'
 import { Hospitality } from './sections/Hospitality'
 import { ProjectDetail } from './sections/ProjectDetail'
@@ -76,12 +79,15 @@ export default function App() {
       <main id="main">
         <Hero ready={ready} revealed={revealed} reduced={reduced} />
         <Statement />
+        <CinemaReveal />
         <Projects onOpen={open} />
         <Hospitality />
         <Collections />
         <Founder />
+        <FounderFilm />
         <Films />
         <Clients />
+        <Global />
         <Contact />
       </main>
       <Footer />

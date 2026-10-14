@@ -14,6 +14,9 @@ export function Statement() {
   const { t, tx } = useLang()
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 45%'] })
+  const marquee = useRef<HTMLElement>(null)
+  const { scrollYProgress: mq } = useScroll({ target: marquee, offset: ['start end', 'end start'] })
+  const x = useTransform(mq, [0, 1], ['0%', '-25%'])
   const words = tx(manifesto).split(' ')
 
   const facts = [
@@ -24,7 +27,7 @@ export function Statement() {
   ]
 
   return (
-    <section className="relative overflow-hidden bg-ink py-28 md:py-44" aria-label={t('Runway at a glance', 'Runway en cifras')}>
+    <section ref={marquee} className="relative overflow-hidden bg-ink py-28 md:py-44" aria-label={t('Runway at a glance', 'Runway en cifras')}>
       <div ref={ref} className="mx-auto max-w-[1400px] px-5 md:px-10">
         <p className="eyebrow mb-10 text-gold">— {t('Since', 'Desde')} {brand.since}</p>
         <p className="display text-[8.5vw] leading-[1.02] md:text-[4.6vw]">
@@ -36,6 +39,15 @@ export function Statement() {
         </p>
       </div>
 
+
+      <motion.div style={{ x }} className="mt-24 flex whitespace-nowrap md:mt-32" aria-hidden>
+        {(t('Luxury Hospitality|Residential|Bespoke Furniture|Montreal|Singapore|Worldwide|Luxury Hospitality|Residential', 'Hotelería de lujo|Residencial|Mobiliario a medida|Montreal|Singapur|Todo el mundo|Hotelería de lujo|Residencial')).split('|').map((w, i) => (
+          <span key={i} className="display flex items-center text-[15vw] text-transparent md:text-[8vw]" style={{ WebkitTextStroke: '1px rgba(210,196,174,.22)' }}>
+            {w}
+            <span className="mx-[3vw] inline-block size-[1.2vw] rotate-45 bg-gold/40" />
+          </span>
+        ))}
+      </motion.div>
 
       <dl className="mx-auto mt-20 grid max-w-[1600px] grid-cols-2 gap-px px-5 md:mt-28 md:grid-cols-4 md:px-10">
         {facts.map((f, i) => (

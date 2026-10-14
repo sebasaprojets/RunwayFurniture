@@ -9,6 +9,9 @@ export const easeCine = [0.76, 0, 0.24, 1] as const
  */
 export const RESPECT_REDUCED_MOTION = false
 
+/** gsap.matchMedia query for scroll scenes: every device unless the OS setting is honoured again. */
+export const MOTION_QUERY = RESPECT_REDUCED_MOTION ? '(prefers-reduced-motion: no-preference)' : 'all'
+
 export function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(
     () => RESPECT_REDUCED_MOTION && typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,

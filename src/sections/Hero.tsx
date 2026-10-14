@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'motion/react'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
 import { WaterCanvas } from '../components/WaterCanvas'
@@ -88,6 +88,23 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
 
       <motion.div style={calm ? undefined : { y: contentY, opacity: fade }} className="relative z-10 flex h-full flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
 
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={ready ? { opacity: 1 } : {}}
+          transition={{ delay: 0.9, duration: 1 }}
+          className="eyebrow absolute top-32 left-5 hidden flex-col gap-2 text-mineral/70 md:left-10 md:flex"
+        >
+          <span>{t('Luxury Hospitality  ·  Residential  ·  Bespoke Furniture', 'Hotelería de lujo  ·  Residencial  ·  Mobiliario a medida')}</span>
+          <Timecode show={ready} />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={ready ? { opacity: 1 } : {}}
+          transition={{ delay: 1, duration: 1 }}
+          className="eyebrow absolute top-32 right-5 hidden text-right text-mineral/70 md:right-10 md:block"
+        >
+          <WorldClocks />
+        </motion.div>
         <div className="grid items-end gap-10 lg:grid-cols-12">
           <div className="lg:col-span-8">
             {ready && (
@@ -144,6 +161,66 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         </motion.div>
       </motion.div>
     </section>
+  )
+}
+
+const zones = [
+  { city: { en: 'Montreal', es: 'Montreal' }, tz: 'America/Toronto' },
+  { city: { en: 'Singapore', es: 'Singapur' }, tz: 'Asia/Singapore' },
+]
+
+/** Live local time in both studios — the brand's global reach, ticking. */
+function WorldClocks() {
+  const { tx } = useLang()
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(t)
+  }, [])
+  return (
+    <span className="flex flex-col items-end gap-2">
+      {zones.map((z) => (
+        <span key={z.tz} className="flex items-center gap-3">
+          <span>{tx(z.city)}</span>
+          <span className="h-px w-6 bg-gold/50" />
+          <span className="font-display text-sm tracking-normal text-bone tabular-nums">
+            {now.toLocaleTimeString('en-GB', { timeZone: z.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+          </span>
+        </span>
+      ))}
+    </span>
+  )
+}
+
+/** Film-slate timecode running at 24 fps. */
+function Timecode({ show }: { show: boolean }) {
+  const { t } = useLang()
+  const ref = useRef<HTMLSpanElement>(null)
+  useEffect(() => {
+    const start = performance.now()
+    let raf = 0
+    const pad = (n: number) => String(n).padStart(2, '0')
+    const tick = (now: number) => {
+      const f = Math.floor(((now - start) / 1000) * 24)
+      const s = Math.floor(f / 24)
+      if (ref.current) ref.current.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${pad(f % 24)}`
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={show ? { opacity: 1 } : {}}
+      transition={{ delay: 1.2, duration: 1 }}
+      className="mt-2 flex items-center gap-3 text-[0.6rem] text-mineral/60"
+      aria-hidden
+    >
+      <span className="size-1.5 animate-pulse rounded-full bg-terracotta" />
+      <span>{t('Scene 01 — The sea beneath the glass', 'Escena 01 — El mar bajo el cristal')}</span>
+      <span ref={ref} className="tabular-nums text-bone/70">00:00:00:00</span>
+    </motion.div>
   )
 }
 

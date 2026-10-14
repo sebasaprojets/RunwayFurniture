@@ -1,3 +1,4 @@
+import founderDeck from '../assets/img/founder-deck.jpg'
 import founderStanding from '../assets/img/founder-standing.jpg'
 import founderSeated from '../assets/img/founder-seated.jpg'
 
@@ -21,10 +22,12 @@ export const thumb = (url: string) => thumbs.get(url) ?? url
 
 /** Supplied photography used for full-bleed moments outside the project pages. */
 export const showcase = {
+  residence: real('sardinera-1'),
   contact: real('lounge-sunset'),
 }
 
 export const images = {
+  founderDeck,
   founderStanding,
   founderSeated,
 }
