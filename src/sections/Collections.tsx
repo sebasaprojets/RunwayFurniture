@@ -109,7 +109,7 @@ export function Collections() {
                 key={src}
                 src={src}
                 alt={`${t('Runway interior collection — piece', 'Colección interior Runway — pieza')} ${i + 1}`}
-                className={`aspect-[4/5] ${i % 2 ? 'md:mt-16' : ''}`}
+                className={`aspect-[4/3] ${i % 2 ? 'md:mt-16' : ''}`}
                 from={i % 2 ? 'top' : 'bottom'}
                 delay={i * 0.08}
               />

@@ -20,7 +20,7 @@ export function Hospitality() {
 
   useLayoutEffect(() => {
     const mm = gsap.matchMedia()
-    mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
+    mm.add('(min-width: 900px)', () => {
       const track = trackRef.current!
       const distance = () => track.scrollWidth - window.innerWidth
       const tween = gsap.to(track, {
@@ -116,7 +116,7 @@ export function Hospitality() {
           >
             <div
               className={`relative overflow-hidden ${
-                i % 2 ? 'aspect-[3/4]' : 'aspect-[3/4] min-[900px]:aspect-[16/11]'
+                i % 2 ? 'aspect-[4/3] min-[900px]:aspect-[3/4]' : 'aspect-[4/3] min-[900px]:aspect-[16/11]'
               }`}
             >
               <img
@@ -125,7 +125,7 @@ export function Hospitality() {
                 alt={`${tx(s.title)}: ${tx(s.caption)}`}
                 loading="lazy"
                 decoding="async"
-                className="grade absolute inset-y-0 -left-[12%] h-full w-[124%] max-w-none object-cover"
+                className="grade absolute inset-0 h-full w-full max-w-none object-cover min-[900px]:-left-[12%] min-[900px]:w-[124%]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
               <span className="absolute top-5 left-5 font-display text-lg text-bone/80 italic">0{i + 1}</span>

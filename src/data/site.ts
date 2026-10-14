@@ -11,6 +11,14 @@ const real = (name: string) => {
   return url
 }
 
+/** Lighter 960px version of a supplied photo, for grids and cards. */
+const thumbs = new Map(
+  Object.entries(realFiles)
+    .filter(([k]) => k.endsWith('.sm.jpg'))
+    .map(([k, v]) => [realFiles[k.replace('.sm.jpg', '.jpg')], v]),
+)
+export const thumb = (url: string) => thumbs.get(url) ?? url
+
 /** Supplied photography used for full-bleed moments outside the project pages. */
 export const showcase = {
   contact: real('lounge-sunset'),
@@ -600,6 +608,258 @@ export const projects: Project[] = [
     ],
     cover: real('noches-1'),
     gallery: [real('noches-2'), real('noches-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'el-palomar-house',
+    title: 'El Palomar House',
+    category: 'Private Residences',
+    location: { en: 'Mexico', es: 'México' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A glass pavilion house opening onto a lawn and a long terrace.',
+      es: 'Una casa pabellón de cristal que se abre a un jardín y una larga terraza.',
+    },
+    concept: {
+      en: 'Sculptural white and graphite pieces sit between the glass walls and the garden.',
+      es: 'Piezas escultóricas en blanco y grafito entre los muros de cristal y el jardín.',
+    },
+    narrative: {
+      en: 'Vondom lounge chairs, loungers and pouf seating furnish the terrace and the lawn.',
+      es: 'Sillones, camastros y pufs de Vondom visten la terraza y el jardín.',
+    },
+    furniture: [
+      { en: 'Sculptural lounge chairs', es: 'Sillones escultóricos' },
+      { en: 'Garden sun loungers', es: 'Camastros de jardín' },
+      { en: 'Pouf seating', es: 'Pufs' },
+      { en: 'Terrace tables', es: 'Mesas de terraza' },
+    ],
+    cover: real('palomar-1'),
+    gallery: [real('palomar-2'), real('palomar-3'), real('palomar-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'modena-house',
+    title: 'Modena House',
+    category: 'Private Residences',
+    location: { en: 'Modena · Italy', es: 'Módena · Italia' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A contemporary take on the gabled farmhouse, open to a green garden.',
+      es: 'Una versión contemporánea de la casa de campo a dos aguas, abierta a un jardín verde.',
+    },
+    concept: {
+      en: 'Black frames, white walls and climbing plants: the furniture stays light and graphic.',
+      es: 'Marcos negros, muros blancos y enredaderas: el mobiliario se mantiene ligero y gráfico.',
+    },
+    narrative: {
+      en: 'Vondom dining and lounge pieces connect the kitchen, the porch and the garden.',
+      es: 'Las piezas de comedor y sala de Vondom conectan la cocina, el porche y el jardín.',
+    },
+    furniture: [
+      { en: 'Outdoor dining set', es: 'Comedor exterior' },
+      { en: 'Porch lounge chairs', es: 'Sillones de porche' },
+      { en: 'Bar stools', es: 'Taburetes' },
+      { en: 'Garden accents', es: 'Accesorios de jardín' },
+    ],
+    cover: real('modena-1'),
+    gallery: [real('modena-3'), real('modena-2'), real('modena-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'ottel-house',
+    title: 'Öttel House',
+    category: 'Private Residences',
+    location: { en: 'Vizcaya · Spain', es: 'Vizcaya · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'Warm, soft interiors in cream and wood, with a covered terrace for dining.',
+      es: 'Interiores cálidos y suaves en crema y madera, con una terraza cubierta para comer.',
+    },
+    concept: {
+      en: 'Deep sofas and round tables create a relaxed, family living space.',
+      es: 'Sofás profundos y mesas redondas crean un espacio familiar y relajado.',
+    },
+    narrative: {
+      en: 'Vondom seating and tables carry the same soft forms from the living room to the terrace.',
+      es: 'Los asientos y mesas de Vondom llevan las mismas formas suaves de la sala a la terraza.',
+    },
+    furniture: [
+      { en: 'Deep lounge sofas', es: 'Sofás profundos' },
+      { en: 'Round coffee tables', es: 'Mesas de centro redondas' },
+      { en: 'Terrace dining set', es: 'Comedor de terraza' },
+      { en: 'Accent chairs', es: 'Sillas de acento' },
+    ],
+    cover: real('ottel-1'),
+    gallery: [real('ottel-2'), real('ottel-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'la-pinada-house',
+    title: 'La Pinada House',
+    category: 'Private Residences',
+    location: { en: 'Valencia · Spain', es: 'Valencia · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A low house among pines, with a pergola dining terrace and a glowing glass front.',
+      es: 'Una casa baja entre pinos, con un comedor bajo pérgola y una fachada de cristal iluminada.',
+    },
+    concept: {
+      en: 'White chairs and long tables sit under the pergola, in the dappled light of the pines.',
+      es: 'Sillas blancas y mesas largas bajo la pérgola, en la luz filtrada de los pinos.',
+    },
+    narrative: {
+      en: 'Vondom dining furniture runs from the kitchen to the pergola and the garden.',
+      es: 'El mobiliario de comedor de Vondom va de la cocina a la pérgola y al jardín.',
+    },
+    furniture: [
+      { en: 'Pergola dining set', es: 'Comedor bajo pérgola' },
+      { en: 'White dining chairs', es: 'Sillas de comedor blancas' },
+      { en: 'Kitchen table', es: 'Mesa de cocina' },
+      { en: 'Garden seating', es: 'Asientos de jardín' },
+    ],
+    cover: real('pinada-3'),
+    gallery: [real('pinada-1'), real('pinada-2'), real('pinada-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'castellon-house',
+    title: 'Castellón House',
+    category: 'Private Residences',
+    location: { en: 'Castellón · Spain', es: 'Castellón · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'Light-filled dining rooms with soft blinds and sculptural pendant lamps.',
+      es: 'Comedores luminosos con cortinas suaves y lámparas colgantes escultóricas.',
+    },
+    concept: {
+      en: 'Pale chairs, glass tables and woven pendants make a calm, bright dining space.',
+      es: 'Sillas claras, mesas de cristal y lámparas tejidas crean un comedor sereno y luminoso.',
+    },
+    narrative: {
+      en: 'Vondom dining chairs and pendant lighting furnish the indoor and covered dining areas.',
+      es: 'Las sillas de comedor y lámparas de Vondom visten los comedores interiores y cubiertos.',
+    },
+    furniture: [
+      { en: 'Dining chairs', es: 'Sillas de comedor' },
+      { en: 'Glass dining table', es: 'Mesa de comedor de cristal' },
+      { en: 'Woven pendant lamps', es: 'Lámparas colgantes tejidas' },
+      { en: 'Side tables', es: 'Mesas auxiliares' },
+    ],
+    cover: real('castellon-1'),
+    gallery: [real('castellon-2'), real('castellon-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'kaloterakis',
+    title: 'Kaloterakis',
+    category: 'Private Residences',
+    location: { en: 'Greece', es: 'Grecia' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A Mediterranean pool terrace that turns gold at sunset.',
+      es: 'Una terraza mediterránea con piscina que se vuelve dorada al atardecer.',
+    },
+    concept: {
+      en: 'White in-pool loungers and rounded seating stand out against the blue water and the sky.',
+      es: 'Camastros blancos dentro de la piscina y asientos redondeados resaltan contra el agua y el cielo.',
+    },
+    narrative: {
+      en: 'Vondom pool, lounge and planter pieces furnish the terraces and the garden paths.',
+      es: 'Las piezas de piscina, sala y maceteros de Vondom visten las terrazas y los caminos del jardín.',
+    },
+    furniture: [
+      { en: 'In-pool sun loungers', es: 'Camastros para piscina' },
+      { en: 'Rounded lounge chairs', es: 'Sillones redondeados' },
+      { en: 'Planters', es: 'Maceteros' },
+      { en: 'Terrace furniture', es: 'Mobiliario de terraza' },
+    ],
+    cover: real('kaloterakis-1'),
+    gallery: [real('kaloterakis-2'), real('kaloterakis-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'finca-las-marias',
+    title: 'Finca Las Marías',
+    category: 'Private Residences',
+    location: { en: 'Spain', es: 'España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A modern country house with a deep covered porch facing the garden.',
+      es: 'Una casa de campo moderna con un amplio porche cubierto frente al jardín.',
+    },
+    concept: {
+      en: 'White outdoor furniture fills the porch, framed by timber and white walls.',
+      es: 'Mobiliario exterior blanco llena el porche, enmarcado por madera y muros blancos.',
+    },
+    narrative: {
+      en: 'Vondom lounge and dining pieces turn the porch into the main living room in summer.',
+      es: 'Las piezas de sala y comedor de Vondom convierten el porche en la sala principal en verano.',
+    },
+    furniture: [
+      { en: 'Porch lounge set', es: 'Sala de porche' },
+      { en: 'Outdoor dining chairs', es: 'Sillas de comedor exterior' },
+      { en: 'Side tables', es: 'Mesas auxiliares' },
+      { en: 'Planters', es: 'Maceteros' },
+    ],
+    cover: real('marias-1'),
+    gallery: [real('marias-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'ocean-suites-altea',
+    title: 'Ocean Suites',
+    category: 'Private Residences',
+    location: { en: 'Altea · Spain', es: 'Altea · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'White terraces above the Mediterranean, lit up at dusk against the mountains.',
+      es: 'Terrazas blancas sobre el Mediterráneo, iluminadas al atardecer frente a las montañas.',
+    },
+    concept: {
+      en: 'Sculptural white chairs and loungers line the wooden decks of each suite.',
+      es: 'Sillas y camastros blancos y escultóricos recorren las terrazas de madera de cada suite.',
+    },
+    narrative: {
+      en: 'Vondom outdoor furniture furnishes the suite terraces, designed for evenings by the sea.',
+      es: 'El mobiliario exterior de Vondom viste las terrazas de las suites, pensado para las noches junto al mar.',
+    },
+    furniture: [
+      { en: 'Sculptural terrace chairs', es: 'Sillas escultóricas de terraza' },
+      { en: 'Sun loungers', es: 'Camastros' },
+      { en: 'Low tables', es: 'Mesas bajas' },
+      { en: 'Illuminated pieces', es: 'Piezas iluminadas' },
+    ],
+    cover: real('altea-1'),
+    gallery: [real('altea-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'villa-la-reina',
+    title: 'Villa La Reina',
+    category: 'Private Residences',
+    location: { en: 'Vrsar · Croatia', es: 'Vrsar · Croacia' },
+    collection: 'Vondom',
+    summary: {
+      en: 'An Adriatic villa with a pool terrace and white architecture open to the sea air.',
+      es: 'Una villa en el Adriático con terraza de piscina y arquitectura blanca abierta a la brisa del mar.',
+    },
+    concept: {
+      en: 'Clean white volumes and pale outdoor furniture keep the focus on the pool and the light.',
+      es: 'Volúmenes blancos y mobiliario exterior claro mantienen el protagonismo en la piscina y la luz.',
+    },
+    narrative: {
+      en: 'Vondom loungers and lounge pieces furnish the pool deck and the terraces around the villa.',
+      es: 'Los camastros y piezas de sala de Vondom visten la piscina y las terrazas de la villa.',
+    },
+    furniture: [
+      { en: 'Pool loungers', es: 'Camastros de piscina' },
+      { en: 'Outdoor lounge set', es: 'Sala exterior' },
+      { en: 'Terrace tables', es: 'Mesas de terraza' },
+      { en: 'Planters', es: 'Maceteros' },
+    ],
+    cover: real('reina-1'),
+    gallery: [real('reina-2'), real('reina-0')],
     isConcept: false,
   },
 ]

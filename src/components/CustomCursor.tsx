@@ -12,8 +12,7 @@ export function CustomCursor() {
 
   useEffect(() => {
     const fine = window.matchMedia('(pointer: fine)').matches
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (!fine || reduced) return
+    if (!fine) return
     setEnabled(true)
     document.documentElement.classList.add('has-cursor')
     let x = -100

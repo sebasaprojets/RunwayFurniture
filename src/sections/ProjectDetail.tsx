@@ -59,7 +59,7 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
           </h2>
           <p className="mt-8 max-w-lg text-lg leading-relaxed text-bone/70">{tx(p.summary)}</p>
         </motion.div>
-        <motion.div layoutId={`cover-${p.slug}`} className="relative order-1 aspect-[4/5] overflow-hidden lg:order-2 lg:col-span-5 lg:max-h-[82svh]">
+        <motion.div layoutId={`cover-${p.slug}`} className="relative order-1 aspect-[4/3] overflow-hidden lg:order-2 lg:aspect-[4/5] lg:col-span-5 lg:max-h-[82svh]">
           <img src={p.cover} alt={tx(p.summary)} className="grade h-full w-full object-cover" />
         </motion.div>
       </header>
