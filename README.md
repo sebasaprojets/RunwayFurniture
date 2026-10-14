@@ -33,8 +33,8 @@ All data — projects, collections, clients, materials, films — lives in **`sr
 
 ## Languages (EN / ES)
 
-The EN / ES switch sits in the header. The site starts in the visitor's last choice, otherwise their browser language.
-Share `…/RunwayFurniture/?lang=es` to open it directly in Spanish.
+One link for both languages: the opening screen asks the visitor to choose **English** or **Español**, and the
+EN / ES switch in the header changes it at any time. `…/RunwayFurniture/?lang=es` still pre-selects Spanish.
 
 ## Design skills and Playwright MCP
 
