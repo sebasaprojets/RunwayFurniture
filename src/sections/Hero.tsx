@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'motion/react'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
 import { WaterCanvas } from '../components/WaterCanvas'
@@ -84,7 +84,6 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         ))}
       </svg>
 
-      <CursorLight disabled={reduced} />
       <Seal show={ready} reduced={reduced} />
 
       <motion.div style={calm ? undefined : { y: contentY, opacity: fade }} className="relative z-10 flex h-full flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
@@ -174,35 +173,4 @@ function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
       </span>
     </motion.button>
   )
-}
-
-/** Soft warm light that follows the pointer across the water, like a sunbeam through glass. */
-function CursorLight({ disabled }: { disabled: boolean }) {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (disabled || !window.matchMedia('(pointer: fine)').matches) return
-    const el = ref.current!
-    let x = window.innerWidth / 2
-    let y = window.innerHeight / 2
-    let cx = x
-    let cy = y
-    let raf = 0
-    const move = (e: PointerEvent) => {
-      x = e.clientX
-      y = e.clientY
-    }
-    const loop = () => {
-      cx += (x - cx) * 0.08
-      cy += (y - cy) * 0.08
-      el.style.background = `radial-gradient(520px circle at ${cx}px ${cy}px, rgba(255, 226, 180, 0.13), transparent 60%)`
-      raf = requestAnimationFrame(loop)
-    }
-    window.addEventListener('pointermove', move)
-    raf = requestAnimationFrame(loop)
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('pointermove', move)
-    }
-  }, [disabled])
-  return <div ref={ref} className="pointer-events-none absolute inset-0 z-[5] mix-blend-screen" aria-hidden />
 }

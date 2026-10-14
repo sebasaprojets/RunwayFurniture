@@ -5,7 +5,6 @@ import { Preloader } from './components/Preloader'
 import { projects, type Project } from './data/site'
 import { useCalmScroll, usePrefersReducedMotion } from './lib/motion'
 import { initSmoothScroll, lockScroll, ScrollTrigger } from './lib/scroll'
-import { CustomCursor } from './components/CustomCursor'
 import { ScrollProgress } from './components/ScrollProgress'
 import { Clients } from './sections/Clients'
 import { Collections } from './sections/Collections'
@@ -71,7 +70,6 @@ export default function App() {
       <a href="#main" className="sr-only z-[200] rounded bg-bone px-4 py-2 text-ink focus:not-sr-only focus:fixed focus:top-4 focus:left-4">
         {t('Skip to content', 'Saltar al contenido')}
       </a>
-      <CustomCursor />
       <ScrollProgress />
       <Preloader onDone={onReady} onReveal={onReveal} reduced={reduced} />
       <Navigation ready={ready} />

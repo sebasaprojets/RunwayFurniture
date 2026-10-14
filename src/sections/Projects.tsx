@@ -105,7 +105,7 @@ function ProjectCard({
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.9, ease: easeLuxe, delay: (index % 3) * 0.06 }}
     >
-      <button onClick={() => onOpen(p)} data-cursor="View" className="group block w-full text-left" aria-label={`${t('Open project', 'Abrir proyecto')}: ${p.title}`}>
+      <button onClick={() => onOpen(p)} className="group block w-full text-left" aria-label={`${t('Open project', 'Abrir proyecto')}: ${p.title}`}>
         <motion.div layoutId={`cover-${p.slug}`} className="relative aspect-[4/3] overflow-hidden bg-graphite">
           <img
             src={thumb(p.cover)}

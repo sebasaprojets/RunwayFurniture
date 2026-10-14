@@ -44,7 +44,6 @@ function Film({ film }: { film: (typeof films)[number] }) {
               setPlaying(true)
               if (!film.youtube) ref.current?.play()
             }}
-            data-cursor="Play"
             className="group absolute inset-0 grid place-items-center bg-ink/30 transition-colors duration-500 hover:bg-ink/10"
             aria-label={`${t('Play', 'Reproducir')} ${tx(film.title)}${film.duration ? ` (${film.duration})` : ''}`}
           >
