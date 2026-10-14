@@ -30,7 +30,7 @@ export function Contact() {
       <div className="absolute inset-0 bg-gradient-to-b from-graphite via-graphite/90 to-graphite" />
       <div className="relative mx-auto grid max-w-[1600px] gap-16 px-5 py-28 md:px-10 md:py-40 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <SectionLabel index="11" label={t('Contact', 'Contacto')} />
+          <SectionLabel index="07" label={t('Contact', 'Contacto')} />
           <RevealText text={t('Let’s create\nsomething\nextraordinary.', 'Creemos\nalgo\nextraordinario.')} accent={['extraordinary.', 'extraordinario.']} className="display mt-10 text-[13vw] text-bone uppercase sm:text-[9vw] lg:text-[5.4vw]" />
           <FadeIn>
             <p className="mt-10 max-w-md leading-relaxed text-bone/65">

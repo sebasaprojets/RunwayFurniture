@@ -1,11 +1,11 @@
 import { motion, useScroll, useTransform } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
 import { WaterCanvas } from '../components/WaterCanvas'
 import { brand, heroVideo } from '../data/site'
 import { useLang } from '../i18n'
-import { easeCine, easeLuxe } from '../lib/motion'
+import { easeCine, easeLuxe, useCalmScroll } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
 
 export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: boolean; reduced: boolean }) {
@@ -15,6 +15,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '-22%'])
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0])
   const gridY = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
+  const calm = useCalmScroll()
   const { lang, t, tx } = useLang()
 
   return (
@@ -26,7 +27,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         animate={revealed || ready ? { scale: 1, filter: 'brightness(1)' } : {}}
         transition={{ duration: 3.2, ease: easeCine }}
       >
-        <motion.div className="absolute inset-0" style={reduced ? undefined : { scale }}>
+        <motion.div className="absolute inset-0" style={calm ? undefined : { scale }}>
           {heroVideo ? (
             <video className="h-full w-full object-cover" src={heroVideo.src} poster={heroVideo.poster} autoPlay muted loop playsInline />
           ) : (
@@ -35,7 +36,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
 
           {/* Structural glass floor — steel mullions in perspective, like standing above the sea */}
           <div className="pointer-events-none absolute inset-0 [perspective:900px]" aria-hidden>
-            <motion.div style={reduced ? undefined : { y: gridY }} className="absolute inset-0 [transform-style:preserve-3d]">
+            <motion.div style={calm ? undefined : { y: gridY }} className="absolute inset-0 [transform-style:preserve-3d]">
             <div className="absolute -inset-x-full top-[-260%] bottom-[-50%] origin-bottom [transform:rotateX(58deg)]">
               <div
                 className="h-full w-full opacity-70"
@@ -86,24 +87,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
       <CursorLight disabled={reduced} />
       <Seal show={ready} reduced={reduced} />
 
-      <motion.div style={reduced ? undefined : { y: contentY, opacity: fade }} className="relative z-10 flex h-full flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={ready ? { opacity: 1 } : {}}
-          transition={{ delay: 0.9, duration: 1 }}
-          className="eyebrow absolute top-32 left-5 hidden flex-col gap-2 text-mineral/70 md:left-10 md:flex"
-        >
-          <span>{t('Luxury Hospitality  ·  Residential  ·  Bespoke Furniture', 'Hotelería de lujo  ·  Residencial  ·  Mobiliario a medida')}</span>
-          <Timecode show={ready} />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={ready ? { opacity: 1 } : {}}
-          transition={{ delay: 1, duration: 1 }}
-          className="eyebrow absolute top-32 right-5 hidden text-right text-mineral/70 md:right-10 md:block"
-        >
-          <WorldClocks />
-        </motion.div>
+      <motion.div style={calm ? undefined : { y: contentY, opacity: fade }} className="relative z-10 flex h-full flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
 
         <div className="grid items-end gap-10 lg:grid-cols-12">
           <div className="lg:col-span-8">
@@ -140,7 +124,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
               >
                 {t('Explore our work', 'Ver proyectos')}
               </Button>
-              <Button href="#philosophy" variant="ghost" onClick={() => scrollToTarget('#philosophy')}>
+              <Button href="#founder" variant="ghost" onClick={() => scrollToTarget('#founder')}>
                 {t('Discover Runway', 'Conocer Runway')}
               </Button>
             </div>
@@ -164,73 +148,13 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   )
 }
 
-const zones = [
-  { city: { en: 'Montreal', es: 'Montreal' }, tz: 'America/Toronto' },
-  { city: { en: 'Singapore', es: 'Singapur' }, tz: 'Asia/Singapore' },
-]
-
-/** Live local time in both studios — the brand's global reach, ticking. */
-function WorldClocks() {
-  const { tx } = useLang()
-  const [now, setNow] = useState(() => new Date())
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(t)
-  }, [])
-  return (
-    <span className="flex flex-col items-end gap-2">
-      {zones.map((z) => (
-        <span key={z.tz} className="flex items-center gap-3">
-          <span>{tx(z.city)}</span>
-          <span className="h-px w-6 bg-gold/50" />
-          <span className="font-display text-sm tracking-normal text-bone tabular-nums">
-            {now.toLocaleTimeString('en-GB', { timeZone: z.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-          </span>
-        </span>
-      ))}
-    </span>
-  )
-}
-
-/** Film-slate timecode running at 24 fps. */
-function Timecode({ show }: { show: boolean }) {
-  const { t } = useLang()
-  const ref = useRef<HTMLSpanElement>(null)
-  useEffect(() => {
-    const start = performance.now()
-    let raf = 0
-    const pad = (n: number) => String(n).padStart(2, '0')
-    const tick = (now: number) => {
-      const f = Math.floor(((now - start) / 1000) * 24)
-      const s = Math.floor(f / 24)
-      if (ref.current) ref.current.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${pad(f % 24)}`
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [])
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={show ? { opacity: 1 } : {}}
-      transition={{ delay: 1.2, duration: 1 }}
-      className="mt-2 flex items-center gap-3 text-[0.6rem] text-mineral/60"
-      aria-hidden
-    >
-      <span className="size-1.5 animate-pulse rounded-full bg-terracotta" />
-      <span>{t('Scene 01 — The sea beneath the glass', 'Escena 01 — El mar bajo el cristal')}</span>
-      <span ref={ref} className="tabular-nums text-bone/70">00:00:00:00</span>
-    </motion.div>
-  )
-}
-
 /** Rotating gilded seal — a quiet signature mark in the composition. */
 function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
   const { t } = useLang()
   const text = t('Since 2009 · Hospitality · Residential · Bespoke · ', 'Desde 2009 · Hotelería · Residencial · A medida · ')
   return (
     <motion.button
-      onClick={() => scrollToTarget('#philosophy')}
+      onClick={() => scrollToTarget('#projects')}
       initial={{ opacity: 0, scale: 0.8, rotate: -40 }}
       animate={show ? { opacity: 1, scale: 1, rotate: 0 } : {}}
       transition={{ duration: 1.6, ease: easeLuxe, delay: 1 }}

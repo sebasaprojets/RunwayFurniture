@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
-import { easeCine, usePrefersReducedMotion } from '../lib/motion'
+import { easeCine, useCalmScroll } from '../lib/motion'
 
 type Props = {
   src: string
@@ -24,7 +24,7 @@ const clips = {
 /** Image revealed by an architectural clip-path wipe, with a gentle scroll parallax inside the frame. */
 export function MaskImage({ src, alt, className = '', imgClassName = '', from = 'bottom', parallax = 8, delay = 0, priority }: Props) {
   const ref = useRef<HTMLDivElement>(null)
-  const reduced = usePrefersReducedMotion()
+  const calm = useCalmScroll()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const y = useTransform(scrollYProgress, [0, 1], [`-${parallax}%`, `${parallax}%`])
   return (
@@ -41,7 +41,7 @@ export function MaskImage({ src, alt, className = '', imgClassName = '', from = 
         alt={alt}
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
-        style={reduced ? undefined : { y, scale: 1 + parallax / 50 }}
+        style={calm ? undefined : { y, scale: 1 + parallax / 50 }}
         className={`grade h-full w-full object-cover ${imgClassName}`}
       />
     </motion.div>

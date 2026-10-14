@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { Button } from '../components/Button'
 import { FadeIn } from '../components/FadeIn'
 import { MaskImage } from '../components/MaskImage'
-import { categoryLabel, materials, projects, textures, type Project } from '../data/site'
+import { categoryLabel, projects, type Project } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
@@ -22,8 +22,6 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [p, onClose])
-
-  const mats = (p.materials ?? []).map((k) => materials.find((m) => m.key === k)!)
 
   return (
     <motion.div
@@ -72,9 +70,7 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
             [t('Category', 'Categoría'), tx(categoryLabel[p.category])],
             [t('Location', 'Ubicación'), p.location ? tx(p.location) : t('Concept — not a client commission', 'Concepto — no es un encargo de cliente')],
             [t('Scope', 'Alcance'), t('Furniture, FF&E & detailing', 'Mobiliario, FF&E y detalles')],
-            mats.length
-              ? [t('Key materials', 'Materiales clave'), mats.map((m) => tx(m.name)).join(', ')]
-              : [t('Collection', 'Colección'), p.collection ?? 'Runway Furniture'],
+            [t('Collection', 'Colección'), p.collection ?? 'Runway Furniture'],
           ].map(([k, v]) => (
             <div key={k}>
               <dt className="eyebrow text-mineral/50">{k}</dt>
@@ -103,35 +99,14 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
           </FadeIn>
         </div>
 
-        {mats.length > 0 && (
-        <div className="mt-24">
-          <p className="eyebrow text-mineral/50">{t('Material palette', 'Paleta de materiales')}</p>
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {mats.map((m, i) => (
-              <FadeIn key={m.key} delay={i * 0.07}>
-                <img src={textures[m.key]} alt={tx(m.name)} loading="lazy" className="aspect-[4/5] w-full object-cover" />
-                <p className="mt-3 font-display text-xl text-bone">{tx(m.name)}</p>
-                <p className="text-xs text-bone/50">{tx(m.family)}</p>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-        )}
-
         {p.gallery.length > 0 && (
-        <div className="mt-24 grid grid-cols-12 gap-4 md:gap-6">
+        <div className="mt-24 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
           {p.gallery.map((g, i) => (
             <MaskImage
               key={g + i}
               src={g}
               alt={`${p.title} — ${t('gallery image', 'imagen de galería')} ${i + 1}`}
-              className={
-                i === 0
-                  ? 'col-span-12 aspect-[4/5] md:col-span-6'
-                  : i === 1
-                    ? 'col-span-6 aspect-[3/4] md:col-span-4 md:col-start-8 md:mt-40'
-                    : 'col-span-6 aspect-[3/4] md:col-span-4 md:col-start-3 md:-mt-10'
-              }
+              className={`aspect-[4/3] ${p.gallery.length % 2 === 1 && i === 0 ? 'sm:col-span-2 sm:aspect-[16/9]' : ''}`}
               from={i % 2 ? 'left' : 'bottom'}
             />
           ))}

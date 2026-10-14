@@ -7,16 +7,6 @@ import { categories, categoryLabel, projects, type Category, type Project } from
 import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
 
-// Editorial placements — deliberately irregular so the portfolio reads like a magazine spread.
-const layout = [
-  { cell: 'md:col-span-7', ratio: 'aspect-[4/5] md:aspect-[5/6]' },
-  { cell: 'md:col-span-4 md:col-start-9 md:mt-56', ratio: 'aspect-[3/4]' },
-  { cell: 'md:col-span-5 md:col-start-2 md:-mt-16', ratio: 'aspect-[4/5]' },
-  { cell: 'md:col-span-5 md:col-start-8 md:mt-28', ratio: 'aspect-square' },
-  { cell: 'md:col-span-6 md:col-start-3', ratio: 'aspect-[16/11]' },
-  { cell: 'md:col-span-3 md:col-start-10 md:mt-40', ratio: 'aspect-[3/4]' },
-]
-
 export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
   const { t, tx } = useLang()
   const [filter, setFilter] = useState<Category | 'All'>('All')
@@ -28,7 +18,7 @@ export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <SectionLabel index="02" label={t('Signature Projects', 'Proyectos emblemáticos')} />
+            <SectionLabel index="01" label={t('Signature Projects', 'Proyectos emblemáticos')} />
             <RevealText
               text={t('Signature\nprojects', 'Proyectos\nemblemáticos')}
               accent={['projects', 'emblemáticos']}
@@ -62,10 +52,10 @@ export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
         </div>
 
         <LayoutGroup>
-          <motion.ul layout className="mt-14 grid grid-cols-1 gap-x-6 gap-y-16 md:mt-20 md:grid-cols-12 md:gap-y-24">
+          <motion.ul layout className="mt-12 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 md:mt-16 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {list.map((p, i) => (
-                <ProjectCard key={p.slug} project={p} index={i} onOpen={onOpen} placement={layout[i % layout.length]} />
+                <ProjectCard key={p.slug} project={p} index={i} onOpen={onOpen} />
               ))}
             </AnimatePresence>
           </motion.ul>
@@ -79,12 +69,10 @@ function ProjectCard({
   project: p,
   index,
   onOpen,
-  placement,
 }: {
   project: Project
   index: number
   onOpen: (p: Project) => void
-  placement: (typeof layout)[number]
 }) {
   const { t, tx } = useLang()
   return (
@@ -93,11 +81,10 @@ function ProjectCard({
       initial={{ opacity: 0, y: 60 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.9, ease: easeLuxe, delay: index * 0.05 }}
-      className={placement.cell}
+      transition={{ duration: 0.9, ease: easeLuxe, delay: (index % 3) * 0.06 }}
     >
       <button onClick={() => onOpen(p)} data-cursor="View" className="group block w-full text-left" aria-label={`${t('Open project', 'Abrir proyecto')}: ${p.title}`}>
-        <motion.div layoutId={`cover-${p.slug}`} className={`relative overflow-hidden bg-graphite ${placement.ratio}`}>
+        <motion.div layoutId={`cover-${p.slug}`} className="relative aspect-[4/5] overflow-hidden bg-graphite">
           <img
             src={p.cover}
             alt=""
@@ -123,7 +110,7 @@ function ProjectCard({
         <div className="mt-5 flex items-start justify-between gap-6">
           <div>
             <p className="eyebrow text-gold/80">{tx(categoryLabel[p.category])}</p>
-            <h3 className="mt-2 font-display text-3xl text-bone transition-colors md:text-4xl">
+            <h3 className="mt-2 font-display text-3xl text-bone transition-colors">
               <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-700 group-hover:bg-[length:100%_1px]">
                 {p.title}
               </span>

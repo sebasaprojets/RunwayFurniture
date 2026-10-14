@@ -28,13 +28,14 @@ All data — projects, collections, clients, materials, films — lives in **`sr
   from `useLang()` (`src/i18n.tsx`).
 - `brand.contactEmail` — enquiries address (`info@runwayfurniture.com`), used by the contact form via `mailto:`.
 - `projects` — real hospitality projects from the company profile and residential projects from the Vondom book.
+- `films` — the Runway film plays from YouTube in HD (`youtube` id); the showroom film is a local mp4.
 - `kenkoon` — the Kenkoon outdoor collections; `clients` — the client list from the company profile.
 - `heroVideo` — set to `{ src: './media/hero.mp4' }` (file in `/public/media`) to replace the WebGL hero with a filmed video.
 
 ## Languages (EN / ES)
 
-One link for both languages: the opening screen asks the visitor to choose **English** or **Español**, and the
-EN / ES switch in the header changes it at any time. `…/RunwayFurniture/?lang=es` still pre-selects Spanish.
+One link for both languages: the EN / ES switch sits in the header next to "Enquire". The site starts in the
+visitor's last choice, otherwise their browser language; `…/RunwayFurniture/?lang=es` opens it in Spanish.
 
 ## Design skills and Playwright MCP
 

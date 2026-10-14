@@ -19,7 +19,7 @@ export function Collections() {
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <SectionLabel index="04" label={t('Collections', 'Colecciones')} />
+            <SectionLabel index="03" label={t('Collections', 'Colecciones')} />
             <RevealText
               text={t('Modernized\noutdoor living.', 'Vida exterior\nmodernizada.')}
               accent={['outdoor', 'exterior']}

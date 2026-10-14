@@ -3,7 +3,7 @@ import { BRAND_SERIF } from './BrandMark'
 export function Logo({ className = '' }: { className?: string }) {
   return (
     <span className={`flex flex-col items-center leading-none ${className}`}>
-      <span className="text-[1.45rem] font-medium tracking-[0.2em]" style={{ fontFamily: BRAND_SERIF }}>
+      <span className="text-[1.2rem] font-medium tracking-[0.2em] sm:text-[1.45rem]" style={{ fontFamily: BRAND_SERIF }}>
         RUNWAY
       </span>
       <span className="mt-1.5 flex items-center gap-1.5">

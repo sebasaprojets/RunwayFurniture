@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useAnimationControls } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { brand } from '../data/site'
 import { easeCine, easeLuxe } from '../lib/motion'
-import { useLang, type Lang } from '../i18n'
+import { useLang } from '../i18n'
 
 const SERIF = 'Instrument Serif, Georgia, serif'
 
@@ -15,7 +15,7 @@ const SERIF = 'Instrument Serif, Georgia, serif'
  * Skippable (click / key), and reduced to a simple fade for prefers-reduced-motion.
  */
 export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; onReveal?: () => void; reduced: boolean }) {
-  const { setLang } = useLang()
+  const { t, tx } = useLang()
   const [phase, setPhase] = useState<'title' | 'dive' | 'done'>('title')
   const [count, setCount] = useState(0)
   const [credit, setCredit] = useState(-1)
@@ -23,8 +23,11 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
   const diving = useRef(false)
   const dive = useAnimationControls()
 
-  // Shown before the visitor picks a language, so kept language-neutral.
-  const credits = [`Est. ${brand.since}`, brand.offices.map((o) => o.city).join('  ·  '), brand.full]
+  const credits = [
+    `${t('Est.', 'Desde')} ${brand.since}`,
+    `${brand.offices.map((o) => tx(o.cityLabel)).join('  ·  ')}  ·  ${t('Worldwide', 'Todo el mundo')}`,
+    t('Creating extraordinary spaces', 'Creamos espacios extraordinarios'),
+  ]
 
   const finish = () => {
     if (finished.current) return
@@ -44,7 +47,10 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
   }
 
   useEffect(() => {
-    if (reduced) return
+    if (reduced) {
+      const t = setTimeout(finish, 400)
+      return () => clearTimeout(t)
+    }
     // loading counter (eased, cinematic rather than literal)
     const start = performance.now()
     let raf = 0
@@ -58,29 +64,21 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
       setTimeout(() => setCredit(0), 2100),
       setTimeout(() => setCredit(1), 2900),
       setTimeout(() => setCredit(2), 3700),
+      setTimeout(startDive, 4500),
     ]
+    const skip = () => startDive()
+    window.addEventListener('keydown', skip)
     return () => {
       cancelAnimationFrame(raf)
       timers.forEach(clearTimeout)
+      window.removeEventListener('keydown', skip)
     }
   }, [reduced])
-
-  // The visitor enters by choosing a language — one link for both audiences.
-  const choose = (l: Lang) => {
-    setLang(l)
-    if (reduced) finish()
-    else startDive()
-  }
 
   if (reduced)
     return (
       <AnimatePresence>
-        {phase !== 'done' && (
-          <motion.div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-ink" exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
-            <p className="font-display text-4xl tracking-[0.38em] text-bone md:text-5xl">RUNWAY</p>
-            <LanguageChoice onChoose={choose} />
-          </motion.div>
-        )}
+        {phase !== 'done' && <motion.div className="fixed inset-0 z-[100] bg-ink" exit={{ opacity: 0 }} transition={{ duration: 0.6 }} aria-hidden />}
       </AnimatePresence>
     )
 
@@ -90,7 +88,8 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
     <AnimatePresence>
       {phase !== 'done' && (
         <motion.div
-          className="fixed inset-0 z-[100] overflow-hidden"
+          className="fixed inset-0 z-[100] cursor-pointer overflow-hidden"
+          onClick={startDive}
           exit={{ opacity: 0, transition: { duration: 0.4 } }}
           role="presentation"
         >
@@ -257,15 +256,6 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
               <motion.span className="h-px bg-gradient-to-l from-transparent to-gold/70" initial={{ width: 0 }} animate={{ width: 64 }} transition={{ duration: 1.4, ease: easeLuxe, delay: 1.9 }} />
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={phase === 'dive' ? { opacity: 0, y: -10 } : { opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: easeLuxe, delay: phase === 'dive' ? 0 : 2.6 }}
-              className="relative"
-            >
-              <LanguageChoice onChoose={choose} />
-            </motion.div>
-
             {/* opening credits */}
             <div className="absolute bottom-[16vh] h-6 overflow-hidden text-center">
               <AnimatePresence mode="wait">
@@ -300,7 +290,7 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
                 animate={{ opacity: phase === 'dive' ? 0 : 1 }}
                 transition={{ delay: phase === 'dive' ? 0 : 0.8 }}
               >
-                {side === 'top' ? 'Runway Furniture International' : `Est. ${brand.since}`}
+                {side === 'top' ? 'Runway Furniture International' : <><span className="md:hidden">{t('Tap to enter', 'Toca para entrar')}</span><span className="hidden md:inline">{t('Click or press any key to enter', 'Haz clic o pulsa cualquier tecla para entrar')}</span></>}
               </motion.span>
               <motion.span
                 className={`eyebrow text-[0.6rem] text-bone/40 tabular-nums ${side === 'bottom' ? 'max-md:hidden' : ''}`}
@@ -321,37 +311,5 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
         </motion.div>
       )}
     </AnimatePresence>
-  )
-}
-
-/** Two equal choices, each written in its own language. */
-function LanguageChoice({ onChoose }: { onChoose: (l: Lang) => void }) {
-  const options: { lang: Lang; label: string; hint: string }[] = [
-    { lang: 'en', label: 'English', hint: 'Enter' },
-    { lang: 'es', label: 'Español', hint: 'Entrar' },
-  ]
-  return (
-    <div className="mt-12 flex flex-col items-center gap-5 md:mt-14">
-      <p className="eyebrow text-[0.6rem] text-mineral/60">Select your language · Seleccione su idioma</p>
-      <div role="group" aria-label="Language / Idioma" className="flex items-center gap-3">
-        {options.map((o) => (
-          <button
-            key={o.lang}
-            lang={o.lang}
-            onClick={(e) => {
-              e.stopPropagation()
-              onChoose(o.lang)
-            }}
-            className="group relative flex min-w-36 flex-col items-center overflow-hidden rounded-full border border-bone/25 px-8 py-3.5 text-bone transition-colors duration-500 hover:border-gold focus-visible:border-gold md:min-w-44"
-          >
-            <span className="absolute inset-0 origin-bottom scale-y-0 bg-gold transition-transform duration-500 ease-[var(--ease-luxe)] group-hover:scale-y-100 group-focus-visible:scale-y-100" />
-            <span className="relative font-display text-2xl leading-none transition-colors duration-500 group-hover:text-ink group-focus-visible:text-ink">{o.label}</span>
-            <span className="eyebrow relative mt-1.5 text-[0.55rem] text-bone/45 transition-colors duration-500 group-hover:text-ink/70 group-focus-visible:text-ink/70">
-              {o.hint}
-            </span>
-          </button>
-        ))}
-      </div>
-    </div>
   )
 }

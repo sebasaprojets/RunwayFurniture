@@ -84,7 +84,7 @@ export function Hospitality() {
       >
         {/* intro panel */}
         <div className="flex w-[85vw] shrink-0 snap-start flex-col justify-center min-[900px]:w-[42vw]">
-          <SectionLabel index="03" label={t('Luxury Hospitality', 'Hotelería de lujo')} />
+          <SectionLabel index="02" label={t('Luxury Hospitality', 'Hotelería de lujo')} />
           <RevealText
             text={t('Spaces that\ndefine\ndestinations.', 'Espacios que\ndefinen\ndestinos.')}
             accent={['destinations', 'destinos']}

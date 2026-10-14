@@ -6,13 +6,13 @@ import { RevealText } from '../components/RevealText'
 import { SectionLabel } from '../components/SectionLabel'
 import { brand, images } from '../data/site'
 import { useLang } from '../i18n'
-import { usePrefersReducedMotion } from '../lib/motion'
+import { useCalmScroll } from '../lib/motion'
 
 /** Founder letter — text and portraits exactly as supplied by the company. */
 export function Founder() {
   const { t, tx } = useLang()
   const ref = useRef<HTMLElement>(null)
-  const reduced = usePrefersReducedMotion()
+  const calm = useCalmScroll()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const yA = useTransform(scrollYProgress, [0, 1], ['10%', '-10%'])
   const yB = useTransform(scrollYProgress, [0, 1], ['-6%', '14%'])
@@ -20,12 +20,12 @@ export function Founder() {
   return (
     <section ref={ref} id="founder" className="relative overflow-hidden bg-ink py-28 md:py-40" aria-labelledby="founder-title">
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
-        <SectionLabel index="07" label={t('The Founder', 'El fundador')} />
+        <SectionLabel index="04" label={t('The Founder', 'El fundador')} />
 
         <div className="mt-12 grid gap-16 lg:grid-cols-12">
           {/* portraits */}
           <div className="relative lg:col-span-6">
-            <motion.div style={reduced ? undefined : { y: yA }} className="relative z-10 w-[78%]">
+            <motion.div style={calm ? undefined : { y: yA }} className="relative z-10 w-[78%]">
               <MaskImage
                 src={images.founderStanding}
                 alt={t(
@@ -36,7 +36,7 @@ export function Founder() {
                 parallax={4}
               />
             </motion.div>
-            <motion.div style={reduced ? undefined : { y: yB }} className="relative z-20 -mt-[38%] ml-auto w-[52%] border-[6px] border-ink">
+            <motion.div style={calm ? undefined : { y: yB }} className="relative z-20 -mt-[38%] ml-auto w-[52%] border-[6px] border-ink">
               <MaskImage
                 src={images.founderSeated}
                 alt={t(

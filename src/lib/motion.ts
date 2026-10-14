@@ -27,3 +27,13 @@ export function useMediaQuery(query: string) {
   }, [query])
   return match
 }
+
+/**
+ * True on phones/tablets (touch, or narrow screens) and for reduced-motion users:
+ * scroll stays native and nothing moves with the scroll position, so the page never "swims".
+ */
+export function useCalmScroll() {
+  const reduced = usePrefersReducedMotion()
+  const touch = useMediaQuery('(hover: none), (pointer: coarse), (max-width: 899px)')
+  return reduced || touch
+}
