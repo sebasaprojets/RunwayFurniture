@@ -78,10 +78,10 @@ export function Hospitality() {
       </div>
       <div
         ref={trackRef}
-        className="relative flex h-auto snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 py-24 min-[900px]:h-[100svh] min-[900px]:snap-none min-[900px]:items-center min-[900px]:gap-[4vw] min-[900px]:overflow-visible min-[900px]:px-[6vw] min-[900px]:py-0 motion-reduce:min-[900px]:overflow-x-auto"
+        className="relative grid grid-cols-1 gap-12 px-5 py-24 sm:grid-cols-2 sm:gap-x-6 min-[900px]:flex min-[900px]:h-[100svh] min-[900px]:items-center min-[900px]:gap-[4vw] min-[900px]:px-[6vw] min-[900px]:py-0"
       >
         {/* intro panel */}
-        <div className="flex w-[85vw] shrink-0 snap-start flex-col justify-center min-[900px]:w-[42vw]">
+        <div className="flex shrink-0 flex-col justify-center sm:col-span-2 min-[900px]:w-[42vw]">
           <RevealText
             text={t('Spaces that\ndefine\ndestinations.', 'Espacios que\ndefinen\ndestinos.')}
             accent={['destinations', 'destinos']}
@@ -110,7 +110,7 @@ export function Hospitality() {
         {hospitalityScenes.map((s, i) => (
           <figure
             key={s.title.en}
-            className={`relative w-[80vw] shrink-0 snap-center ${
+            className={`relative shrink-0 ${
               i % 2 ? 'min-[900px]:mt-[16vh] min-[900px]:w-[25vw]' : 'min-[900px]:-mt-[8vh] min-[900px]:w-[44vw]'
             }`}
           >

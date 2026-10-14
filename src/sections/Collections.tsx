@@ -101,7 +101,7 @@ export function Collections() {
               </p>
             </FadeIn>
           </div>
-          <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6">
             {interiorCollection.map((src, i) => (
               <MaskImage
                 key={src}

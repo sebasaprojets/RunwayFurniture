@@ -402,7 +402,7 @@ export const projects: Project[] = [
       { en: 'Accent furniture', es: 'Muebles de acento' },
     ],
     cover: real('bridge-house-lounge'),
-    gallery: [],
+    gallery: [real('bridge-house-sofa'), real('bridge-house-salon'), real('bridge-house-lounge-2'), real('bridge-house-sofa-2'), real('bridge-house-dining')],
     isConcept: false,
   },
   {
@@ -1058,4 +1058,4 @@ export const kenkoon = {
 }
 
 /** Runway's own interior collection — leather and lounge pieces from the company profile. */
-export const interiorCollection = [real('collection-sofa'), real('collection-salon'), real('collection-library'), real('collection-chesterfield')]
+export const interiorCollection = [real('collection-cabinet'), real('collection-library'), real('collection-chesterfield')]
