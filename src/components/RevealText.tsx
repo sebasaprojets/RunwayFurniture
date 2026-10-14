@@ -24,7 +24,7 @@ export function RevealText({ text, as: Tag = 'h2', className, delay = 0, stagger
     : { whileInView: 'show' as const, viewport: { once: true, margin: '0px 0px -12% 0px' } }
   return (
     <Tag className={className} aria-label={text.replace(/\n/g, ' ')}>
-      <motion.span initial="hide" {...anim} aria-hidden className="block">
+      <motion.span key={text} initial="hide" {...anim} aria-hidden className="block">
         {lines.map((line, li) => (
           <span key={li} className="block">
             {line.split(' ').map((word, wi) => {
@@ -32,7 +32,7 @@ export function RevealText({ text, as: Tag = 'h2', className, delay = 0, stagger
               const strip = (w: string) => w.replace(/[.,]/g, '')
               const isAccent = accent.map(strip).includes(strip(word))
               return (
-                <span key={wi} className="-mr-[0.12em] inline-block overflow-hidden pr-[0.12em] pb-[0.08em] align-top">
+                <span key={wi} className="-mt-[0.18em] -mr-[0.12em] inline-block overflow-hidden pt-[0.18em] pr-[0.12em] pb-[0.08em] align-top">
                   <motion.span
                     className={`inline-block ${isAccent ? accentClass : ''}`}
                     variants={{

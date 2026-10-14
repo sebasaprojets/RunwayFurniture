@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
-import { photos } from '../data/site'
+import { showcase } from '../data/site'
+import { useLang } from '../i18n'
 import { gsap } from '../lib/scroll'
 
 /**
@@ -7,6 +8,7 @@ import { gsap } from '../lib/scroll'
  * the camera pushes in, letterbox bars retract and a line of copy surfaces.
  */
 export function CinemaReveal() {
+  const { t } = useLang()
   const root = useRef<HTMLElement>(null)
 
   useLayoutEffect(() => {
@@ -26,23 +28,26 @@ export function CinemaReveal() {
   }, [])
 
   return (
-    <section ref={root} className="relative h-[100svh] overflow-hidden bg-ink" aria-label="Every piece begins with a place">
+    <section ref={root} className="relative h-[100svh] overflow-hidden bg-ink" aria-label={t('Every piece begins with a place', 'Cada pieza nace de un lugar')}>
       <p data-pre className="display absolute inset-x-0 top-[12%] z-10 text-center text-[9vw] text-bone/90 uppercase md:text-[5vw]">
-        Every piece <span className="text-gold italic">begins</span>
+        {t('Every piece', 'Cada pieza')} <span className="text-gold italic">{t('begins', 'nace')}</span>
       </p>
       <div data-frame className="absolute inset-0 overflow-hidden">
-        <img data-img src={photos.villaModern} alt="Contemporary villa with pool at dusk" className="grade h-full w-full object-cover" loading="lazy" />
+        <img data-img src={showcase.residence} alt={t('Sardinera House, Jávea — white villa above an infinity pool', 'Casa Sardinera, Jávea — villa blanca sobre una piscina infinita')} className="grade h-full w-full object-cover" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-ink/40" />
       </div>
       <div data-bar className="absolute inset-x-0 top-0 h-[11vh] origin-top bg-ink" />
       <div data-bar className="absolute inset-x-0 bottom-0 h-[11vh] origin-bottom bg-ink" />
       <div data-copy className="absolute inset-x-0 bottom-[14%] z-10 px-5 text-center md:px-10">
-        <p className="eyebrow text-gold">Scene 02 — The Residence</p>
+        <p className="eyebrow text-gold">{t('Scene 02 — The Residence', 'Escena 02 — La residencia')}</p>
         <p className="display mt-6 text-[11vw] text-bone uppercase md:text-[6.5vw]">
-          …with a <span className="italic">place.</span>
+          {t('…with a', '…de un')} <span className="italic">{t('place.', 'lugar.')}</span>
         </p>
         <p className="mx-auto mt-6 max-w-lg text-bone/75">
-          We study the architecture, the light and the landscape first — then design the furniture that belongs there.
+          {t(
+            'We study the architecture, the light and the landscape first — then design the furniture that belongs there.',
+            'Primero estudiamos la arquitectura, la luz y el paisaje; después diseñamos el mobiliario que pertenece a ese lugar.',
+          )}
         </p>
       </div>
     </section>

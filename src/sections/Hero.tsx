@@ -4,6 +4,7 @@ import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
 import { WaterCanvas } from '../components/WaterCanvas'
 import { brand, heroVideo } from '../data/site'
+import { useLang } from '../i18n'
 import { easeCine, easeLuxe } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
 
@@ -14,9 +15,10 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '-22%'])
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0])
   const gridY = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
+  const { lang, t, tx } = useLang()
 
   return (
-    <section ref={ref} id="top" className="relative h-[100svh] min-h-[640px] overflow-hidden bg-ink" aria-label="Introduction">
+    <section ref={ref} id="top" className="relative h-[100svh] min-h-[640px] overflow-hidden bg-ink" aria-label={t('Introduction', 'Introducción')}>
       {/* Film — revealed through an expanding architectural aperture */}
       <motion.div
         className="absolute inset-0"
@@ -91,7 +93,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
           transition={{ delay: 0.9, duration: 1 }}
           className="eyebrow absolute top-32 left-5 hidden flex-col gap-2 text-mineral/70 md:left-10 md:flex"
         >
-          <span>{brand.pillars.join('  ·  ')}</span>
+          <span>{t('Luxury Hospitality  ·  Residential  ·  Bespoke Furniture', 'Hotelería de lujo  ·  Residencial  ·  Mobiliario a medida')}</span>
           <Timecode show={ready} />
         </motion.div>
         <motion.div
@@ -111,9 +113,9 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
                 immediate
                 delay={0.15}
                 stagger={0.08}
-                text={'Creating\nExtraordinary\nSpaces Worldwide'}
-                accent={['Extraordinary']}
-                className="display text-[15vw] text-bone uppercase sm:text-[11vw] lg:text-[7.4vw]"
+                text={t('Creating\nExtraordinary\nSpaces Worldwide', 'Creamos\nespacios\nextraordinarios')}
+                accent={['Extraordinary', 'extraordinarios']}
+                className={`display text-bone uppercase sm:text-[11vw] lg:text-[7.4vw] ${lang === 'es' ? 'text-[12.4vw]' : 'text-[15vw]'}`}
               />
             )}
           </div>
@@ -124,7 +126,10 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
             className="lg:col-span-4 lg:pb-4"
           >
             <p className="max-w-sm text-base leading-relaxed text-bone/75 md:text-lg">
-              Bespoke furniture and considered interiors for exceptional hospitality and residential destinations.
+              {t(
+                'Bespoke furniture and considered interiors for exceptional hospitality and residential destinations.',
+                'Mobiliario a medida e interiores cuidados para destinos residenciales y hoteleros excepcionales.',
+              )}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button
@@ -133,10 +138,10 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
                   scrollToTarget('#projects')
                 }}
               >
-                Explore our work
+                {t('Explore our work', 'Ver proyectos')}
               </Button>
               <Button href="#philosophy" variant="ghost" onClick={() => scrollToTarget('#philosophy')}>
-                Discover Runway
+                {t('Discover Runway', 'Conocer Runway')}
               </Button>
             </div>
           </motion.div>
@@ -148,11 +153,11 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
           transition={{ delay: 1.3, duration: 1 }}
           className="mt-10 flex items-center justify-start border-t border-bone/15 pt-5 md:justify-between"
         >
-          <span className="eyebrow text-mineral/60">Scroll to explore</span>
+          <span className="eyebrow text-mineral/60">{t('Scroll to explore', 'Desliza para explorar')}</span>
           <span className="relative block h-10 w-px overflow-hidden bg-bone/15 max-md:order-first max-md:mr-4" aria-hidden>
             <span className="absolute inset-0 bg-gold [animation:scroll-cue_2.4s_var(--ease-luxe)_infinite]" />
           </span>
-          <span className="eyebrow hidden text-mineral/60 md:inline">{brand.regions.join(' · ')}</span>
+          <span className="eyebrow hidden text-mineral/60 md:inline">{brand.regions.map(tx).join(' · ')}</span>
         </motion.div>
       </motion.div>
     </section>
@@ -160,12 +165,13 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
 }
 
 const zones = [
-  { city: 'Montreal', tz: 'America/Toronto' },
-  { city: 'Singapore', tz: 'Asia/Singapore' },
+  { city: { en: 'Montreal', es: 'Montreal' }, tz: 'America/Toronto' },
+  { city: { en: 'Singapore', es: 'Singapur' }, tz: 'Asia/Singapore' },
 ]
 
 /** Live local time in both studios — the brand's global reach, ticking. */
 function WorldClocks() {
+  const { tx } = useLang()
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
@@ -174,8 +180,8 @@ function WorldClocks() {
   return (
     <span className="flex flex-col items-end gap-2">
       {zones.map((z) => (
-        <span key={z.city} className="flex items-center gap-3">
-          <span>{z.city}</span>
+        <span key={z.tz} className="flex items-center gap-3">
+          <span>{tx(z.city)}</span>
           <span className="h-px w-6 bg-gold/50" />
           <span className="font-display text-sm tracking-normal text-bone tabular-nums">
             {now.toLocaleTimeString('en-GB', { timeZone: z.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
@@ -188,6 +194,7 @@ function WorldClocks() {
 
 /** Film-slate timecode running at 24 fps. */
 function Timecode({ show }: { show: boolean }) {
+  const { t } = useLang()
   const ref = useRef<HTMLSpanElement>(null)
   useEffect(() => {
     const start = performance.now()
@@ -211,7 +218,7 @@ function Timecode({ show }: { show: boolean }) {
       aria-hidden
     >
       <span className="size-1.5 animate-pulse rounded-full bg-terracotta" />
-      <span>Scene 01 — The sea beneath the glass</span>
+      <span>{t('Scene 01 — The sea beneath the glass', 'Escena 01 — El mar bajo el cristal')}</span>
       <span ref={ref} className="tabular-nums text-bone/70">00:00:00:00</span>
     </motion.div>
   )
@@ -219,7 +226,8 @@ function Timecode({ show }: { show: boolean }) {
 
 /** Rotating gilded seal — a quiet signature mark in the composition. */
 function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
-  const text = 'Since 2009 · Hospitality · Residential · Bespoke · '
+  const { t } = useLang()
+  const text = t('Since 2009 · Hospitality · Residential · Bespoke · ', 'Desde 2009 · Hotelería · Residencial · A medida · ')
   return (
     <motion.button
       onClick={() => scrollToTarget('#philosophy')}
@@ -227,7 +235,7 @@ function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
       animate={show ? { opacity: 1, scale: 1, rotate: 0 } : {}}
       transition={{ duration: 1.6, ease: easeLuxe, delay: 1 }}
       className="group absolute top-[26%] right-5 z-20 hidden size-32 md:right-10 md:block lg:top-[24%] lg:size-36"
-      aria-label="Discover Runway"
+      aria-label={t('Discover Runway', 'Conocer Runway')}
     >
       <svg viewBox="0 0 200 200" className={`absolute inset-0 h-full w-full text-bone/70 ${reduced ? '' : 'animate-[spin_24s_linear_infinite]'}`}>
         <defs>

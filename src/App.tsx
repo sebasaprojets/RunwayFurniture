@@ -9,6 +9,9 @@ import { CustomCursor } from './components/CustomCursor'
 import { ScrollProgress } from './components/ScrollProgress'
 import { Bespoke } from './sections/Bespoke'
 import { CinemaReveal } from './sections/CinemaReveal'
+import { Clients } from './sections/Clients'
+import { Collections } from './sections/Collections'
+import { Films } from './sections/Films'
 import { FounderFilm } from './sections/FounderFilm'
 import { Contact } from './sections/Contact'
 import { Footer } from './sections/Footer'
@@ -21,6 +24,7 @@ import { Philosophy } from './sections/Philosophy'
 import { ProjectDetail } from './sections/ProjectDetail'
 import { Projects } from './sections/Projects'
 import { Statement } from './sections/Statement'
+import { useLang } from './i18n'
 
 const fromHash = () => {
   const m = window.location.hash.match(/^#\/project\/([\w-]+)/)
@@ -28,6 +32,7 @@ const fromHash = () => {
 }
 
 export default function App() {
+  const { t } = useLang()
   const reduced = usePrefersReducedMotion()
   const [ready, setReady] = useState(false)
   const [revealed, setRevealed] = useState(false)
@@ -68,7 +73,7 @@ export default function App() {
   return (
     <LayoutGroup>
       <a href="#main" className="sr-only z-[200] rounded bg-bone px-4 py-2 text-ink focus:not-sr-only focus:fixed focus:top-4 focus:left-4">
-        Skip to content
+        {t('Skip to content', 'Saltar al contenido')}
       </a>
       <CustomCursor />
       <ScrollProgress />
@@ -81,10 +86,13 @@ export default function App() {
         <CinemaReveal />
         <Projects onOpen={open} />
         <Hospitality />
+        <Collections />
         <Bespoke />
         <Materials />
         <Founder />
         <FounderFilm />
+        <Films />
+        <Clients />
         <Global />
         <Contact />
       </main>

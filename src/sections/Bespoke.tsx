@@ -5,19 +5,20 @@ import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
 import { SectionLabel } from '../components/SectionLabel'
 import { textures } from '../data/site'
+import { useLang, type T } from '../i18n'
 import { easeLuxe } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
 
 const frames = [
-  { id: 'oak', name: 'Natural Oak', tex: textures.oak, swatch: '#a3805a' },
-  { id: 'walnut', name: 'American Walnut', tex: textures.walnut, swatch: '#4a3322' },
-  { id: 'bronze', name: 'Brushed Bronze', tex: textures.bronze, swatch: '#8d6748' },
+  { id: 'oak', name: { en: 'Natural Oak', es: 'Roble natural' }, tex: textures.oak, swatch: '#a3805a' },
+  { id: 'walnut', name: { en: 'American Walnut', es: 'Nogal americano' }, tex: textures.walnut, swatch: '#4a3322' },
+  { id: 'bronze', name: { en: 'Brushed Bronze', es: 'Bronce cepillado' }, tex: textures.bronze, swatch: '#8d6748' },
 ] as const
 
 const fabrics = [
-  { id: 'leather', name: 'Cognac Leather', tex: textures.leather, swatch: '#83492a' },
-  { id: 'linen', name: 'Belgian Linen', tex: textures.linen, swatch: '#c8bda9' },
-  { id: 'boucle', name: 'Wool Bouclé', tex: textures.boucle, swatch: '#e2ddd2' },
+  { id: 'leather', name: { en: 'Cognac Leather', es: 'Cuero coñac' }, tex: textures.leather, swatch: '#83492a' },
+  { id: 'linen', name: { en: 'Belgian Linen', es: 'Lino belga' }, tex: textures.linen, swatch: '#c8bda9' },
+  { id: 'boucle', name: { en: 'Wool Bouclé', es: 'Bouclé de lana' }, tex: textures.boucle, swatch: '#e2ddd2' },
 ] as const
 
 // Side elevation of the demonstration piece — the "Arc" lounge chair.
@@ -33,6 +34,7 @@ const P = {
 }
 
 export function Bespoke() {
+  const L = useLang()
   const [frame, setFrame] = useState<(typeof frames)[number]>(frames[1])
   const [fabric, setFabric] = useState<(typeof fabrics)[number]>(fabrics[0])
   const [view, setView] = useState<'drawing' | 'finished'>('drawing')
@@ -59,26 +61,28 @@ export function Bespoke() {
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <SectionLabel index="04" label="Bespoke Furniture" />
+            <SectionLabel index="05" label={L.t('Bespoke Furniture', 'Mobiliario a medida')} />
             <RevealText
-              text={'Crafted with\nintention.\nDesigned\nto last.'}
-              accent={['intention.']}
+              text={L.t('Crafted with\nintention.\nDesigned\nto last.', 'Hecho con\nintención.\nDiseñado\npara durar.')}
+              accent={['intention.', 'intención.']}
               className="display mt-10 text-[13vw] text-bone uppercase sm:text-[9vw] lg:text-[5.4vw]"
             />
             <FadeIn>
               <p className="mt-10 max-w-md leading-relaxed text-bone/65">
-                Every bespoke commission is a meeting of art, engineering and precision — from a first line on paper to technical drawings,
-                prototypes and the final hand-finished piece.
+                {L.t(
+                  'Every bespoke commission is a meeting of art, engineering and precision — from a first line on paper to technical drawings, prototypes and the final hand-finished piece.',
+                  'Cada encargo a medida une arte, ingeniería y precisión: desde la primera línea en papel hasta los planos técnicos, los prototipos y la pieza final terminada a mano.',
+                )}
               </p>
             </FadeIn>
             <ol className="mt-12 divide-y divide-bone/10 border-y border-bone/10">
               {[
-                ['Sketch', 'A single gesture defines proportion and character.'],
-                ['Engineering', 'Technical drawings, structure and ergonomics resolved.'],
-                ['Materials', 'Timber, stone, metal and textile selected for the setting.'],
-                ['Craft', 'Built, upholstered and finished by hand.'],
+                [L.t('Sketch', 'Boceto'), L.t('A single gesture defines proportion and character.', 'Un solo trazo define la proporción y el carácter.')],
+                [L.t('Engineering', 'Ingeniería'), L.t('Technical drawings, structure and ergonomics resolved.', 'Planos técnicos, estructura y ergonomía resueltos.')],
+                [L.t('Materials', 'Materiales'), L.t('Timber, stone, metal and textile selected for the setting.', 'Madera, piedra, metal y textil elegidos para cada espacio.')],
+                [L.t('Craft', 'Oficio'), L.t('Built, upholstered and finished by hand.', 'Construido, tapizado y terminado a mano.')],
               ].map(([t, d], i) => (
-                <FadeIn key={t} delay={i * 0.06}>
+                <FadeIn key={i} delay={i * 0.06}>
                   <li className="grid grid-cols-[3rem_1fr] gap-4 py-5">
                     <span className="font-display text-xl text-gold italic">0{i + 1}</span>
                     <span>
@@ -96,8 +100,8 @@ export function Bespoke() {
             <div ref={stageRef} className="relative overflow-hidden border border-bone/10 bg-graphite">
               <div className="grid-lines absolute inset-0" aria-hidden />
               <div className="relative flex items-center justify-between px-5 pt-5 md:px-7 md:pt-7">
-                <p className="eyebrow text-mineral/60">Demonstration piece — Arc Lounge Chair</p>
-                <div role="group" aria-label="View" className="flex rounded-full border border-bone/15 p-1">
+                <p className="eyebrow text-mineral/60">{L.t('Demonstration piece — Arc Lounge Chair', 'Pieza de demostración — Sillón Arc')}</p>
+                <div role="group" aria-label={L.t('View', 'Vista')} className="flex rounded-full border border-bone/15 p-1">
                   {(['drawing', 'finished'] as const).map((v) => (
                     <button
                       key={v}
@@ -110,7 +114,7 @@ export function Bespoke() {
                         view === v ? 'bg-bone text-ink' : 'text-bone/60 hover:text-bone'
                       }`}
                     >
-                      {v}
+                      {v === 'drawing' ? L.t('Drawing', 'Plano') : L.t('Finished', 'Terminado')}
                     </button>
                   ))}
                 </div>
@@ -120,7 +124,10 @@ export function Bespoke() {
                 viewBox="100 30 420 450"
                 className="relative mx-auto aspect-[42/45] w-full max-w-[640px]"
                 role="img"
-                aria-label={`Arc lounge chair in ${frame.name} with ${fabric.name} upholstery, shown as a ${view === 'drawing' ? 'technical drawing' : 'finished piece'}`}
+                aria-label={L.t(
+                  `Arc lounge chair in ${frame.name.en} with ${fabric.name.en} upholstery, shown as a ${view === 'drawing' ? 'technical drawing' : 'finished piece'}`,
+                  `Sillón Arc en ${frame.name.es} con tapizado de ${fabric.name.es}, mostrado como ${view === 'drawing' ? 'plano técnico' : 'pieza terminada'}`,
+                )}
               >
                 <defs>
                   <pattern id={`f-${uid}`} patternUnits="userSpaceOnUse" width="300" height="300">
@@ -200,8 +207,8 @@ export function Bespoke() {
               </svg>
 
               <div className="relative grid gap-6 border-t border-bone/10 p-5 sm:grid-cols-2 md:p-7">
-                <SwatchGroup label="Frame" options={frames} value={frame} onChange={choose(setFrame)} />
-                <SwatchGroup label="Upholstery" options={fabrics} value={fabric} onChange={choose(setFabric)} />
+                <SwatchGroup label={L.t('Frame', 'Estructura')} options={frames} value={frame} onChange={choose(setFrame)} />
+                <SwatchGroup label={L.t('Upholstery', 'Tapizado')} options={fabrics} value={fabric} onChange={choose(setFabric)} />
               </div>
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-between gap-6">
@@ -214,11 +221,11 @@ export function Bespoke() {
                   className="font-display text-2xl text-bone"
                   aria-live="polite"
                 >
-                  {frame.name} <span className="text-gold italic">&</span> {fabric.name}
+                  {L.tx(frame.name)} <span className="text-gold italic">&</span> {L.tx(fabric.name)}
                 </motion.p>
               </AnimatePresence>
               <Button href="#contact" onClick={() => scrollToTarget('#contact')}>
-                Discuss a bespoke project
+                {L.t('Discuss a bespoke project', 'Hablemos de un proyecto a medida')}
               </Button>
             </div>
           </div>
@@ -228,17 +235,18 @@ export function Bespoke() {
   )
 }
 
-type Opt = { id: string; name: string; swatch: string; tex: string }
+type Opt = { id: string; name: T; swatch: string; tex: string }
 
 function SwatchGroup<T extends Opt>({ label, options, value, onChange }: { label: string; options: readonly T[]; value: T; onChange: (v: T) => void }) {
+  const { tx } = useLang()
   return (
     <fieldset>
       <legend className="eyebrow text-mineral/60">
-        {label} — <span className="text-bone">{value.name}</span>
+        {label} — <span className="text-bone">{tx(value.name)}</span>
       </legend>
       <div className="mt-4 flex gap-3">
         {options.map((o) => (
-          <label key={o.id} className="group relative cursor-pointer" title={o.name}>
+          <label key={o.id} className="group relative cursor-pointer" title={tx(o.name)}>
             <input
               type="radio"
               name={label}
@@ -251,7 +259,7 @@ function SwatchGroup<T extends Opt>({ label, options, value, onChange }: { label
               className="block size-12 rounded-full border border-bone/20 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 peer-checked:ring-1 peer-checked:ring-gold peer-checked:ring-offset-4 peer-checked:ring-offset-graphite peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-8 peer-focus-visible:outline-gold"
               style={{ backgroundImage: `url(${o.tex})`, backgroundColor: o.swatch }}
             />
-            <span className="sr-only">{o.name}</span>
+            <span className="sr-only">{tx(o.name)}</span>
           </label>
         ))}
       </div>

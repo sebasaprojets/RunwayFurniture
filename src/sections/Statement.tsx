@@ -1,33 +1,37 @@
 import { animate, motion, useInView, useScroll, useTransform, type MotionValue } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { brand } from '../data/site'
+import { useLang } from '../i18n'
 
-const manifesto =
-  'For more than seventeen years we have partnered with architects, developers, hotel brands and interior designers around the world — to deliver hospitality and residential environments that people remember.'
+const manifesto = {
+  en: 'For more than seventeen years we have partnered with architects, developers, hotel brands and interior designers around the world — to deliver hospitality and residential environments that people remember.',
+  es: 'Durante más de diecisiete años hemos trabajado con arquitectos, desarrolladores, marcas hoteleras e interioristas de todo el mundo para crear espacios hoteleros y residenciales que la gente recuerda.',
+}
 
 /** A manifesto that lights up word by word as you scroll, followed by count-up facts. */
 export function Statement() {
+  const { t, tx } = useLang()
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 45%'] })
-  const words = manifesto.split(' ')
+  const words = tx(manifesto).split(' ')
   const marquee = useRef<HTMLElement>(null)
   const { scrollYProgress: mq } = useScroll({ target: marquee, offset: ['start end', 'end start'] })
   const x = useTransform(mq, [0, 1], ['0%', '-25%'])
 
   const facts = [
-    { value: brand.since, label: 'Founded', plain: true },
-    { value: brand.years, label: 'Years of excellence' },
-    { value: brand.offices.length, label: 'Studios — Montreal & Singapore' },
-    { value: brand.regions.length, label: brand.regions.join(' · ') },
+    { value: brand.since, label: t('Founded', 'Fundada'), plain: true },
+    { value: brand.years, label: t('Years of excellence', 'Años de excelencia') },
+    { value: brand.offices.length, label: t('Studios — Montreal & Singapore', 'Estudios — Montreal y Singapur') },
+    { value: brand.regions.length, label: brand.regions.map(tx).join(' · ') },
   ]
 
   return (
-    <section ref={marquee} className="relative overflow-hidden bg-ink py-28 md:py-44" aria-label="Runway at a glance">
+    <section ref={marquee} className="relative overflow-hidden bg-ink py-28 md:py-44" aria-label={t('Runway at a glance', 'Runway en cifras')}>
       <div ref={ref} className="mx-auto max-w-[1400px] px-5 md:px-10">
-        <p className="eyebrow mb-10 text-gold">— Since {brand.since}</p>
+        <p className="eyebrow mb-10 text-gold">— {t('Since', 'Desde')} {brand.since}</p>
         <p className="display text-[8.5vw] leading-[1.02] md:text-[4.6vw]">
           {words.map((w, i) => (
-            <Word key={i} progress={scrollYProgress} range={[i / words.length, (i + 1) / words.length]} accent={['remember.', 'world'].includes(w)}>
+            <Word key={i} progress={scrollYProgress} range={[i / words.length, (i + 1) / words.length]} accent={['remember.', 'world', 'recuerda.', 'mundo'].includes(w)}>
               {w}
             </Word>
           ))}
@@ -35,7 +39,7 @@ export function Statement() {
       </div>
 
       <motion.div style={{ x }} className="mt-24 flex whitespace-nowrap md:mt-32" aria-hidden>
-        {['Luxury Hospitality', 'Residential', 'Bespoke Furniture', 'Montreal', 'Singapore', 'Worldwide', 'Luxury Hospitality', 'Residential'].map((w, i) => (
+        {(t('Luxury Hospitality|Residential|Bespoke Furniture|Montreal|Singapore|Worldwide|Luxury Hospitality|Residential', 'Hotelería de lujo|Residencial|Mobiliario a medida|Montreal|Singapur|Todo el mundo|Hotelería de lujo|Residencial')).split('|').map((w, i) => (
           <span key={i} className="display flex items-center text-[15vw] text-transparent md:text-[8vw]" style={{ WebkitTextStroke: '1px rgba(210,196,174,.22)' }}>
             {w}
             <span className="mx-[3vw] inline-block size-[1.2vw] rotate-45 bg-gold/40" />

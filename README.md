@@ -22,16 +22,29 @@ npm run build    # outputs the static site to /docs
 
 ## Editing content
 
-All copy, images, projects and materials live in **`src/data/site.ts`**.
+All data — projects, collections, clients, materials, films — lives in **`src/data/site.ts`**.
 
-- `brand.contactEmail` — **replace with the real enquiries address** (used by the contact form via `mailto:`).
+- Copy is bilingual: every text field is `{ en: '…', es: '…' }`. Section headings use `t('English', 'Español')`
+  from `useLang()` (`src/i18n.tsx`).
+- `brand.contactEmail` — enquiries address (`info@runwayfurniture.com`), used by the contact form via `mailto:`.
+- `projects` — real hospitality projects from the company profile and residential projects from the Vondom book.
+- `kenkoon` — the Kenkoon outdoor collections; `clients` — the client list from the company profile.
 - `heroVideo` — set to `{ src: './media/hero.mp4' }` (file in `/public/media`) to replace the WebGL hero with a filmed video.
-- `projects` — every project has `isConcept: true` because they are demonstration studies built from the supplied imagery.
-  Replace them with real commissions (and set `location`) when available.
+
+## Languages (EN / ES)
+
+The EN / ES switch sits in the header. The site starts in the visitor's last choice, otherwise their browser language.
+Share `…/RunwayFurniture/?lang=es` to open it directly in Spanish.
+
+## Design skills and Playwright MCP
+
+`.claude/skills` holds the project's design skills (Emil Kowalski, Impeccable, Taste Skill) and `.mcp.json` starts the
+Playwright MCP through `.claude/playwright-mcp.mjs`.
 
 ## Images
 
-Photos in `src/assets/img` were supplied by the client and enhanced (denoise → EDSR ×2/×4 super-resolution → local
+Photos in `src/assets/img/real` were extracted from the supplied PDFs (company profile, Vondom, Kenkoon); films in
+`public/media` are the supplied videos, re-encoded for the web. Older photos in `src/assets/img` were supplied by the client and enhanced (denoise → EDSR ×2/×4 super-resolution → local
 contrast → sharpen → subtle grade). Material textures in `src/assets/materials` are procedurally generated.
 For the best result, replace them with the original high-resolution files.
 

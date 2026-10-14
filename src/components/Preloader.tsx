@@ -2,6 +2,7 @@ import { AnimatePresence, motion, useAnimationControls } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { brand } from '../data/site'
 import { easeCine, easeLuxe } from '../lib/motion'
+import { useLang } from '../i18n'
 
 const SERIF = 'Instrument Serif, Georgia, serif'
 
@@ -14,6 +15,7 @@ const SERIF = 'Instrument Serif, Georgia, serif'
  * Skippable (click / key), and reduced to a simple fade for prefers-reduced-motion.
  */
 export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; onReveal?: () => void; reduced: boolean }) {
+  const { t, tx } = useLang()
   const [phase, setPhase] = useState<'title' | 'dive' | 'done'>('title')
   const [count, setCount] = useState(0)
   const [credit, setCredit] = useState(-1)
@@ -21,7 +23,11 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
   const diving = useRef(false)
   const dive = useAnimationControls()
 
-  const credits = [`Est. ${brand.since}`, `${brand.offices.map((o) => o.city).join('  ·  ')}  ·  Worldwide`, 'Creating extraordinary spaces']
+  const credits = [
+    `${t('Est.', 'Desde')} ${brand.since}`,
+    `${brand.offices.map((o) => tx(o.cityLabel)).join('  ·  ')}  ·  ${t('Worldwide', 'Todo el mundo')}`,
+    t('Creating extraordinary spaces', 'Creamos espacios extraordinarios'),
+  ]
 
   const finish = () => {
     if (finished.current) return
@@ -284,7 +290,7 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
                 animate={{ opacity: phase === 'dive' ? 0 : 1 }}
                 transition={{ delay: phase === 'dive' ? 0 : 0.8 }}
               >
-                {side === 'top' ? 'Runway Furniture International' : <><span className="md:hidden">Tap to enter</span><span className="hidden md:inline">Click or press any key to enter</span></>}
+                {side === 'top' ? 'Runway Furniture International' : <><span className="md:hidden">{t('Tap to enter', 'Toca para entrar')}</span><span className="hidden md:inline">{t('Click or press any key to enter', 'Haz clic o pulsa cualquier tecla para entrar')}</span></>}
               </motion.span>
               <motion.span
                 className={`eyebrow text-[0.6rem] text-bone/40 tabular-nums ${side === 'bottom' ? 'max-md:hidden' : ''}`}
