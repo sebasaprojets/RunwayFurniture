@@ -3,6 +3,7 @@ import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
 import { SectionLabel } from '../components/SectionLabel'
 import { hospitalityScenes } from '../data/site'
+import { useLang } from '../i18n'
 import { gsap } from '../lib/scroll'
 import { scrollToTarget } from '../lib/scroll'
 
@@ -12,6 +13,7 @@ import { scrollToTarget } from '../lib/scroll'
  * On touch / small screens / reduced motion it becomes a native swipe carousel.
  */
 export function Hospitality() {
+  const { t, tx } = useLang()
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
@@ -74,7 +76,7 @@ export function Hospitality() {
         style={{ WebkitTextStroke: '1px rgba(184,154,106,.14)' }}
         aria-hidden
       >
-        Destinations · Hospitality
+        {t('Destinations · Hospitality', 'Destinos · Hotelería')}
       </div>
       <div
         ref={trackRef}
@@ -82,15 +84,17 @@ export function Hospitality() {
       >
         {/* intro panel */}
         <div className="flex w-[85vw] shrink-0 snap-start flex-col justify-center min-[900px]:w-[42vw]">
-          <SectionLabel index="03" label="Luxury Hospitality" />
+          <SectionLabel index="03" label={t('Luxury Hospitality', 'Hotelería de lujo')} />
           <RevealText
-            text={'Spaces that\ndefine\ndestinations.'}
-            accent={['destinations']}
+            text={t('Spaces that\ndefine\ndestinations.', 'Espacios que\ndefinen\ndestinos.')}
+            accent={['destinations', 'destinos']}
             className="display mt-8 text-[13vw] text-bone uppercase min-[900px]:text-[5.6vw]"
           />
           <p className="mt-8 max-w-md leading-relaxed text-bone/65">
-            Thoughtfully designed environments where architecture, furniture and hospitality come together to create something
-            extraordinary.
+            {t(
+              'Thoughtfully designed environments where architecture, furniture and hospitality come together to create something extraordinary.',
+              'Ambientes diseñados con cuidado, donde arquitectura, mobiliario y hospitalidad se unen para crear algo extraordinario.',
+            )}
           </p>
           <div className="mt-10">
             <Button
@@ -98,14 +102,14 @@ export function Hospitality() {
               variant="ghost"
               onClick={() => scrollToTarget('#projects')}
             >
-              Explore hospitality projects
+              {t('Explore hospitality projects', 'Ver proyectos de hotelería')}
             </Button>
           </div>
         </div>
 
         {hospitalityScenes.map((s, i) => (
           <figure
-            key={s.title}
+            key={s.title.en}
             className={`relative w-[80vw] shrink-0 snap-center ${
               i % 2 ? 'min-[900px]:mt-[16vh] min-[900px]:w-[25vw]' : 'min-[900px]:-mt-[8vh] min-[900px]:w-[44vw]'
             }`}
@@ -118,7 +122,7 @@ export function Hospitality() {
               <img
                 data-pan
                 src={s.image}
-                alt={`${s.title}: ${s.caption}`}
+                alt={`${tx(s.title)}: ${tx(s.caption)}`}
                 loading="lazy"
                 decoding="async"
                 className="grade absolute inset-y-0 -left-[12%] h-full w-[124%] max-w-none object-cover"
@@ -127,8 +131,8 @@ export function Hospitality() {
               <span className="absolute top-5 left-5 font-display text-lg text-bone/80 italic">0{i + 1}</span>
             </div>
             <figcaption data-caption className="mt-5 flex max-w-md items-baseline gap-5">
-              <span className="font-display text-3xl whitespace-nowrap text-bone">{s.title}</span>
-              <span className="text-sm leading-relaxed text-bone/55">{s.caption}</span>
+              <span className="font-display text-3xl whitespace-nowrap text-bone">{tx(s.title)}</span>
+              <span className="text-sm leading-relaxed text-bone/55">{tx(s.caption)}</span>
             </figcaption>
           </figure>
         ))}

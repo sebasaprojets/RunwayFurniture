@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { useId } from 'react'
+import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
 
 export const BRAND_SERIF = 'Cinzel, "Trajan Pro", "Cormorant Garamond", Georgia, serif'
@@ -166,9 +167,14 @@ export function BrandMark({ animate = false, delay = 0, className = '', pillars 
           animate={{ opacity: 1 }}
           transition={t(2.9)}
         >
-          Luxury Hospitality&nbsp;&nbsp;•&nbsp;&nbsp;Residential&nbsp;&nbsp;•&nbsp;&nbsp;Bespoke Furniture
+          <Pillars />
         </motion.span>
       )}
     </div>
   )
+}
+
+function Pillars() {
+  const { t } = useLang()
+  return <>{t('Luxury Hospitality  •  Residential  •  Bespoke Furniture', 'Hotelería de lujo  •  Residencial  •  Mobiliario a medida').replace(/ {2}/g, '\u00a0\u00a0')}</>
 }

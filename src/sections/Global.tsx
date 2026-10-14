@@ -3,12 +3,14 @@ import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
 import { SectionLabel } from '../components/SectionLabel'
 import { brand } from '../data/site'
+import { useLang } from '../i18n'
 import { usePrefersReducedMotion } from '../lib/motion'
 
 const DEG = Math.PI / 180
 
 /** Wireframe globe (orthographic projection) with the two studios and the arc connecting them. */
 function Globe() {
+  const { t, tx } = useLang()
   const ref = useRef<HTMLCanvasElement>(null)
   const reduced = usePrefersReducedMotion()
 
@@ -114,7 +116,7 @@ function Globe() {
         ctx.fillStyle = 'rgba(242,240,234,.85)'
         const left = p.x > cx
         ctx.textAlign = left ? 'right' : 'left'
-        ctx.fillText(o.city.toUpperCase(), p.x + (left ? -1 : 1) * R * 0.065, p.y + R * 0.02)
+        ctx.fillText(tx(o.cityLabel).toUpperCase(), p.x + (left ? -1 : 1) * R * 0.065, p.y + R * 0.02)
       }
     }
 
@@ -136,23 +138,24 @@ function Globe() {
       io.disconnect()
       window.removeEventListener('resize', size)
     }
-  }, [reduced])
+  }, [reduced, tx])
 
-  return <canvas ref={ref} className="aspect-square w-full" role="img" aria-label="Globe showing Runway studios in Montreal and Singapore" />
+  return <canvas ref={ref} className="aspect-square w-full" role="img" aria-label={t('Globe showing Runway studios in Montreal and Singapore', 'Globo con los estudios de Runway en Montreal y Singapur')} />
 }
 
 export function Global() {
+  const { t, tx } = useLang()
   return (
     <section className="relative overflow-hidden border-t border-bone/10 bg-ink py-28 md:py-36" aria-labelledby="global-title">
       <div className="mx-auto grid max-w-[1600px] items-center gap-14 px-5 md:px-10 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <SectionLabel index="10" label="Global Presence" />
-          <RevealText text={'Montreal.\nSingapore.\nWorldwide.'} accent={['Worldwide.']} className="display mt-10 text-[14vw] text-bone uppercase sm:text-[9vw] lg:text-[5.6vw]" />
+          <SectionLabel index="10" label={t('Global Presence', 'Presencia global')} />
+          <RevealText text={t('Montreal.\nSingapore.\nWorldwide.', 'Montreal.\nSingapur.\nTodo el mundo.')} accent={['Worldwide.', 'Todo', 'el', 'mundo.']} className="display mt-10 text-[14vw] text-bone uppercase sm:text-[9vw] lg:text-[5.6vw]" />
           <FadeIn>
             <ul className="mt-12 grid grid-cols-2 gap-px border-t border-bone/10 sm:grid-cols-3">
               {brand.regions.map((r) => (
-                <li key={r} className="border-b border-bone/10 py-4 font-display text-2xl text-bone/80">
-                  {r}
+                <li key={r.en} className="border-b border-bone/10 py-4 font-display text-2xl text-bone/80">
+                  {tx(r)}
                 </li>
               ))}
             </ul>

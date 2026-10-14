@@ -3,10 +3,12 @@ import { useState } from 'react'
 import { RevealText } from '../components/RevealText'
 import { SectionLabel } from '../components/SectionLabel'
 import { materials, textures } from '../data/site'
+import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
 
 /** Tactile material library: list on the left drives a large macro "sample" on the right. */
 export function Materials() {
+  const { t, tx } = useLang()
   const [active, setActive] = useState(0)
   const m = materials[active]
 
@@ -15,22 +17,24 @@ export function Materials() {
       <div className="mx-auto max-w-[1600px] px-5 py-28 md:px-10 md:py-40">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <SectionLabel index="06" label="Materials & Details" light={false} />
+            <SectionLabel index="06" label={t('Materials & Details', 'Materiales y detalles')} light={false} />
             <RevealText
-              text={'The language\nof materials.'}
-              accent={['materials.']}
+              text={t('The language\nof materials.', 'El lenguaje\nde los materiales.')}
+              accent={['materials.', 'materiales.']}
               accentClass="italic text-bronze"
               className="display mt-10 text-[13vw] uppercase sm:text-[9vw] lg:text-[6vw]"
             />
           </div>
           <p className="max-w-md text-sm leading-relaxed text-ink/65 lg:col-span-4 lg:col-start-9">
-            Quality is something you feel before you see it. Each surface is selected for how it ages, how it catches light and how it
-            feels under the hand.
+            {t(
+              'Quality is something you feel before you see it. Each surface is selected for how it ages, how it catches light and how it feels under the hand.',
+              'La calidad se siente antes de verse. Cada superficie se elige por cómo envejece, cómo atrapa la luz y cómo se siente al tacto.',
+            )}
           </p>
         </div>
 
         <div className="mt-16 grid gap-10 md:mt-24 lg:grid-cols-12">
-          <ul className="order-2 divide-y divide-ink/10 border-y border-ink/10 lg:order-1 lg:col-span-5" aria-label="Materials">
+          <ul className="order-2 divide-y divide-ink/10 border-y border-ink/10 lg:order-1 lg:col-span-5" aria-label={t('Materials', 'Materiales')}>
             {materials.map((mat, i) => (
               <li key={mat.key}>
                 <button
@@ -43,9 +47,9 @@ export function Materials() {
                   <span className="text-[0.65rem] text-ink/40 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
                   <img src={textures[mat.key]} alt="" className={`size-10 rounded-full object-cover transition-transform duration-500 lg:hidden ${i === active ? 'scale-110' : ''}`} />
                   <span className={`font-display text-3xl transition-all duration-500 md:text-4xl ${i === active ? 'translate-x-2 text-ink italic' : 'text-ink/40 group-hover:text-ink/70'}`}>
-                    {mat.name}
+                    {tx(mat.name)}
                   </span>
-                  <span className="eyebrow ml-auto text-[0.6rem] text-ink/40">{mat.family}</span>
+                  <span className="eyebrow ml-auto text-[0.6rem] text-ink/40">{tx(mat.family)}</span>
                 </button>
               </li>
             ))}
@@ -57,7 +61,7 @@ export function Materials() {
                 <motion.img
                   key={m.key}
                   src={textures[m.key]}
-                  alt={`Macro detail of ${m.name}`}
+                  alt={`${t('Macro detail of', 'Detalle macro de')} ${tx(m.name)}`}
                   initial={{ clipPath: 'inset(0% 0% 100% 0%)', scale: 1.15 }}
                   animate={{ clipPath: 'inset(0% 0% 0% 0%)', scale: 1 }}
                   exit={{ opacity: 1 }}
@@ -75,9 +79,9 @@ export function Materials() {
                   transition={{ duration: 0.6, delay: 0.3 }}
                   className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 to-transparent p-6 pt-20 text-bone md:p-8 md:pt-24"
                 >
-                  <p className="eyebrow text-mineral">{m.family}</p>
-                  <p className="mt-2 font-display text-4xl">{m.name}</p>
-                  <p className="mt-3 max-w-sm text-sm leading-relaxed text-bone/75">{m.description}</p>
+                  <p className="eyebrow text-mineral">{tx(m.family)}</p>
+                  <p className="mt-2 font-display text-4xl">{tx(m.name)}</p>
+                  <p className="mt-3 max-w-sm text-sm leading-relaxed text-bone/75">{tx(m.description)}</p>
                 </motion.div>
               </AnimatePresence>
             </div>

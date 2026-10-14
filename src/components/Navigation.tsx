@@ -1,11 +1,13 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { brand, navItems } from '../data/site'
+import { langs, useLang } from '../i18n'
 import { easeCine, easeLuxe } from '../lib/motion'
 import { lockScroll, scrollToTarget } from '../lib/scroll'
 import { Logo } from './Logo'
 
 export function Navigation({ ready }: { ready: boolean }) {
+  const { lang, setLang, t, tx } = useLang()
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState(0)
   const [scrolled, setScrolled] = useState(false)
@@ -73,14 +75,14 @@ export function Navigation({ ready }: { ready: boolean }) {
               go('#top')
             }}
             className="relative z-10 text-bone"
-            aria-label={`${brand.full} — back to top`}
+            aria-label={`${brand.full} — ${t('back to top', 'volver arriba')}`}
           >
             <Logo />
           </a>
-          <nav aria-label="Primary" className={`hidden items-center gap-9 transition-opacity duration-500 lg:flex ${open ? "pointer-events-none opacity-0" : ""}`}>
+          <nav aria-label={t('Primary', 'Principal')} className={`hidden items-center gap-9 transition-opacity duration-500 lg:flex ${open ? "pointer-events-none opacity-0" : ""}`}>
             {navItems.slice(0, 5).map((n) => (
               <a
-                key={n.label}
+                key={n.href + n.label.en}
                 href={n.href}
                 onClick={(e) => {
                   e.preventDefault()
@@ -88,12 +90,27 @@ export function Navigation({ ready }: { ready: boolean }) {
                 }}
                 className="group relative text-[0.6875rem] font-medium tracking-[0.24em] text-bone/80 uppercase transition-colors hover:text-bone"
               >
-                {n.label}
+                {tx(n.label)}
                 <span className="absolute -bottom-1.5 left-0 h-px w-full origin-right scale-x-0 bg-gold transition-transform duration-500 group-hover:origin-left group-hover:scale-x-100" />
               </a>
             ))}
           </nav>
           <div className="relative z-10 flex items-center gap-6">
+            <div role="group" aria-label={t('Language', 'Idioma')} className="flex items-center gap-1.5 text-[0.6875rem] font-semibold tracking-[0.2em] uppercase">
+              {langs.map((l, i) => (
+                <span key={l} className="flex items-center gap-1.5">
+                  {i > 0 && <span className="text-bone/25" aria-hidden>/</span>}
+                  <button
+                    onClick={() => setLang(l)}
+                    aria-pressed={lang === l}
+                    aria-label={l === 'en' ? 'English' : 'Español'}
+                    className={`py-2 uppercase transition-colors duration-300 ${lang === l ? 'text-bone' : 'text-bone/40 hover:text-bone/80'}`}
+                  >
+                    {l}
+                  </button>
+                </span>
+              ))}
+            </div>
             <a
               href="#contact"
               onClick={(e) => {
@@ -102,17 +119,17 @@ export function Navigation({ ready }: { ready: boolean }) {
               }}
               className="hidden text-[0.6875rem] font-semibold tracking-[0.24em] text-gold uppercase md:block"
             >
-              Enquire
+              {t('Enquire', 'Cotizar')}
             </a>
             <button
               ref={toggleRef}
               onClick={() => setOpen((o) => !o)}
               aria-expanded={open}
               aria-controls="fullscreen-menu"
-              aria-label={open ? 'Close menu' : 'Open menu'}
+              aria-label={open ? t('Close menu', 'Cerrar menú') : t('Open menu', 'Abrir menú')}
               className="group flex items-center gap-3 text-[0.6875rem] font-semibold tracking-[0.24em] text-bone uppercase"
             >
-              <span className="hidden sm:inline">{open ? 'Close' : 'Menu'}</span>
+              <span className="hidden sm:inline">{open ? t('Close', 'Cerrar') : t('Menu', 'Menú')}</span>
               <span className="relative flex h-10 w-10 items-center justify-center rounded-full border border-bone/25 transition-colors group-hover:border-gold">
                 <span className={`absolute h-px w-4 bg-current transition-transform duration-500 ${open ? 'rotate-45' : '-translate-y-[3px]'}`} />
                 <span className={`absolute h-px w-4 bg-current transition-transform duration-500 ${open ? '-rotate-45' : 'translate-y-[3px]'}`} />
@@ -129,7 +146,7 @@ export function Navigation({ ready }: { ready: boolean }) {
             ref={menuRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Site menu"
+            aria-label={t('Site menu', 'Menú del sitio')}
             className="fixed inset-0 z-40 overflow-hidden bg-ink"
             initial={{ clipPath: 'inset(0% 0% 100% 0%)' }}
             animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
@@ -157,7 +174,7 @@ export function Navigation({ ready }: { ready: boolean }) {
             <div className="relative flex h-full flex-col justify-between px-5 pt-32 pb-10 md:px-10 md:pt-36">
               <ul className="flex flex-col">
                 {navItems.map((n, i) => (
-                  <li key={n.label} className="overflow-hidden">
+                  <li key={n.label.en} className="overflow-hidden">
                     <motion.a
                       href={n.href}
                       onClick={(e) => {
@@ -178,7 +195,7 @@ export function Navigation({ ready }: { ready: boolean }) {
                           hovered === i ? 'translate-x-3 text-bone italic' : 'text-bone/45'
                         }`}
                       >
-                        {n.label}
+                        {tx(n.label)}
                       </span>
                     </motion.a>
                   </li>
@@ -191,8 +208,8 @@ export function Navigation({ ready }: { ready: boolean }) {
                 transition={{ delay: 0.7, duration: 0.8 }}
                 className="eyebrow flex flex-wrap justify-between gap-4 border-t border-bone/15 pt-6 text-mineral/70"
               >
-                <span>{brand.offices.map((o) => o.city).join(' · ')} · Worldwide</span>
-                <span>Since {brand.since}</span>
+                <span>{brand.offices.map((o) => tx(o.cityLabel)).join(' · ')} · {t('Worldwide', 'Todo el mundo')}</span>
+                <span>{t('Since', 'Desde')} {brand.since}</span>
               </motion.div>
             </div>
           </motion.div>
