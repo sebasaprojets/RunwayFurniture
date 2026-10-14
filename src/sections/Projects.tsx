@@ -19,6 +19,7 @@ const layout = [
 export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
   const [filter, setFilter] = useState<Category | 'All'>('All')
   const list = filter === 'All' ? projects : projects.filter((p) => p.category === filter)
+  const used = categories.filter((c) => projects.some((p) => p.category === c))
 
   return (
     <section id="projects" className="relative bg-ink py-28 md:py-40" aria-labelledby="projects-title">
@@ -34,14 +35,14 @@ export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
           </div>
           <div className="lg:col-span-4 lg:col-start-9">
             <p className="text-sm leading-relaxed text-bone/60">
-              A selection of hospitality, residential and bespoke work. The studies shown here are design concepts that illustrate our
-              approach; delivered client projects are presented on request.
+              A selection of resorts, hotels and private residences furnished by Runway across the Caribbean, Europe and the Americas —
+              from beachfront terraces to hillside villas.
             </p>
           </div>
         </div>
 
         <div role="tablist" aria-label="Filter projects by category" className="mt-14 flex gap-2 overflow-x-auto pb-2 md:mt-20 md:flex-wrap">
-          {(['All', ...categories] as const).map((c) => (
+          {(['All', ...used] as const).map((c) => (
             <button
               key={c}
               role="tab"

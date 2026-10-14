@@ -21,7 +21,7 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
     return () => window.removeEventListener('keydown', onKey)
   }, [p, onClose])
 
-  const mats = p.materials.map((k) => materials.find((m) => m.key === k)!)
+  const mats = (p.materials ?? []).map((k) => materials.find((m) => m.key === k)!)
 
   return (
     <motion.div
@@ -70,7 +70,7 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
             ['Category', p.category],
             ['Location', p.location ?? 'Concept — not a client commission'],
             ['Scope', 'Furniture, FF&E & detailing'],
-            ['Key materials', mats.map((m) => m.name).join(', ')],
+            mats.length ? ['Key materials', mats.map((m) => m.name).join(', ')] : ['Collection', p.collection ?? 'Runway Furniture'],
           ].map(([k, v]) => (
             <div key={k}>
               <dt className="eyebrow text-mineral/50">{k}</dt>
@@ -99,6 +99,7 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
           </FadeIn>
         </div>
 
+        {mats.length > 0 && (
         <div className="mt-24">
           <p className="eyebrow text-mineral/50">Material palette</p>
           <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -111,7 +112,9 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
             ))}
           </div>
         </div>
+        )}
 
+        {p.gallery.length > 0 && (
         <div className="mt-24 grid grid-cols-12 gap-4 md:gap-6">
           {p.gallery.map((g, i) => (
             <MaskImage
@@ -129,6 +132,7 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
             />
           ))}
         </div>
+        )}
 
         <div className="mt-28 flex flex-col items-start justify-between gap-10 border-t border-bone/10 pt-10 md:flex-row md:items-end">
           <Button

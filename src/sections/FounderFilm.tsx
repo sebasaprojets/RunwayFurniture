@@ -28,7 +28,7 @@ export function FounderFilm() {
       </div>
       <div data-bar-t className="absolute inset-x-0 top-0 h-[12%] bg-ink" />
       <div data-bar-b className="absolute inset-x-0 bottom-0 flex h-[12%] items-center justify-between bg-ink px-5 md:px-10">
-        <span className="eyebrow text-[0.6rem] text-bone/40">Scene 06 — The Founder</span>
+        <span className="eyebrow text-[0.6rem] text-bone/40">Scene 07 — The Founder</span>
         <span className="eyebrow text-[0.6rem] text-bone/40">{brand.offices.map((o) => o.city).join(' — ')}</span>
       </div>
       <div className="absolute inset-y-0 left-0 flex max-w-3xl flex-col justify-center px-5 md:w-[52%] md:px-14">

@@ -3,7 +3,7 @@ import { Button } from '../components/Button'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
 import { SectionLabel } from '../components/SectionLabel'
-import { brand, categories, photos } from '../data/site'
+import { brand, categories, showcase } from '../data/site'
 
 export function Contact() {
   const [sent, setSent] = useState(false)
@@ -24,11 +24,11 @@ export function Contact() {
 
   return (
     <section id="contact" className="relative overflow-hidden bg-graphite" aria-labelledby="contact-title">
-      <img src={photos.resortTropical} alt="" className="grade absolute inset-0 h-full w-full object-cover opacity-20" loading="lazy" />
+      <img src={showcase.contact} alt="" className="grade absolute inset-0 h-full w-full object-cover opacity-20" loading="lazy" />
       <div className="absolute inset-0 bg-gradient-to-b from-graphite via-graphite/90 to-graphite" />
       <div className="relative mx-auto grid max-w-[1600px] gap-16 px-5 py-28 md:px-10 md:py-40 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <SectionLabel index="08" label="Contact" />
+          <SectionLabel index="11" label="Contact" />
           <RevealText text={'Let’s create\nsomething\nextraordinary.'} accent={['extraordinary.']} className="display mt-10 text-[13vw] text-bone uppercase sm:text-[9vw] lg:text-[5.4vw]" />
           <FadeIn>
             <p className="mt-10 max-w-md leading-relaxed text-bone/65">
@@ -44,6 +44,9 @@ export function Contact() {
                 </div>
               ))}
             </dl>
+            <a href={`mailto:${brand.contactEmail}`} className="mt-10 inline-block font-display text-2xl text-bone transition-colors hover:text-gold md:text-3xl">
+              {brand.contactEmail}
+            </a>
           </FadeIn>
         </div>
 

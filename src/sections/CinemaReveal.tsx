@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { photos } from '../data/site'
+import { showcase } from '../data/site'
 import { gsap } from '../lib/scroll'
 
 /**
@@ -31,7 +31,7 @@ export function CinemaReveal() {
         Every piece <span className="text-gold italic">begins</span>
       </p>
       <div data-frame className="absolute inset-0 overflow-hidden">
-        <img data-img src={photos.villaModern} alt="Contemporary villa with pool at dusk" className="grade h-full w-full object-cover" loading="lazy" />
+        <img data-img src={showcase.residence} alt="Sardinera House, Jávea — white villa above an infinity pool" className="grade h-full w-full object-cover" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-ink/40" />
       </div>
       <div data-bar className="absolute inset-x-0 top-0 h-[11vh] origin-top bg-ink" />

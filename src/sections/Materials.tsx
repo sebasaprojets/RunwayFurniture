@@ -15,7 +15,7 @@ export function Materials() {
       <div className="mx-auto max-w-[1600px] px-5 py-28 md:px-10 md:py-40">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <SectionLabel index="05" label="Materials & Details" light={false} />
+            <SectionLabel index="06" label="Materials & Details" light={false} />
             <RevealText
               text={'The language\nof materials.'}
               accent={['materials.']}

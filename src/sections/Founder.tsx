@@ -18,7 +18,7 @@ export function Founder() {
   return (
     <section ref={ref} id="founder" className="relative overflow-hidden bg-ink py-28 md:py-40" aria-labelledby="founder-title">
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
-        <SectionLabel index="06" label="The Founder" />
+        <SectionLabel index="07" label="The Founder" />
 
         <div className="mt-12 grid gap-16 lg:grid-cols-12">
           {/* portraits */}

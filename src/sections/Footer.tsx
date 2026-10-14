@@ -42,6 +42,11 @@ export function Footer() {
                 </li>
               ))}
               <li>{brand.regions.join(' · ')}</li>
+              <li className="pt-3">
+                <a href={`mailto:${brand.contactEmail}`} className="transition-colors hover:text-gold">
+                  {brand.contactEmail}
+                </a>
+              </li>
             </ul>
           </div>
         </div>

@@ -146,7 +146,7 @@ export function Global() {
     <section className="relative overflow-hidden border-t border-bone/10 bg-ink py-28 md:py-36" aria-labelledby="global-title">
       <div className="mx-auto grid max-w-[1600px] items-center gap-14 px-5 md:px-10 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <SectionLabel index="07" label="Global Presence" />
+          <SectionLabel index="10" label="Global Presence" />
           <RevealText text={'Montreal.\nSingapore.\nWorldwide.'} accent={['Worldwide.']} className="display mt-10 text-[14vw] text-bone uppercase sm:text-[9vw] lg:text-[5.6vw]" />
           <FadeIn>
             <ul className="mt-12 grid grid-cols-2 gap-px border-t border-bone/10 sm:grid-cols-3">

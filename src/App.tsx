@@ -9,6 +9,9 @@ import { CustomCursor } from './components/CustomCursor'
 import { ScrollProgress } from './components/ScrollProgress'
 import { Bespoke } from './sections/Bespoke'
 import { CinemaReveal } from './sections/CinemaReveal'
+import { Clients } from './sections/Clients'
+import { Collections } from './sections/Collections'
+import { Films } from './sections/Films'
 import { FounderFilm } from './sections/FounderFilm'
 import { Contact } from './sections/Contact'
 import { Footer } from './sections/Footer'
@@ -81,10 +84,13 @@ export default function App() {
         <CinemaReveal />
         <Projects onOpen={open} />
         <Hospitality />
+        <Collections />
         <Bespoke />
         <Materials />
         <Founder />
         <FounderFilm />
+        <Films />
+        <Clients />
         <Global />
         <Contact />
       </main>

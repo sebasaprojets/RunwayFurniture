@@ -59,7 +59,7 @@ export function Bespoke() {
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <SectionLabel index="04" label="Bespoke Furniture" />
+            <SectionLabel index="05" label="Bespoke Furniture" />
             <RevealText
               text={'Crafted with\nintention.\nDesigned\nto last.'}
               accent={['intention.']}
