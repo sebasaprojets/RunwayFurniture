@@ -148,7 +148,6 @@ export function Navigation({ ready }: { ready: boolean }) {
                 />
               </AnimatePresence>
               <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/80 to-ink/30" />
-              <div className="grid-lines absolute inset-0" />
             </div>
 
             <div className="relative flex h-full flex-col justify-between gap-10 overflow-y-auto overscroll-contain px-5 pt-28 pb-8 md:px-10 md:pt-32">
@@ -172,7 +171,7 @@ export function Navigation({ ready }: { ready: boolean }) {
                       <span className="w-8 font-sans text-xs text-gold/80">0{i + 1}</span>
                       <span
                         className={`display text-[clamp(2.25rem,min(12vw,8.5vh),5.75rem)] transition-all duration-700 ${
-                          hovered === i ? 'translate-x-3 text-bone italic' : 'text-bone/45'
+                          hovered === i ? 'translate-x-3 text-bone italic' : 'text-bone/70'
                         }`}
                       >
                         {tx(n.label)}
@@ -189,6 +188,16 @@ export function Navigation({ ready }: { ready: boolean }) {
                 className="eyebrow flex flex-wrap justify-between gap-4 border-t border-bone/15 pt-6 text-mineral/70"
               >
                 <span>{brand.offices.map((o) => tx(o.cityLabel)).join(' · ')} · {t('Worldwide', 'Todo el mundo')}</span>
+                <a
+                  href="#contact"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    go('#contact')
+                  }}
+                  className="text-gold md:hidden"
+                >
+                  {t('Enquire', 'Cotizar')}
+                </a>
                 <span>{t('Since', 'Desde')} {brand.since}</span>
               </motion.div>
             </div>
@@ -210,7 +219,7 @@ function LangSwitch() {
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
           aria-label={l === 'en' ? 'English' : 'Español'}
-          className={`min-w-9 rounded-full px-2.5 py-1.5 text-[0.65rem] font-semibold tracking-[0.18em] uppercase transition-colors duration-300 ${
+          className={`min-w-9 rounded-full px-2.5 py-1.5 text-[0.6875rem] font-semibold tracking-[0.18em] uppercase transition-colors duration-300 ${
             lang === l ? 'bg-bone text-ink' : 'text-bone/60 hover:text-bone'
           }`}
         >

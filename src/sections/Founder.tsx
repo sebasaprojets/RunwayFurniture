@@ -3,7 +3,6 @@ import { useRef } from 'react'
 import { FadeIn } from '../components/FadeIn'
 import { MaskImage } from '../components/MaskImage'
 import { RevealText } from '../components/RevealText'
-import { SectionLabel } from '../components/SectionLabel'
 import { brand, images } from '../data/site'
 import { useLang } from '../i18n'
 import { useCalmScroll } from '../lib/motion'
@@ -20,7 +19,6 @@ export function Founder() {
   return (
     <section ref={ref} id="founder" className="relative overflow-hidden bg-ink py-28 md:py-40" aria-labelledby="founder-title">
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
-        <SectionLabel index="04" label={t('The Founder', 'El fundador')} />
 
         <div className="mt-12 grid gap-16 lg:grid-cols-12">
           {/* portraits */}
@@ -57,11 +55,10 @@ export function Founder() {
 
           {/* letter */}
           <div className="lg:col-span-5 lg:col-start-8">
-            <p className="eyebrow text-gold">{t('A letter from', 'Una carta de')}</p>
             <RevealText text={t('The Founder', 'El fundador')} as="h2" className="display mt-4 text-[16vw] text-bone uppercase sm:text-[10vw] lg:text-[6vw]" />
             <span className="mt-8 block h-px w-16 bg-terracotta" />
             <FadeIn>
-              <div className="mt-10 space-y-6 text-[1.05rem] leading-relaxed text-bone/75">
+              <div className="mt-10 max-w-[62ch] space-y-6 text-[1.05rem] leading-relaxed text-bone/75">
                 <p className="font-display text-3xl leading-snug text-bone">
                   {t('“Great furniture is more than design — it creates experiences that people remember.', '“Un gran mueble es más que diseño: crea experiencias que la gente recuerda.')}
                 </p>

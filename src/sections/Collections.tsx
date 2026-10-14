@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { FadeIn } from '../components/FadeIn'
 import { MaskImage } from '../components/MaskImage'
 import { RevealText } from '../components/RevealText'
-import { SectionLabel } from '../components/SectionLabel'
 import { interiorCollection, kenkoon } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
@@ -19,11 +18,10 @@ export function Collections() {
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <SectionLabel index="03" label={t('Collections', 'Colecciones')} />
             <RevealText
               text={t('Modernized\noutdoor living.', 'Vida exterior\nmodernizada.')}
               accent={['outdoor', 'exterior']}
-              className="display mt-10 text-[13vw] text-bone uppercase sm:text-[9vw] lg:text-[6vw]"
+              className="display text-[13vw] text-bone uppercase sm:text-[9vw] lg:text-[6vw]"
             />
           </div>
           <p className="max-w-md text-sm leading-relaxed text-bone/60 lg:col-span-4 lg:col-start-9">
@@ -60,7 +58,7 @@ export function Collections() {
                 className="mt-6 grid gap-3 md:grid-cols-2 md:gap-10"
               >
                 <p className="text-sm leading-relaxed text-bone/70">{tx(c.description)}</p>
-                <p className="eyebrow text-[0.6rem] leading-loose text-gold/80">{c.pieces}</p>
+                <p className="eyebrow text-[0.6875rem] leading-loose text-gold/80">{c.pieces}</p>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -75,10 +73,10 @@ export function Collections() {
                   aria-pressed={i === active}
                   className="group flex w-full items-baseline gap-5 py-5 text-left"
                 >
-                  <span className="text-[0.65rem] text-bone/40 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="text-[0.65rem] text-bone/60 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
                   <span
                     className={`font-display text-2xl transition-all duration-500 md:text-3xl ${
-                      i === active ? 'translate-x-2 text-bone italic' : 'text-bone/40 group-hover:text-bone/70'
+                      i === active ? 'translate-x-2 text-bone italic' : 'text-bone/60 group-hover:text-bone/70'
                     }`}
                   >
                     {col.name}

@@ -1,6 +1,5 @@
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
-import { SectionLabel } from '../components/SectionLabel'
 import { brand, clients } from '../data/site'
 import { useLang } from '../i18n'
 
@@ -36,16 +35,15 @@ export function Clients() {
       <div className="mx-auto max-w-[1600px] px-5 py-28 md:px-10 md:py-40">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <SectionLabel index="06" label={t('Clients', 'Clientes')} light={false} />
             <RevealText
               text={t('Trusted by the\nworld’s finest\naddresses.', 'La confianza de\nlos mejores\ndestinos.')}
               accent={['finest', 'mejores']}
               accentClass="italic text-bronze"
-              className="display mt-10 text-[12vw] uppercase sm:text-[8vw] lg:text-[5.4vw]"
+              className="display text-[12vw] uppercase sm:text-[8vw] lg:text-[5.4vw]"
             />
           </div>
           <FadeIn className="lg:col-span-4 lg:col-start-9">
-            <p className="text-sm leading-relaxed text-ink/65">
+            <p className="max-w-xl text-sm leading-relaxed text-ink/65">
               {t(
                 'Our furniture can be found in some of the world’s most beautiful hotels, resorts and residences — including, but not limited to, the following.',
                 'Nuestro mobiliario está presente en algunos de los hoteles, resorts y residencias más bellos del mundo, entre ellos los siguientes.',
@@ -65,7 +63,7 @@ export function Clients() {
                   return (
                     <li key={n} className="py-3 text-sm leading-snug">
                       <span className="text-ink/85">{name}</span>
-                      {place && <span className="block text-xs text-ink/45">{lang === 'es' ? (placesEs[place] ?? place) : place}</span>}
+                      {place && <span className="block text-xs text-ink/65">{lang === 'es' ? (placesEs[place] ?? place) : place}</span>}
                     </li>
                   )
                 })}
@@ -95,11 +93,11 @@ export function Clients() {
             </p>
             <dl className="mt-12 grid gap-8 sm:grid-cols-2">
               <div>
-                <dt className="eyebrow text-ink/45">{t('Dignitaries', 'Dignatarios')}</dt>
+                <dt className="eyebrow text-ink/65">{t('Dignitaries', 'Dignatarios')}</dt>
                 <dd className="mt-3 text-sm leading-relaxed text-ink/75">{clients.dignitaries.map(tx).join(' · ')}</dd>
               </div>
               <div>
-                <dt className="eyebrow text-ink/45">{t('Film & television', 'Cine y televisión')}</dt>
+                <dt className="eyebrow text-ink/65">{t('Film & television', 'Cine y televisión')}</dt>
                 <dd className="mt-3 text-sm leading-relaxed text-ink/75">{clients.media.join(' · ')}</dd>
               </div>
             </dl>

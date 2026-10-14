@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
-import { SectionLabel } from '../components/SectionLabel'
 import { hospitalityScenes } from '../data/site'
 import { useLang } from '../i18n'
 import { gsap } from '../lib/scroll'
@@ -69,7 +68,6 @@ export function Hospitality() {
 
   return (
     <section ref={sectionRef} id="hospitality" className="relative overflow-hidden bg-graphite" aria-labelledby="hospitality-title">
-      <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
       <div
         data-bgword
         className="display pointer-events-none absolute top-1/2 left-0 hidden -translate-y-1/2 text-[24vw] whitespace-nowrap text-transparent uppercase min-[900px]:block"
@@ -84,11 +82,10 @@ export function Hospitality() {
       >
         {/* intro panel */}
         <div className="flex w-[85vw] shrink-0 snap-start flex-col justify-center min-[900px]:w-[42vw]">
-          <SectionLabel index="02" label={t('Luxury Hospitality', 'Hotelería de lujo')} />
           <RevealText
             text={t('Spaces that\ndefine\ndestinations.', 'Espacios que\ndefinen\ndestinos.')}
             accent={['destinations', 'destinos']}
-            className="display mt-8 text-[13vw] text-bone uppercase min-[900px]:text-[5.6vw]"
+            className="display text-[13vw] text-bone uppercase min-[900px]:text-[5.6vw]"
           />
           <p className="mt-8 max-w-md leading-relaxed text-bone/65">
             {t(
@@ -100,7 +97,10 @@ export function Hospitality() {
             <Button
               href="#projects"
               variant="ghost"
-              onClick={() => scrollToTarget('#projects')}
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('projects:filter', { detail: 'Luxury Hospitality' }))
+                scrollToTarget('#projects')
+              }}
             >
               {t('Explore hospitality projects', 'Ver proyectos de hotelería')}
             </Button>

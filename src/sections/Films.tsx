@@ -1,8 +1,7 @@
-import { Play } from 'lucide-react'
+import { ArrowUpRight, Play } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
-import { SectionLabel } from '../components/SectionLabel'
 import { films } from '../data/site'
 import { useLang } from '../i18n'
 
@@ -63,9 +62,9 @@ function Film({ film }: { film: (typeof films)[number] }) {
               href={`https://www.youtube.com/watch?v=${film.youtube}`}
               target="_blank"
               rel="noreferrer"
-              className="eyebrow mt-3 block text-gold/80 transition-colors hover:text-gold"
+              className="eyebrow mt-3 inline-flex items-center gap-1.5 text-gold/80 transition-colors hover:text-gold"
             >
-              {t('Watch on YouTube', 'Ver en YouTube')} ↗
+              {t('Watch on YouTube', 'Ver en YouTube')} <ArrowUpRight className="size-3.5" strokeWidth={1.5} />
             </a>
           )}
         </span>
@@ -80,11 +79,10 @@ export function Films() {
   return (
     <section id="films" className="relative bg-ink py-28 md:py-40" aria-labelledby="films-title">
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
-        <SectionLabel index="05" label={t('Films', 'Películas')} />
         <RevealText
           text={t('See it\nin motion.', 'Míralo\nen movimiento.')}
           accent={['motion.', 'movimiento.']}
-          className="display mt-10 text-[13vw] text-bone uppercase sm:text-[9vw] lg:text-[6vw]"
+          className="display text-[13vw] text-bone uppercase sm:text-[9vw] lg:text-[6vw]"
         />
         <div className="mt-16 grid gap-16 md:mt-24 lg:grid-cols-12 lg:gap-6">
           <FadeIn className="lg:col-span-8">

@@ -136,7 +136,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
           transition={{ delay: 1.3, duration: 1 }}
           className="mt-10 flex items-center justify-start border-t border-bone/15 pt-5 md:justify-between"
         >
-          <span className="eyebrow text-mineral/60">{t('Scroll to explore', 'Desliza para explorar')}</span>
+          <span className="eyebrow text-mineral/60">{t('Scroll to explore', 'Desplázate para explorar')}</span>
           <span className="relative block h-10 w-px overflow-hidden bg-bone/15 max-md:order-first max-md:mr-4" aria-hidden>
             <span className="absolute inset-0 bg-gold [animation:scroll-cue_2.4s_var(--ease-luxe)_infinite]" />
           </span>
@@ -158,7 +158,7 @@ function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
       animate={show ? { opacity: 1, scale: 1, rotate: 0 } : {}}
       transition={{ duration: 1.6, ease: easeLuxe, delay: 1 }}
       className="group absolute top-[26%] right-5 z-20 hidden size-32 md:right-10 md:block lg:top-[24%] lg:size-36"
-      aria-label={t('Discover Runway', 'Conocer Runway')}
+      aria-label={t('Explore our work', 'Ver proyectos')}
     >
       <svg viewBox="0 0 200 200" className={`absolute inset-0 h-full w-full text-bone/70 ${reduced ? '' : 'animate-[spin_24s_linear_infinite]'}`}>
         <defs>

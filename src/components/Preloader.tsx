@@ -285,7 +285,7 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
               transition={{ duration: 1.2, ease: easeCine, delay: 0.3 }}
             >
               <motion.span
-                className="eyebrow text-[0.6rem] text-bone/40"
+                className="eyebrow text-[0.6rem] text-bone/60"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: phase === 'dive' ? 0 : 1 }}
                 transition={{ delay: phase === 'dive' ? 0 : 0.8 }}
@@ -293,7 +293,7 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
                 {side === 'top' ? 'Runway Furniture International' : <><span className="md:hidden">{t('Tap to enter', 'Toca para entrar')}</span><span className="hidden md:inline">{t('Click or press any key to enter', 'Haz clic o pulsa cualquier tecla para entrar')}</span></>}
               </motion.span>
               <motion.span
-                className={`eyebrow text-[0.6rem] text-bone/40 tabular-nums ${side === 'bottom' ? 'max-md:hidden' : ''}`}
+                className={`eyebrow text-[0.6rem] text-bone/60 tabular-nums ${side === 'bottom' ? 'max-md:hidden' : ''}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: phase === 'dive' ? 0 : 1 }}
                 transition={{ delay: phase === 'dive' ? 0 : 0.8 }}

@@ -2,7 +2,6 @@ import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { ArrowUpRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { RevealText } from '../components/RevealText'
-import { SectionLabel } from '../components/SectionLabel'
 import { categories, categoryLabel, projects, thumb, type Category, type Project } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
@@ -16,6 +15,12 @@ export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
   const INITIAL = 9
   const list = showAll ? filtered : filtered.slice(0, INITIAL)
 
+  useEffect(() => {
+    const on = (e: Event) => setFilter((e as CustomEvent<Category>).detail)
+    window.addEventListener('projects:filter', on)
+    return () => window.removeEventListener('projects:filter', on)
+  }, [])
+
   // The grid height changes below the fold: re-measure the pinned scenes after it settles.
   useEffect(() => {
     const id = setTimeout(() => ScrollTrigger.refresh(), 1000)
@@ -28,15 +33,14 @@ export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <SectionLabel index="01" label={t('Signature Projects', 'Proyectos emblemáticos')} />
             <RevealText
               text={t('Signature\nprojects', 'Proyectos\nemblemáticos')}
               accent={['projects', 'emblemáticos']}
-              className="display mt-10 text-[16vw] text-bone uppercase sm:text-[11vw] lg:text-[7vw]"
+              className="display text-[16vw] text-bone uppercase sm:text-[11vw] lg:text-[7vw]"
             />
           </div>
           <div className="lg:col-span-4 lg:col-start-9">
-            <p className="text-sm leading-relaxed text-bone/60">
+            <p className="max-w-xl text-sm leading-relaxed text-bone/60">
               {t(
                 'A selection of resorts, hotels and private residences furnished by Runway across the Caribbean, Europe and the Americas — from beachfront terraces to hillside villas.',
                 'Una selección de resorts, hoteles y residencias privadas amueblados por Runway en el Caribe, Europa y las Américas: desde terrazas frente al mar hasta villas en la ladera.',
