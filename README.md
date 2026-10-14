@@ -53,6 +53,7 @@ For the best result, replace them with the original high-resolution files.
 `/docs` contains the production build (run `npm run build` to regenerate it).
 
 Settings → Pages → Build and deployment → Source: **Deploy from a branch** →
-branch `claude/peaceful-mccarthy-q9z9bm` (or `main` after merging), folder **`/docs`** → Save.
+branch `claude/exciting-mendel-621i1t` (or `main` after merging), folder **`/docs`** → Save.
+The repository must be public for GitHub Pages on a free plan. The old `gh-pages` branch holds an earlier build.
 
 The site is then served at https://sebasaprojets.github.io/RunwayFurniture/
