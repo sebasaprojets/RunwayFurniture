@@ -22,7 +22,7 @@ this codebase. They become relevant the moment a backend (form endpoint, CMS, ad
 
 | Severity | Risk | Status |
 |---|---|---|
-| Medium | GitHub Pages cannot send HTTP security headers (no `frame-ancestors`, HSTS, `nosniff`) → clickjacking possible there | **Mitigated on Vercel** via `vercel.json` headers. Residual on GitHub Pages (platform limit) |
+| Medium | GitHub Pages cannot send HTTP security headers (no `frame-ancestors`, HSTS, `nosniff`) → clickjacking possible there | **Fixed on Vercel** (https://runway-furniture-6a75.vercel.app) — headers verified live with `curl -I` and framing blocked in a real browser. Residual on GitHub Pages (platform limit) |
 | Medium | No automated security checks in CI | **Fixed**: `.github/workflows/security.yml` (build, static checks, npm audit, gitleaks, Semgrep, CodeQL) + Dependabot |
 | Low | `style-src 'unsafe-inline'` in CSP | **Accepted**: the animation libraries (Motion, GSAP) write inline `style` attributes; scripts remain strictly `'self'` |
 | Low | `.env` files not git-ignored | **Fixed** in `.gitignore` |
@@ -59,7 +59,7 @@ form fields never rendered, invalid email rejected, `maxLength` on all inputs, s
 1. GitHub → Settings → Pages: source `gh-pages` / root, and tick **Enforce HTTPS**.
 2. GitHub → Settings → Code security: enable **Secret scanning**, **Push protection**, **Dependabot alerts**.
 3. GitHub → Settings → Branches: protect the deployed branch (require the *Security* workflow to pass).
-4. Vercel: after import, check the headers with `curl -I https://<project>.vercel.app`.
+4. Vercel: delete the duplicate project `runway-furniture` (the live one is `runway-furniture-6a75`).
 5. Google Drive: set the source PDFs/videos to *Restricted* if they are not meant to be public.
 6. Optional: put the site behind Cloudflare (WAF / DDoS) when a custom domain is added.
 
