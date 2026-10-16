@@ -41,6 +41,25 @@ this codebase. They become relevant the moment a backend (form endpoint, CMS, ad
 - **No secrets** in the repository, its history, or the published bundle; no source maps published.
 - **Dependencies**: lockfile + `npm ci`, `npm audit` = 0 vulnerabilities, Dependabot weekly.
 
+## Vercel Firewall (project `runway-furniture-6a75`)
+
+Configured through the Vercel API and verified live:
+
+| Rule | Action | Verified |
+|---|---|---|
+| Firewall | Enabled | ✅ config version 4 active |
+| Block vulnerability scanners (`.env`, `.git`, `wp-admin`, `phpmyadmin`, `.php`, `.sql`, `.bak`…) | Deny (403) | ✅ `/.env`, `/.git/config`, `/wp-admin/`, `/wp-login.php`, `/phpmyadmin/`, `/index.php` → 403; no real site file matches the pattern |
+| Rate limit: 600 requests / 60 s per IP (a full visit uses ~120) | HTTP 429 | Configured; not load-tested against production |
+| Bot Protection (managed) | Challenge | ✅ non-browser clients (`curl`) get the Vercel Security Checkpoint |
+
+Not available on the Hobby plan: the OWASP Core Ruleset (XSS/SQLi/RCE blocking) — it needs a paid plan. For this
+static site those attacks have nothing to hit, so the gap is small.
+
+**To verify on a real device:** an automated test browser in a datacenter could not pass the Bot Protection
+challenge (expected: Vercel flags automation). Real visitors on a normal phone/PC browser should pass invisibly.
+If any visitor reports a "Vercel Security Checkpoint" loop, set Bot Protection to *Log* in
+Vercel → Firewall → Bot Management.
+
 ## Tests
 
 ```bash
@@ -59,7 +78,8 @@ form fields never rendered, invalid email rejected, `maxLength` on all inputs, s
 1. GitHub → Settings → Pages: source `gh-pages` / root, and tick **Enforce HTTPS**.
 2. GitHub → Settings → Code security: enable **Secret scanning**, **Push protection**, **Dependabot alerts**.
 3. GitHub → Settings → Branches: protect the deployed branch (require the *Security* workflow to pass).
-4. Vercel: delete the duplicate project `runway-furniture` (the live one is `runway-furniture-6a75`).
+4. Vercel: delete the duplicate project `runway-furniture` (the live one is `runway-furniture-6a75`) at
+   https://vercel.com/sebasprojects1/runway-furniture/settings/advanced → *Delete Project*.
 5. Google Drive: set the source PDFs/videos to *Restricted* if they are not meant to be public.
 6. Optional: put the site behind Cloudflare (WAF / DDoS) when a custom domain is added.
 
