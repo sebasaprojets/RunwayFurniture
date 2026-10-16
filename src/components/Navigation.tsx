@@ -7,22 +7,15 @@ import { lockScroll, scrollToTarget } from '../lib/scroll'
 import { Logo } from './Logo'
 
 export function Navigation({ ready }: { ready: boolean }) {
-  const { lang, setLang, t, tx } = useLang()
+  const { t, tx } = useLang()
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState(0)
   const [scrolled, setScrolled] = useState(false)
-  const [hidden, setHidden] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const toggleRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    let last = window.scrollY
-    const on = () => {
-      const y = window.scrollY
-      setScrolled(y > 40)
-      setHidden(y > last && y > 400)
-      last = y
-    }
+    const on = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', on, { passive: true })
     return () => window.removeEventListener('scroll', on)
   }, [])
@@ -59,7 +52,7 @@ export function Navigation({ ready }: { ready: boolean }) {
     <>
       <motion.header
         initial={{ opacity: 0, y: -20 }}
-        animate={ready ? { opacity: 1, y: hidden && !open ? -110 : 0 } : {}}
+        animate={ready ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.9, ease: easeLuxe, delay: ready && !scrolled ? 0.6 : 0 }}
         className="fixed inset-x-0 top-0 z-50"
       >
@@ -95,22 +88,8 @@ export function Navigation({ ready }: { ready: boolean }) {
               </a>
             ))}
           </nav>
-          <div className="relative z-10 flex items-center gap-6">
-            <div role="group" aria-label={t('Language', 'Idioma')} className="flex items-center gap-1.5 text-[0.6875rem] font-semibold tracking-[0.2em] uppercase">
-              {langs.map((l, i) => (
-                <span key={l} className="flex items-center gap-1.5">
-                  {i > 0 && <span className="text-bone/25" aria-hidden>/</span>}
-                  <button
-                    onClick={() => setLang(l)}
-                    aria-pressed={lang === l}
-                    aria-label={l === 'en' ? 'English' : 'Español'}
-                    className={`py-2 uppercase transition-colors duration-300 ${lang === l ? 'text-bone' : 'text-bone/40 hover:text-bone/80'}`}
-                  >
-                    {l}
-                  </button>
-                </span>
-              ))}
-            </div>
+          <div className="relative z-10 flex shrink-0 items-center gap-3 md:gap-6">
+            <LangSwitch />
             <a
               href="#contact"
               onClick={(e) => {
@@ -147,6 +126,7 @@ export function Navigation({ ready }: { ready: boolean }) {
             role="dialog"
             aria-modal="true"
             aria-label={t('Site menu', 'Menú del sitio')}
+            data-lenis-prevent
             className="fixed inset-0 z-40 overflow-hidden bg-ink"
             initial={{ clipPath: 'inset(0% 0% 100% 0%)' }}
             animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
@@ -168,10 +148,9 @@ export function Navigation({ ready }: { ready: boolean }) {
                 />
               </AnimatePresence>
               <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/80 to-ink/30" />
-              <div className="grid-lines absolute inset-0" />
             </div>
 
-            <div className="relative flex h-full flex-col justify-between px-5 pt-32 pb-10 md:px-10 md:pt-36">
+            <div className="relative flex h-full flex-col justify-between gap-10 overflow-y-auto overscroll-contain px-5 pt-28 pb-8 md:px-10 md:pt-32">
               <ul className="flex flex-col">
                 {navItems.map((n, i) => (
                   <li key={n.label.en} className="overflow-hidden">
@@ -191,8 +170,8 @@ export function Navigation({ ready }: { ready: boolean }) {
                     >
                       <span className="w-8 font-sans text-xs text-gold/80">0{i + 1}</span>
                       <span
-                        className={`display text-[13vw] transition-all duration-700 sm:text-6xl md:text-7xl lg:text-[6.5rem] ${
-                          hovered === i ? 'translate-x-3 text-bone italic' : 'text-bone/45'
+                        className={`display text-[clamp(2.25rem,min(12vw,8.5vh),5.75rem)] transition-all duration-700 ${
+                          hovered === i ? 'translate-x-3 text-bone italic' : 'text-bone/70'
                         }`}
                       >
                         {tx(n.label)}
@@ -209,6 +188,16 @@ export function Navigation({ ready }: { ready: boolean }) {
                 className="eyebrow flex flex-wrap justify-between gap-4 border-t border-bone/15 pt-6 text-mineral/70"
               >
                 <span>{brand.offices.map((o) => tx(o.cityLabel)).join(' · ')} · {t('Worldwide', 'Todo el mundo')}</span>
+                <a
+                  href="#contact"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    go('#contact')
+                  }}
+                  className="text-gold md:hidden"
+                >
+                  {t('Enquire', 'Cotizar')}
+                </a>
                 <span>{t('Since', 'Desde')} {brand.since}</span>
               </motion.div>
             </div>
@@ -216,5 +205,27 @@ export function Navigation({ ready }: { ready: boolean }) {
         )}
       </AnimatePresence>
     </>
+  )
+}
+
+/** EN | ES pill — always visible in the header and inside the open menu. */
+function LangSwitch() {
+  const { lang, setLang, t } = useLang()
+  return (
+    <div role="group" aria-label={t('Language', 'Idioma')} className="flex items-center rounded-full border border-bone/25 p-0.5">
+      {langs.map((l) => (
+        <button
+          key={l}
+          onClick={() => setLang(l)}
+          aria-pressed={lang === l}
+          aria-label={l === 'en' ? 'English' : 'Español'}
+          className={`min-w-9 rounded-full px-2.5 py-1.5 text-[0.6875rem] font-semibold tracking-[0.18em] uppercase transition-colors duration-300 ${
+            lang === l ? 'bg-bone text-ink' : 'text-bone/60 hover:text-bone'
+          }`}
+        >
+          {l}
+        </button>
+      ))}
+    </div>
   )
 }

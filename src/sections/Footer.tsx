@@ -16,8 +16,8 @@ export function Footer() {
             {t('We don’t simply supply furniture.', 'No solo suministramos muebles.')}{' '}
             <span className="text-gold italic">{t('We help create destinations.', 'Ayudamos a crear destinos.')}</span>
           </p>
-          <nav aria-label={t('Footer', 'Pie de página')} className="md:col-span-3 md:col-start-7">
-            <p className="eyebrow text-mineral/50">{t('Explore', 'Explorar')}</p>
+          <nav aria-label={t('Footer', 'Pie de página')} className="md:col-span-3 md:col-start-6">
+            <p className="eyebrow text-mineral/75">{t('Explore', 'Explorar')}</p>
             <ul className="mt-5 space-y-2">
               {navItems.map((n) => (
                 <li key={n.label.en}>
@@ -35,8 +35,8 @@ export function Footer() {
               ))}
             </ul>
           </nav>
-          <div className="md:col-span-3">
-            <p className="eyebrow text-mineral/50">{t('Studios', 'Estudios')}</p>
+          <div className="md:col-span-4">
+            <p className="eyebrow text-mineral/75">{t('Studios', 'Estudios')}</p>
             <ul className="mt-5 space-y-2 text-bone/70">
               {brand.offices.map((o) => (
                 <li key={o.city}>
@@ -46,7 +46,7 @@ export function Footer() {
               ))}
               <li>{brand.regions.map(tx).join(' · ')}</li>
               <li className="pt-3">
-                <a href={`mailto:${brand.contactEmail}`} className="transition-colors hover:text-gold">
+                <a href={`mailto:${brand.contactEmail}`} className="break-all transition-colors hover:text-gold">
                   {brand.contactEmail}
                 </a>
               </li>
@@ -67,7 +67,7 @@ export function Footer() {
         RUNWAY
       </motion.p>
 
-      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 px-5 py-8 text-xs text-bone/45 md:px-10">
+      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 px-5 py-8 text-xs text-bone/70 md:px-10">
         <span>
           © {new Date().getFullYear()} {brand.full}. {t('Since', 'Desde')} {brand.since}.
         </span>

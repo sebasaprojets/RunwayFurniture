@@ -13,10 +13,10 @@ export function Statement() {
   const { t, tx } = useLang()
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 45%'] })
-  const words = tx(manifesto).split(' ')
   const marquee = useRef<HTMLElement>(null)
   const { scrollYProgress: mq } = useScroll({ target: marquee, offset: ['start end', 'end start'] })
   const x = useTransform(mq, [0, 1], ['0%', '-25%'])
+  const words = tx(manifesto).split(' ')
 
   const facts = [
     { value: brand.since, label: t('Founded', 'Fundada'), plain: true },
@@ -37,6 +37,7 @@ export function Statement() {
           ))}
         </p>
       </div>
+
 
       <motion.div style={{ x }} className="mt-24 flex whitespace-nowrap md:mt-32" aria-hidden>
         {(t('Luxury Hospitality|Residential|Bespoke Furniture|Montreal|Singapore|Worldwide|Luxury Hospitality|Residential', 'Hotelería de lujo|Residencial|Mobiliario a medida|Montreal|Singapur|Todo el mundo|Hotelería de lujo|Residencial')).split('|').map((w, i) => (

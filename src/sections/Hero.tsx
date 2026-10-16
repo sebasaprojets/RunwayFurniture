@@ -5,7 +5,7 @@ import { RevealText } from '../components/RevealText'
 import { WaterCanvas } from '../components/WaterCanvas'
 import { brand, heroVideo } from '../data/site'
 import { useLang } from '../i18n'
-import { easeCine, easeLuxe } from '../lib/motion'
+import { easeCine, easeLuxe, useCalmScroll } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
 
 export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: boolean; reduced: boolean }) {
@@ -15,6 +15,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '-22%'])
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0])
   const gridY = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
+  const calm = useCalmScroll()
   const { lang, t, tx } = useLang()
 
   return (
@@ -26,7 +27,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         animate={revealed || ready ? { scale: 1, filter: 'brightness(1)' } : {}}
         transition={{ duration: 3.2, ease: easeCine }}
       >
-        <motion.div className="absolute inset-0" style={reduced ? undefined : { scale }}>
+        <motion.div className="absolute inset-0" style={calm ? undefined : { scale }}>
           {heroVideo ? (
             <video className="h-full w-full object-cover" src={heroVideo.src} poster={heroVideo.poster} autoPlay muted loop playsInline />
           ) : (
@@ -35,7 +36,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
 
           {/* Structural glass floor — steel mullions in perspective, like standing above the sea */}
           <div className="pointer-events-none absolute inset-0 [perspective:900px]" aria-hidden>
-            <motion.div style={reduced ? undefined : { y: gridY }} className="absolute inset-0 [transform-style:preserve-3d]">
+            <motion.div style={calm ? undefined : { y: gridY }} className="absolute inset-0 [transform-style:preserve-3d]">
             <div className="absolute -inset-x-full top-[-260%] bottom-[-50%] origin-bottom [transform:rotateX(58deg)]">
               <div
                 className="h-full w-full opacity-70"
@@ -83,10 +84,10 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         ))}
       </svg>
 
-      <CursorLight disabled={reduced} />
       <Seal show={ready} reduced={reduced} />
 
-      <motion.div style={reduced ? undefined : { y: contentY, opacity: fade }} className="relative z-10 flex h-full flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
+      <motion.div style={calm ? undefined : { y: contentY, opacity: fade }} className="relative z-10 flex h-full flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={ready ? { opacity: 1 } : {}}
@@ -104,7 +105,6 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         >
           <WorldClocks />
         </motion.div>
-
         <div className="grid items-end gap-10 lg:grid-cols-12">
           <div className="lg:col-span-8">
             {ready && (
@@ -140,7 +140,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
               >
                 {t('Explore our work', 'Ver proyectos')}
               </Button>
-              <Button href="#philosophy" variant="ghost" onClick={() => scrollToTarget('#philosophy')}>
+              <Button href="#founder" variant="ghost" onClick={() => scrollToTarget('#founder')}>
                 {t('Discover Runway', 'Conocer Runway')}
               </Button>
             </div>
@@ -153,7 +153,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
           transition={{ delay: 1.3, duration: 1 }}
           className="mt-10 flex items-center justify-start border-t border-bone/15 pt-5 md:justify-between"
         >
-          <span className="eyebrow text-mineral/60">{t('Scroll to explore', 'Desliza para explorar')}</span>
+          <span className="eyebrow text-mineral/60">{t('Scroll to explore', 'Desplázate para explorar')}</span>
           <span className="relative block h-10 w-px overflow-hidden bg-bone/15 max-md:order-first max-md:mr-4" aria-hidden>
             <span className="absolute inset-0 bg-gold [animation:scroll-cue_2.4s_var(--ease-luxe)_infinite]" />
           </span>
@@ -230,12 +230,12 @@ function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
   const text = t('Since 2009 · Hospitality · Residential · Bespoke · ', 'Desde 2009 · Hotelería · Residencial · A medida · ')
   return (
     <motion.button
-      onClick={() => scrollToTarget('#philosophy')}
+      onClick={() => scrollToTarget('#projects')}
       initial={{ opacity: 0, scale: 0.8, rotate: -40 }}
       animate={show ? { opacity: 1, scale: 1, rotate: 0 } : {}}
       transition={{ duration: 1.6, ease: easeLuxe, delay: 1 }}
       className="group absolute top-[26%] right-5 z-20 hidden size-32 md:right-10 md:block lg:top-[24%] lg:size-36"
-      aria-label={t('Discover Runway', 'Conocer Runway')}
+      aria-label={t('Explore our work', 'Ver proyectos')}
     >
       <svg viewBox="0 0 200 200" className={`absolute inset-0 h-full w-full text-bone/70 ${reduced ? '' : 'animate-[spin_24s_linear_infinite]'}`}>
         <defs>
@@ -250,35 +250,4 @@ function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
       </span>
     </motion.button>
   )
-}
-
-/** Soft warm light that follows the pointer across the water, like a sunbeam through glass. */
-function CursorLight({ disabled }: { disabled: boolean }) {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (disabled || !window.matchMedia('(pointer: fine)').matches) return
-    const el = ref.current!
-    let x = window.innerWidth / 2
-    let y = window.innerHeight / 2
-    let cx = x
-    let cy = y
-    let raf = 0
-    const move = (e: PointerEvent) => {
-      x = e.clientX
-      y = e.clientY
-    }
-    const loop = () => {
-      cx += (x - cx) * 0.08
-      cy += (y - cy) * 0.08
-      el.style.background = `radial-gradient(520px circle at ${cx}px ${cy}px, rgba(255, 226, 180, 0.13), transparent 60%)`
-      raf = requestAnimationFrame(loop)
-    }
-    window.addEventListener('pointermove', move)
-    raf = requestAnimationFrame(loop)
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('pointermove', move)
-    }
-  }, [disabled])
-  return <div ref={ref} className="pointer-events-none absolute inset-0 z-[5] mix-blend-screen" aria-hidden />
 }

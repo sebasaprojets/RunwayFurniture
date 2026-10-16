@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import { brand, images } from '../data/site'
 import { useLang } from '../i18n'
+import { MOTION_QUERY } from '../lib/motion'
 import { gsap } from '../lib/scroll'
 
 /** Closing shot of the founder chapter: letterboxed, slow push-in, the founder's line typed across the frame. */
@@ -9,7 +10,7 @@ export function FounderFilm() {
   const root = useRef<HTMLElement>(null)
   useLayoutEffect(() => {
     const mm = gsap.matchMedia()
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
+    mm.add(MOTION_QUERY, () => {
       const q = gsap.utils.selector(root)
       const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: '+=140%', scrub: 1, pin: true } })
       tl.fromTo(q('[data-img]'), { scale: 1.25, filter: 'brightness(0.55)' }, { scale: 1, filter: 'brightness(0.9)', ease: 'none', duration: 1.4 }, 0)

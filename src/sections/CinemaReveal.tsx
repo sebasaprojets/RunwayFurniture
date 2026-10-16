@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import { showcase } from '../data/site'
 import { useLang } from '../i18n'
+import { MOTION_QUERY } from '../lib/motion'
 import { gsap } from '../lib/scroll'
 
 /**
@@ -13,7 +14,7 @@ export function CinemaReveal() {
 
   useLayoutEffect(() => {
     const mm = gsap.matchMedia()
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
+    mm.add(MOTION_QUERY, () => {
       const q = gsap.utils.selector(root)
       const tl = gsap.timeline({
         scrollTrigger: { trigger: root.current, start: 'top top', end: '+=160%', scrub: 1, pin: true },

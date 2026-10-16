@@ -3,3 +3,7 @@ node_modules
 .DS_Store
 *.log
 .playwright-mcp/
+.impeccable/live/
+.env
+.env.*
+!.env.example

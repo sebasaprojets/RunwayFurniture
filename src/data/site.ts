@@ -1,25 +1,8 @@
-import grotto from '../assets/img/grotto-suite.jpg'
-import atelier from '../assets/img/atelier-facade.jpg'
-import drawingLounge from '../assets/img/drawing-lounge.jpg'
-import coastDeck from '../assets/img/coast-deck.jpg'
-import coastPool from '../assets/img/coast-pool.jpg'
-import resortSunset from '../assets/img/resort-sunset.jpg'
-import resortPanorama from '../assets/img/resort-panorama.jpg'
 import founderDeck from '../assets/img/founder-deck.jpg'
 import founderStanding from '../assets/img/founder-standing.jpg'
 import founderSeated from '../assets/img/founder-seated.jpg'
 
-import marble from '../assets/materials/marble.jpg'
-import travertine from '../assets/materials/travertine.jpg'
-import oak from '../assets/materials/oak.jpg'
-import walnut from '../assets/materials/walnut.jpg'
-import leather from '../assets/materials/leather.jpg'
-import linen from '../assets/materials/linen.jpg'
-import boucle from '../assets/materials/boucle.jpg'
-import bronze from '../assets/materials/bronze.jpg'
-import glass from '../assets/materials/glass.jpg'
 import type { T } from '../i18n'
-import { photo } from './remote'
 
 /** Photography supplied by Runway (company profile, Vondom residential book, Kenkoon catalogue). */
 const realFiles = import.meta.glob<string>('../assets/img/real/*.jpg', { eager: true, import: 'default' })
@@ -29,26 +12,13 @@ const real = (name: string) => {
   return url
 }
 
-/** Modern editorial photography (remote, with the supplied images as offline fallbacks). */
-export const photos = {
-  hotelSuite: photo('1582719478250-c89cae4dc85b', grotto),
-  hotelRoom: photo('1590490360182-c33d57733427', grotto),
-  hotelBedroom: photo('1631049307264-da0ec9d70304', grotto),
-  resortPool: photo('1566073771259-6a8506099945', resortPanorama),
-  resortLoungers: photo('1571896349842-33c89424de2d', resortSunset),
-  resortBeach: photo('1520250497591-112f2f40a3f4', coastPool),
-  resortTropical: photo('1540541338287-41700207dee6', resortSunset),
-  villaPool: photo('1600585154340-be6161a56a0c', coastDeck),
-  villaDusk: photo('1600596542815-ffad4c1539a9', coastPool),
-  villaModern: photo('1613490493576-7fde63acd811', coastDeck),
-  livingRoom: photo('1618221195710-dd6b41faaea6', drawingLounge),
-  livingGallery: photo('1600607687939-ce8a6c25118c', drawingLounge),
-  livingDining: photo('1600210492486-724fe5c67fb0', atelier),
-  lounge: photo('1586023492125-27b2c045efd7', drawingLounge),
-  sofa: photo('1555041469-a586c61ea9bc', drawingLounge),
-  sofaRoom: photo('1567016432779-094069958ea5', drawingLounge),
-  restaurant: photo('1517248135467-4c7edcad34c4', atelier),
-}
+/** Lighter 960px version of a supplied photo, for grids and cards. */
+const thumbs = new Map(
+  Object.entries(realFiles)
+    .filter(([k]) => k.endsWith('.sm.jpg'))
+    .map(([k, v]) => [realFiles[k.replace('.sm.jpg', '.jpg')], v]),
+)
+export const thumb = (url: string) => thumbs.get(url) ?? url
 
 /** Supplied photography used for full-bleed moments outside the project pages. */
 export const showcase = {
@@ -57,19 +27,10 @@ export const showcase = {
 }
 
 export const images = {
-  grotto,
-  atelier,
-  drawingLounge,
-  coastDeck,
-  coastPool,
-  resortSunset,
-  resortPanorama,
   founderDeck,
   founderStanding,
   founderSeated,
 }
-
-export const textures = { marble, travertine, oak, walnut, leather, linen, boucle, bronze, glass }
 
 /**
  * Brand facts — taken only from material supplied by the company
@@ -114,9 +75,12 @@ export const films = [
       en: 'Resorts, villas and beach clubs furnished by Runway — a four-minute tour of the work.',
       es: 'Resorts, villas y beach clubs amueblados por Runway: un recorrido de cuatro minutos por nuestro trabajo.',
     },
-    src: './media/runway-film.mp4',
+    /** HD version on YouTube (from the Drive material); the WhatsApp copy was 480p. */
+    youtube: 'p2-C_48G3Zk',
+    src: '',
+    srcWebm: '',
     poster: './media/runway-film.jpg',
-    duration: '4:07',
+    duration: '',
   },
   {
     title: { en: 'The Showroom', es: 'El showroom' },
@@ -124,7 +88,9 @@ export const films = [
       en: 'Inside the Foresta showroom: living, dining and lighting collections on display.',
       es: 'Dentro del showroom Foresta: colecciones de sala, comedor e iluminación en exhibición.',
     },
+    youtube: undefined as string | undefined,
     src: './media/showroom.mp4',
+    srcWebm: './media/showroom.webm',
     poster: './media/showroom.jpg',
     duration: '1:10',
   },
@@ -135,7 +101,7 @@ export const navItems = [
   { label: { en: 'Hospitality', es: 'Hotelería' }, href: '#hospitality', image: real('gansevoort-pool') },
   { label: { en: 'Collections', es: 'Colecciones' }, href: '#collections', image: real('kenkoon-mesh-sunset') },
   { label: { en: 'Clients', es: 'Clientes' }, href: '#clients', image: real('beachclub-pool') },
-  { label: { en: 'About', es: 'Nosotros' }, href: '#founder', image: founderDeck },
+  { label: { en: 'About', es: 'Nosotros' }, href: '#founder', image: founderStanding },
   { label: { en: 'Contact', es: 'Contacto' }, href: '#contact', image: real('lounge-sunset') },
 ]
 
@@ -166,8 +132,6 @@ export type Project = {
   summary: T
   concept: T
   narrative: T
-  /** Material palette keys — shown only when set. */
-  materials?: (keyof typeof textures)[]
   furniture: T[]
   cover: string
   gallery: string[]
@@ -204,7 +168,21 @@ export const projects: Project[] = [
       { en: 'Wine lounge seating', es: 'Asientos para la cava' },
     ],
     cover: real('gansevoort-pool'),
-    gallery: [real('gansevoort-beach'), real('gansevoort-terrace'), real('gansevoort-lounge'), real('gansevoort-wine')],
+    gallery: [
+      real('gansevoort-beach'),
+      real('gansevoort-terrace'),
+      real('gansevoort-restaurant'),
+      real('gansevoort-terrace-2'),
+      real('gansevoort-suite'),
+      real('gansevoort-bedroom'),
+      real('gansevoort-bedroom-2'),
+      real('gansevoort-living-2'),
+      real('gansevoort-living'),
+      real('gansevoort-kitchen'),
+      real('gansevoort-lounge'),
+      real('gansevoort-wine'),
+      real('gansevoort-lounge-2'),
+    ],
     isConcept: false,
   },
   {
@@ -259,7 +237,7 @@ export const projects: Project[] = [
       { en: 'Pool terrace furniture', es: 'Mobiliario para terraza de piscina' },
     ],
     cover: real('costa-esmeralda-deck'),
-    gallery: [real('costa-esmeralda-dining')],
+    gallery: [real('costa-esmeralda-loungers'), real('costa-esmeralda-pool'), real('costa-esmeralda-cabanas'), real('costa-esmeralda-dining')],
     isConcept: false,
   },
   {
@@ -369,7 +347,7 @@ export const projects: Project[] = [
       { en: 'Outdoor lounges', es: 'Salas exteriores' },
     ],
     cover: real('sosua-aerial'),
-    gallery: [],
+    gallery: [real('sosua-living'), real('sosua-kitchen'), real('sosua-stairs'), real('sosua-bedroom')],
     isConcept: false,
   },
   {
@@ -424,7 +402,7 @@ export const projects: Project[] = [
       { en: 'Accent furniture', es: 'Muebles de acento' },
     ],
     cover: real('bridge-house-lounge'),
-    gallery: [],
+    gallery: [real('bridge-house-sofa'), real('bridge-house-salon'), real('bridge-house-lounge-2'), real('bridge-house-sofa-2'), real('bridge-house-dining')],
     isConcept: false,
   },
   {
@@ -481,6 +459,426 @@ export const projects: Project[] = [
     ],
     cover: real('arrecife-1'),
     gallery: [real('arrecife-2'), real('arrecife-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'las-cumbres-house',
+    title: 'Las Cumbres House',
+    category: 'Private Residences',
+    location: { en: 'Bétera · Spain', es: 'Bétera · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A stone-and-white villa wrapped around a turquoise pool and an old olive tree.',
+      es: 'Una villa de piedra y blanco que rodea una piscina turquesa y un olivo centenario.',
+    },
+    concept: {
+      en: 'The living room opens completely to the terrace, so the sofas sit half inside, half in the garden.',
+      es: 'La sala se abre por completo a la terraza: los sofás quedan mitad dentro, mitad en el jardín.',
+    },
+    narrative: {
+      en: 'Vondom lounge furniture in soft greys carries the same calm from the living room to the pool deck.',
+      es: 'El mobiliario de sala de Vondom en grises suaves lleva la misma calma de la sala a la piscina.',
+    },
+    furniture: [
+      { en: 'Indoor-outdoor sofas', es: 'Sofás interior y exterior' },
+      { en: 'Low lounge tables', es: 'Mesas bajas de sala' },
+      { en: 'Pool loungers', es: 'Camastros de piscina' },
+      { en: 'Terrace armchairs', es: 'Sillones de terraza' },
+    ],
+    cover: real('cumbres-1'),
+    gallery: [real('cumbres-2'), real('cumbres-3'), real('cumbres-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'herrero-house',
+    title: 'Herrero House',
+    category: 'Private Residences',
+    location: { en: 'Barcelona · Spain', es: 'Barcelona · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A long white house on a green lawn, with a pool that runs the length of the garden.',
+      es: 'Una casa blanca y alargada sobre el césped, con una piscina que recorre todo el jardín.',
+    },
+    concept: {
+      en: 'Simple white volumes, blue water and green grass: the furniture keeps to the same clean palette.',
+      es: 'Volúmenes blancos, agua azul y césped verde: el mobiliario respeta la misma paleta limpia.',
+    },
+    narrative: {
+      en: 'Vondom outdoor dining and lounge pieces line the terraces along the house, facing the pool and the sun.',
+      es: 'Las piezas de comedor y sala exterior de Vondom recorren las terrazas de la casa, frente a la piscina y el sol.',
+    },
+    furniture: [
+      { en: 'Outdoor dining sets', es: 'Comedores exteriores' },
+      { en: 'Terrace lounge chairs', es: 'Sillones de terraza' },
+      { en: 'Pool loungers', es: 'Camastros de piscina' },
+      { en: 'Planters', es: 'Maceteros' },
+    ],
+    cover: real('herrero-1'),
+    gallery: [real('herrero-2'), real('herrero-3'), real('herrero-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'vitacura-house',
+    title: 'Vitacura House',
+    category: 'Private Residences',
+    location: { en: 'Vitacura · Chile', es: 'Vitacura · Chile' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A hillside terrace in the Andes foothills, furnished for long afternoons outdoors.',
+      es: 'Una terraza en las faldas de los Andes, amueblada para largas tardes al aire libre.',
+    },
+    concept: {
+      en: 'Sculptural loungers and low sofas sit on pale stone, with the mountains as the backdrop.',
+      es: 'Camastros escultóricos y sofás bajos sobre piedra clara, con las montañas de fondo.',
+    },
+    narrative: {
+      en: 'Vondom lounge furniture turns the roof terrace into an outdoor living room with a view of the valley.',
+      es: 'El mobiliario de Vondom convierte la terraza en una sala exterior con vista al valle.',
+    },
+    furniture: [
+      { en: 'Sculptural sun loungers', es: 'Camastros escultóricos' },
+      { en: 'Low outdoor sofas', es: 'Sofás bajos de exterior' },
+      { en: 'Side tables', es: 'Mesas auxiliares' },
+      { en: 'Parasols', es: 'Sombrillas' },
+    ],
+    cover: real('vitacura-1'),
+    gallery: [real('vitacura-2'), real('vitacura-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'la-cantera-house',
+    title: 'La Cantera House',
+    category: 'Private Residences',
+    location: { en: 'Valencia · Spain', es: 'Valencia · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A cantilevered villa above the bay, with an infinity pool that glows at dusk.',
+      es: 'Una villa en voladizo sobre la bahía, con una piscina infinita que brilla al atardecer.',
+    },
+    concept: {
+      en: 'White dining chairs face the sea by day; lit sofas and loungers take over the pool deck at night.',
+      es: 'De día, sillas blancas frente al mar; de noche, sofás y camastros iluminados toman la piscina.',
+    },
+    narrative: {
+      en: 'Vondom dining, lounge and illuminated pieces furnish the terraces from morning to night.',
+      es: 'Las piezas de comedor, sala e iluminadas de Vondom visten las terrazas de la mañana a la noche.',
+    },
+    furniture: [
+      { en: 'Outdoor dining chairs', es: 'Sillas de comedor exterior' },
+      { en: 'Illuminated lounge pieces', es: 'Piezas de sala iluminadas' },
+      { en: 'Pool loungers', es: 'Camastros de piscina' },
+      { en: 'Terrace tables', es: 'Mesas de terraza' },
+    ],
+    cover: real('cantera-3'),
+    gallery: [real('cantera-1'), real('cantera-2'), real('cantera-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'ibiza-house',
+    title: 'Ibiza House',
+    category: 'Private Residences',
+    location: { en: 'Ibiza · Spain', es: 'Ibiza · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A whitewashed Ibiza retreat with loungers set right into the pool.',
+      es: 'Un refugio blanco en Ibiza con camastros dentro de la propia piscina.',
+    },
+    concept: {
+      en: 'Everything is white — walls, floor and furniture — so the water and the sunset bring the colour.',
+      es: 'Todo es blanco, muros, suelo y muebles: el agua y el atardecer ponen el color.',
+    },
+    narrative: {
+      en: 'Vondom in-pool loungers and outdoor dining extend the house onto the water.',
+      es: 'Los camastros para piscina y el comedor exterior de Vondom extienden la casa sobre el agua.',
+    },
+    furniture: [
+      { en: 'In-pool sun loungers', es: 'Camastros para piscina' },
+      { en: 'Outdoor dining set', es: 'Comedor exterior' },
+      { en: 'Lounge chairs', es: 'Sillones' },
+      { en: 'Side tables', es: 'Mesas auxiliares' },
+    ],
+    cover: real('ibiza-1'),
+    gallery: [real('ibiza-0')],
+    isConcept: false,
+  },
+  {
+    slug: '1001-noches',
+    title: '1001 Noches',
+    category: 'Private Residences',
+    location: { en: 'Almería · Spain', es: 'Almería · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A stone house set into the landscape, with long lawns and a pool terrace.',
+      es: 'Una casa de piedra integrada en el paisaje, con amplios jardines y terraza de piscina.',
+    },
+    concept: {
+      en: 'Grey loungers with red cushions echo the stone walls and add a single note of colour.',
+      es: 'Camastros grises con cojines rojos dialogan con los muros de piedra y suman una sola nota de color.',
+    },
+    narrative: {
+      en: 'Vondom loungers and lounge sets run along the pool and the covered terrace.',
+      es: 'Los camastros y salas de Vondom recorren la piscina y la terraza cubierta.',
+    },
+    furniture: [
+      { en: 'Pool loungers', es: 'Camastros de piscina' },
+      { en: 'Covered-terrace lounge', es: 'Sala de terraza cubierta' },
+      { en: 'Planters', es: 'Maceteros' },
+      { en: 'Side tables', es: 'Mesas auxiliares' },
+    ],
+    cover: real('noches-1'),
+    gallery: [real('noches-2'), real('noches-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'el-palomar-house',
+    title: 'El Palomar House',
+    category: 'Private Residences',
+    location: { en: 'Mexico', es: 'México' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A glass pavilion house opening onto a lawn and a long terrace.',
+      es: 'Una casa pabellón de cristal que se abre a un jardín y una larga terraza.',
+    },
+    concept: {
+      en: 'Sculptural white and graphite pieces sit between the glass walls and the garden.',
+      es: 'Piezas escultóricas en blanco y grafito entre los muros de cristal y el jardín.',
+    },
+    narrative: {
+      en: 'Vondom lounge chairs, loungers and pouf seating furnish the terrace and the lawn.',
+      es: 'Sillones, camastros y pufs de Vondom visten la terraza y el jardín.',
+    },
+    furniture: [
+      { en: 'Sculptural lounge chairs', es: 'Sillones escultóricos' },
+      { en: 'Garden sun loungers', es: 'Camastros de jardín' },
+      { en: 'Pouf seating', es: 'Pufs' },
+      { en: 'Terrace tables', es: 'Mesas de terraza' },
+    ],
+    cover: real('palomar-1'),
+    gallery: [real('palomar-2'), real('palomar-3'), real('palomar-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'modena-house',
+    title: 'Modena House',
+    category: 'Private Residences',
+    location: { en: 'Modena · Italy', es: 'Módena · Italia' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A contemporary take on the gabled farmhouse, open to a green garden.',
+      es: 'Una versión contemporánea de la casa de campo a dos aguas, abierta a un jardín verde.',
+    },
+    concept: {
+      en: 'Black frames, white walls and climbing plants: the furniture stays light and graphic.',
+      es: 'Marcos negros, muros blancos y enredaderas: el mobiliario se mantiene ligero y gráfico.',
+    },
+    narrative: {
+      en: 'Vondom dining and lounge pieces connect the kitchen, the porch and the garden.',
+      es: 'Las piezas de comedor y sala de Vondom conectan la cocina, el porche y el jardín.',
+    },
+    furniture: [
+      { en: 'Outdoor dining set', es: 'Comedor exterior' },
+      { en: 'Porch lounge chairs', es: 'Sillones de porche' },
+      { en: 'Bar stools', es: 'Taburetes' },
+      { en: 'Garden accents', es: 'Accesorios de jardín' },
+    ],
+    cover: real('modena-1'),
+    gallery: [real('modena-3'), real('modena-2'), real('modena-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'ottel-house',
+    title: 'Öttel House',
+    category: 'Private Residences',
+    location: { en: 'Vizcaya · Spain', es: 'Vizcaya · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'Warm, soft interiors in cream and wood, with a covered terrace for dining.',
+      es: 'Interiores cálidos y suaves en crema y madera, con una terraza cubierta para comer.',
+    },
+    concept: {
+      en: 'Deep sofas and round tables create a relaxed, family living space.',
+      es: 'Sofás profundos y mesas redondas crean un espacio familiar y relajado.',
+    },
+    narrative: {
+      en: 'Vondom seating and tables carry the same soft forms from the living room to the terrace.',
+      es: 'Los asientos y mesas de Vondom llevan las mismas formas suaves de la sala a la terraza.',
+    },
+    furniture: [
+      { en: 'Deep lounge sofas', es: 'Sofás profundos' },
+      { en: 'Round coffee tables', es: 'Mesas de centro redondas' },
+      { en: 'Terrace dining set', es: 'Comedor de terraza' },
+      { en: 'Accent chairs', es: 'Sillas de acento' },
+    ],
+    cover: real('ottel-1'),
+    gallery: [real('ottel-2'), real('ottel-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'la-pinada-house',
+    title: 'La Pinada House',
+    category: 'Private Residences',
+    location: { en: 'Valencia · Spain', es: 'Valencia · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A low house among pines, with a pergola dining terrace and a glowing glass front.',
+      es: 'Una casa baja entre pinos, con un comedor bajo pérgola y una fachada de cristal iluminada.',
+    },
+    concept: {
+      en: 'White chairs and long tables sit under the pergola, in the dappled light of the pines.',
+      es: 'Sillas blancas y mesas largas bajo la pérgola, en la luz filtrada de los pinos.',
+    },
+    narrative: {
+      en: 'Vondom dining furniture runs from the kitchen to the pergola and the garden.',
+      es: 'El mobiliario de comedor de Vondom va de la cocina a la pérgola y al jardín.',
+    },
+    furniture: [
+      { en: 'Pergola dining set', es: 'Comedor bajo pérgola' },
+      { en: 'White dining chairs', es: 'Sillas de comedor blancas' },
+      { en: 'Kitchen table', es: 'Mesa de cocina' },
+      { en: 'Garden seating', es: 'Asientos de jardín' },
+    ],
+    cover: real('pinada-3'),
+    gallery: [real('pinada-1'), real('pinada-2'), real('pinada-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'castellon-house',
+    title: 'Castellón House',
+    category: 'Private Residences',
+    location: { en: 'Castellón · Spain', es: 'Castellón · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'Light-filled dining rooms with soft blinds and sculptural pendant lamps.',
+      es: 'Comedores luminosos con cortinas suaves y lámparas colgantes escultóricas.',
+    },
+    concept: {
+      en: 'Pale chairs, glass tables and woven pendants make a calm, bright dining space.',
+      es: 'Sillas claras, mesas de cristal y lámparas tejidas crean un comedor sereno y luminoso.',
+    },
+    narrative: {
+      en: 'Vondom dining chairs and pendant lighting furnish the indoor and covered dining areas.',
+      es: 'Las sillas de comedor y lámparas de Vondom visten los comedores interiores y cubiertos.',
+    },
+    furniture: [
+      { en: 'Dining chairs', es: 'Sillas de comedor' },
+      { en: 'Glass dining table', es: 'Mesa de comedor de cristal' },
+      { en: 'Woven pendant lamps', es: 'Lámparas colgantes tejidas' },
+      { en: 'Side tables', es: 'Mesas auxiliares' },
+    ],
+    cover: real('castellon-1'),
+    gallery: [real('castellon-2'), real('castellon-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'kaloterakis',
+    title: 'Kaloterakis',
+    category: 'Private Residences',
+    location: { en: 'Greece', es: 'Grecia' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A Mediterranean pool terrace that turns gold at sunset.',
+      es: 'Una terraza mediterránea con piscina que se vuelve dorada al atardecer.',
+    },
+    concept: {
+      en: 'White in-pool loungers and rounded seating stand out against the blue water and the sky.',
+      es: 'Camastros blancos dentro de la piscina y asientos redondeados resaltan contra el agua y el cielo.',
+    },
+    narrative: {
+      en: 'Vondom pool, lounge and planter pieces furnish the terraces and the garden paths.',
+      es: 'Las piezas de piscina, sala y maceteros de Vondom visten las terrazas y los caminos del jardín.',
+    },
+    furniture: [
+      { en: 'In-pool sun loungers', es: 'Camastros para piscina' },
+      { en: 'Rounded lounge chairs', es: 'Sillones redondeados' },
+      { en: 'Planters', es: 'Maceteros' },
+      { en: 'Terrace furniture', es: 'Mobiliario de terraza' },
+    ],
+    cover: real('kaloterakis-1'),
+    gallery: [real('kaloterakis-2'), real('kaloterakis-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'finca-las-marias',
+    title: 'Finca Las Marías',
+    category: 'Private Residences',
+    location: { en: 'Spain', es: 'España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'A modern country house with a deep covered porch facing the garden.',
+      es: 'Una casa de campo moderna con un amplio porche cubierto frente al jardín.',
+    },
+    concept: {
+      en: 'White outdoor furniture fills the porch, framed by timber and white walls.',
+      es: 'Mobiliario exterior blanco llena el porche, enmarcado por madera y muros blancos.',
+    },
+    narrative: {
+      en: 'Vondom lounge and dining pieces turn the porch into the main living room in summer.',
+      es: 'Las piezas de sala y comedor de Vondom convierten el porche en la sala principal en verano.',
+    },
+    furniture: [
+      { en: 'Porch lounge set', es: 'Sala de porche' },
+      { en: 'Outdoor dining chairs', es: 'Sillas de comedor exterior' },
+      { en: 'Side tables', es: 'Mesas auxiliares' },
+      { en: 'Planters', es: 'Maceteros' },
+    ],
+    cover: real('marias-1'),
+    gallery: [real('marias-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'ocean-suites-altea',
+    title: 'Ocean Suites',
+    category: 'Private Residences',
+    location: { en: 'Altea · Spain', es: 'Altea · España' },
+    collection: 'Vondom',
+    summary: {
+      en: 'White terraces above the Mediterranean, lit up at dusk against the mountains.',
+      es: 'Terrazas blancas sobre el Mediterráneo, iluminadas al atardecer frente a las montañas.',
+    },
+    concept: {
+      en: 'Sculptural white chairs and loungers line the wooden decks of each suite.',
+      es: 'Sillas y camastros blancos y escultóricos recorren las terrazas de madera de cada suite.',
+    },
+    narrative: {
+      en: 'Vondom outdoor furniture furnishes the suite terraces, designed for evenings by the sea.',
+      es: 'El mobiliario exterior de Vondom viste las terrazas de las suites, pensado para las noches junto al mar.',
+    },
+    furniture: [
+      { en: 'Sculptural terrace chairs', es: 'Sillas escultóricas de terraza' },
+      { en: 'Sun loungers', es: 'Camastros' },
+      { en: 'Low tables', es: 'Mesas bajas' },
+      { en: 'Illuminated pieces', es: 'Piezas iluminadas' },
+    ],
+    cover: real('altea-1'),
+    gallery: [real('altea-0')],
+    isConcept: false,
+  },
+  {
+    slug: 'villa-la-reina',
+    title: 'Villa La Reina',
+    category: 'Private Residences',
+    location: { en: 'Vrsar · Croatia', es: 'Vrsar · Croacia' },
+    collection: 'Vondom',
+    summary: {
+      en: 'An Adriatic villa with a pool terrace and white architecture open to the sea air.',
+      es: 'Una villa en el Adriático con terraza de piscina y arquitectura blanca abierta a la brisa del mar.',
+    },
+    concept: {
+      en: 'Clean white volumes and pale outdoor furniture keep the focus on the pool and the light.',
+      es: 'Volúmenes blancos y mobiliario exterior claro mantienen el protagonismo en la piscina y la luz.',
+    },
+    narrative: {
+      en: 'Vondom loungers and lounge pieces furnish the pool deck and the terraces around the villa.',
+      es: 'Los camastros y piezas de sala de Vondom visten la piscina y las terrazas de la villa.',
+    },
+    furniture: [
+      { en: 'Pool loungers', es: 'Camastros de piscina' },
+      { en: 'Outdoor lounge set', es: 'Sala exterior' },
+      { en: 'Terrace tables', es: 'Mesas de terraza' },
+      { en: 'Planters', es: 'Maceteros' },
+    ],
+    cover: real('reina-1'),
+    gallery: [real('reina-2'), real('reina-0')],
     isConcept: false,
   },
 ]
@@ -565,7 +963,7 @@ export const clients = {
       ],
     },
     {
-      region: { en: 'Canada', es: 'Canadá' },
+      region: { en: 'Canada · developers & partners', es: 'Canadá · desarrolladores y socios' },
       names: ['Sheraton Hotel', 'Aldo Construction', 'Groupe Cholette', 'Trans Management'],
     },
   ],
@@ -660,92 +1058,4 @@ export const kenkoon = {
 }
 
 /** Runway's own interior collection — leather and lounge pieces from the company profile. */
-export const interiorCollection = [real('collection-sofa'), real('collection-salon'), real('collection-library'), real('collection-chesterfield')]
-
-export type Material = {
-  key: keyof typeof textures
-  name: T
-  family: T
-  description: T
-}
-
-export const materials: Material[] = [
-  {
-    key: 'marble',
-    name: { en: 'Calacatta Marble', es: 'Mármol Calacatta' },
-    family: { en: 'Stone', es: 'Piedra' },
-    description: {
-      en: 'Warm white ground with soft grey and bronze veining, honed to a quiet satin finish.',
-      es: 'Fondo blanco cálido con vetas suaves en gris y bronce, apomazado a un acabado satinado.',
-    },
-  },
-  {
-    key: 'travertine',
-    name: { en: 'Travertine', es: 'Travertino' },
-    family: { en: 'Stone', es: 'Piedra' },
-    description: {
-      en: 'Banded, porous and mineral — filled or left open for a more geological surface.',
-      es: 'Veteado, poroso y mineral: relleno o con poro abierto para una superficie más geológica.',
-    },
-  },
-  {
-    key: 'oak',
-    name: { en: 'European Oak', es: 'Roble europeo' },
-    family: { en: 'Timber', es: 'Madera' },
-    description: { en: 'Straight, calm grain in natural, smoked or blackened finishes.', es: 'Veta recta y serena en acabado natural, ahumado o ennegrecido.' },
-  },
-  {
-    key: 'walnut',
-    name: { en: 'American Walnut', es: 'Nogal americano' },
-    family: { en: 'Timber', es: 'Madera' },
-    description: {
-      en: 'Deep chocolate tones and cathedral figure, oiled to deepen with age.',
-      es: 'Tonos chocolate profundos y veta catedral, aceitado para oscurecerse con los años.',
-    },
-  },
-  {
-    key: 'leather',
-    name: { en: 'Cognac Leather', es: 'Cuero coñac' },
-    family: { en: 'Upholstery', es: 'Tapicería' },
-    description: {
-      en: 'Full-grain, vegetable-tanned hide that develops a patina over the years.',
-      es: 'Piel de flor entera curtida al vegetal que desarrolla una pátina con los años.',
-    },
-  },
-  {
-    key: 'linen',
-    name: { en: 'Belgian Linen', es: 'Lino belga' },
-    family: { en: 'Textile', es: 'Textil' },
-    description: {
-      en: 'Slubbed natural weave, breathable and relaxed — also in performance grades.',
-      es: 'Tejido natural con textura, transpirable y relajado; también en versiones de alto rendimiento.',
-    },
-  },
-  {
-    key: 'boucle',
-    name: { en: 'Wool Bouclé', es: 'Bouclé de lana' },
-    family: { en: 'Textile', es: 'Textil' },
-    description: {
-      en: 'Looped wool yarns with a soft, sculptural, light-catching texture.',
-      es: 'Hilos de lana rizados con una textura suave y escultórica que atrapa la luz.',
-    },
-  },
-  {
-    key: 'bronze',
-    name: { en: 'Brushed Bronze', es: 'Bronce cepillado' },
-    family: { en: 'Metal', es: 'Metal' },
-    description: {
-      en: 'Hand-brushed and patinated; ages gracefully in coastal environments.',
-      es: 'Cepillado a mano y patinado; envejece con elegancia en ambientes costeros.',
-    },
-  },
-  {
-    key: 'glass',
-    name: { en: 'Smoked Glass', es: 'Vidrio ahumado' },
-    family: { en: 'Mineral', es: 'Mineral' },
-    description: {
-      en: 'Structural and decorative glass in deep smoked and mineral tints.',
-      es: 'Vidrio estructural y decorativo en tonos ahumados y minerales profundos.',
-    },
-  },
-]
+export const interiorCollection = [real('collection-cabinet'), real('collection-library'), real('collection-chesterfield')]

@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
-import { SectionLabel } from '../components/SectionLabel'
 import { hospitalityScenes } from '../data/site'
 import { useLang } from '../i18n'
 import { gsap } from '../lib/scroll'
@@ -20,7 +19,7 @@ export function Hospitality() {
 
   useLayoutEffect(() => {
     const mm = gsap.matchMedia()
-    mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
+    mm.add('(min-width: 900px)', () => {
       const track = trackRef.current!
       const distance = () => track.scrollWidth - window.innerWidth
       const tween = gsap.to(track, {
@@ -69,7 +68,6 @@ export function Hospitality() {
 
   return (
     <section ref={sectionRef} id="hospitality" className="relative overflow-hidden bg-graphite" aria-labelledby="hospitality-title">
-      <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
       <div
         data-bgword
         className="display pointer-events-none absolute top-1/2 left-0 hidden -translate-y-1/2 text-[24vw] whitespace-nowrap text-transparent uppercase min-[900px]:block"
@@ -80,15 +78,14 @@ export function Hospitality() {
       </div>
       <div
         ref={trackRef}
-        className="relative flex h-auto snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 py-24 min-[900px]:h-[100svh] min-[900px]:snap-none min-[900px]:items-center min-[900px]:gap-[4vw] min-[900px]:overflow-visible min-[900px]:px-[6vw] min-[900px]:py-0 motion-reduce:min-[900px]:overflow-x-auto"
+        className="relative grid grid-cols-1 gap-12 px-5 py-24 sm:grid-cols-2 sm:gap-x-6 min-[900px]:flex min-[900px]:h-[100svh] min-[900px]:items-center min-[900px]:gap-[4vw] min-[900px]:px-[6vw] min-[900px]:py-0"
       >
         {/* intro panel */}
-        <div className="flex w-[85vw] shrink-0 snap-start flex-col justify-center min-[900px]:w-[42vw]">
-          <SectionLabel index="03" label={t('Luxury Hospitality', 'Hotelería de lujo')} />
+        <div className="flex shrink-0 flex-col justify-center sm:col-span-2 min-[900px]:w-[42vw]">
           <RevealText
             text={t('Spaces that\ndefine\ndestinations.', 'Espacios que\ndefinen\ndestinos.')}
             accent={['destinations', 'destinos']}
-            className="display mt-8 text-[13vw] text-bone uppercase min-[900px]:text-[5.6vw]"
+            className="display text-[13vw] text-bone uppercase min-[900px]:text-[5.6vw]"
           />
           <p className="mt-8 max-w-md leading-relaxed text-bone/65">
             {t(
@@ -100,7 +97,10 @@ export function Hospitality() {
             <Button
               href="#projects"
               variant="ghost"
-              onClick={() => scrollToTarget('#projects')}
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('projects:filter', { detail: 'Luxury Hospitality' }))
+                scrollToTarget('#projects')
+              }}
             >
               {t('Explore hospitality projects', 'Ver proyectos de hotelería')}
             </Button>
@@ -110,13 +110,13 @@ export function Hospitality() {
         {hospitalityScenes.map((s, i) => (
           <figure
             key={s.title.en}
-            className={`relative w-[80vw] shrink-0 snap-center ${
+            className={`relative shrink-0 ${
               i % 2 ? 'min-[900px]:mt-[16vh] min-[900px]:w-[25vw]' : 'min-[900px]:-mt-[8vh] min-[900px]:w-[44vw]'
             }`}
           >
             <div
               className={`relative overflow-hidden ${
-                i % 2 ? 'aspect-[3/4]' : 'aspect-[3/4] min-[900px]:aspect-[16/11]'
+                i % 2 ? 'aspect-[4/3] min-[900px]:aspect-[3/4]' : 'aspect-[4/3] min-[900px]:aspect-[16/11]'
               }`}
             >
               <img
@@ -125,7 +125,7 @@ export function Hospitality() {
                 alt={`${tx(s.title)}: ${tx(s.caption)}`}
                 loading="lazy"
                 decoding="async"
-                className="grade absolute inset-y-0 -left-[12%] h-full w-[124%] max-w-none object-cover"
+                className="grade absolute inset-0 h-full w-full max-w-none object-cover min-[900px]:-left-[12%] min-[900px]:w-[124%]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
               <span className="absolute top-5 left-5 font-display text-lg text-bone/80 italic">0{i + 1}</span>

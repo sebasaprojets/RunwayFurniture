@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { Button } from '../components/Button'
 import { FadeIn } from '../components/FadeIn'
 import { MaskImage } from '../components/MaskImage'
-import { categoryLabel, materials, projects, textures, type Project } from '../data/site'
+import { categoryLabel, projects, type Project } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
@@ -22,8 +22,6 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [p, onClose])
-
-  const mats = (p.materials ?? []).map((k) => materials.find((m) => m.key === k)!)
 
   return (
     <motion.div
@@ -61,7 +59,7 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
           </h2>
           <p className="mt-8 max-w-lg text-lg leading-relaxed text-bone/70">{tx(p.summary)}</p>
         </motion.div>
-        <motion.div layoutId={`cover-${p.slug}`} className="relative order-1 aspect-[4/5] overflow-hidden lg:order-2 lg:col-span-5 lg:max-h-[82svh]">
+        <motion.div layoutId={`cover-${p.slug}`} className="relative order-1 aspect-[4/3] overflow-hidden lg:order-2 lg:aspect-[4/5] lg:col-span-5 lg:max-h-[82svh]">
           <img src={p.cover} alt={tx(p.summary)} className="grade h-full w-full object-cover" />
         </motion.div>
       </header>
@@ -72,12 +70,10 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
             [t('Category', 'Categoría'), tx(categoryLabel[p.category])],
             [t('Location', 'Ubicación'), p.location ? tx(p.location) : t('Concept — not a client commission', 'Concepto — no es un encargo de cliente')],
             [t('Scope', 'Alcance'), t('Furniture, FF&E & detailing', 'Mobiliario, FF&E y detalles')],
-            mats.length
-              ? [t('Key materials', 'Materiales clave'), mats.map((m) => tx(m.name)).join(', ')]
-              : [t('Collection', 'Colección'), p.collection ?? 'Runway Furniture'],
+            [t('Collection', 'Colección'), p.collection ?? 'Runway Furniture'],
           ].map(([k, v]) => (
             <div key={k}>
-              <dt className="eyebrow text-mineral/50">{k}</dt>
+              <dt className="eyebrow text-mineral/75">{k}</dt>
               <dd className="mt-3 text-sm leading-relaxed text-bone/85">{v}</dd>
             </div>
           ))}
@@ -85,13 +81,13 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
 
         <div className="mt-20 grid gap-14 lg:grid-cols-12">
           <FadeIn className="lg:col-span-6">
-            <p className="eyebrow text-mineral/50">{t('Concept', 'Concepto')}</p>
+            <p className="eyebrow text-mineral/75">{t('Concept', 'Concepto')}</p>
             <p className="mt-6 font-display text-3xl leading-snug text-bone md:text-4xl">{tx(p.concept)}</p>
           </FadeIn>
           <FadeIn className="lg:col-span-5 lg:col-start-8" delay={0.1}>
-            <p className="eyebrow text-mineral/50">{t('Narrative', 'Narrativa')}</p>
+            <p className="eyebrow text-mineral/75">{t('Narrative', 'Narrativa')}</p>
             <p className="mt-6 leading-relaxed text-bone/70">{tx(p.narrative)}</p>
-            <p className="eyebrow mt-12 text-mineral/50">{t('Furniture', 'Mobiliario')}</p>
+            <p className="eyebrow mt-12 text-mineral/75">{t('Furniture', 'Mobiliario')}</p>
             <ul className="mt-4 divide-y divide-bone/10 border-y border-bone/10">
               {p.furniture.map((f, i) => (
                 <li key={f.en} className="flex items-baseline gap-5 py-3.5 text-sm text-bone/80">
@@ -103,35 +99,15 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
           </FadeIn>
         </div>
 
-        {mats.length > 0 && (
-        <div className="mt-24">
-          <p className="eyebrow text-mineral/50">{t('Material palette', 'Paleta de materiales')}</p>
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {mats.map((m, i) => (
-              <FadeIn key={m.key} delay={i * 0.07}>
-                <img src={textures[m.key]} alt={tx(m.name)} loading="lazy" className="aspect-[4/5] w-full object-cover" />
-                <p className="mt-3 font-display text-xl text-bone">{tx(m.name)}</p>
-                <p className="text-xs text-bone/50">{tx(m.family)}</p>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-        )}
-
         {p.gallery.length > 0 && (
-        <div className="mt-24 grid grid-cols-12 gap-4 md:gap-6">
+        <div className="mt-24 columns-1 gap-4 sm:columns-2 md:gap-6">
           {p.gallery.map((g, i) => (
             <MaskImage
               key={g + i}
               src={g}
               alt={`${p.title} — ${t('gallery image', 'imagen de galería')} ${i + 1}`}
-              className={
-                i === 0
-                  ? 'col-span-12 aspect-[4/5] md:col-span-6'
-                  : i === 1
-                    ? 'col-span-6 aspect-[3/4] md:col-span-4 md:col-start-8 md:mt-40'
-                    : 'col-span-6 aspect-[3/4] md:col-span-4 md:col-start-3 md:-mt-10'
-              }
+              className="mb-4 break-inside-avoid md:mb-6"
+              parallax={0}
               from={i % 2 ? 'left' : 'bottom'}
             />
           ))}
@@ -149,7 +125,7 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
             {t('Discuss a similar project', 'Hablemos de un proyecto similar')}
           </Button>
           <button onClick={() => onNavigate(next)} className="group text-right">
-            <span className="eyebrow text-mineral/50">{t('Next project', 'Siguiente proyecto')}</span>
+            <span className="eyebrow text-mineral/75">{t('Next project', 'Siguiente proyecto')}</span>
             <span className="display mt-2 flex items-center gap-4 text-5xl text-bone transition-colors group-hover:text-gold md:text-7xl">
               {next.title}
               <ArrowRight className="size-8 transition-transform duration-500 group-hover:translate-x-2" strokeWidth={1} />

@@ -1,0 +1,53 @@
+name: Security
+
+on:
+  push:
+    branches: [claude/exciting-mendel-621i1t, main]
+  pull_request:
+  schedule:
+    - cron: '17 6 * * 1' # weekly, catches newly disclosed CVEs
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - name: Static security checks (CSP, secrets, unsafe APIs, headers)
+        run: npm run security:check
+      - name: Dependency audit
+        run: npm audit --audit-level=moderate
+      - name: Secret scan (full git history)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  semgrep:
+    runs-on: ubuntu-latest
+    container: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      - run: semgrep scan --config p/react --config p/typescript --config p/javascript --config p/secrets --metrics=off --error src scripts vite.config.ts index.html
+
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+      - uses: github/codeql-action/analyze@v3

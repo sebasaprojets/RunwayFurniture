@@ -3,11 +3,21 @@ import { useEffect, useState } from 'react'
 export const easeLuxe = [0.22, 1, 0.36, 1] as const
 export const easeCine = [0.76, 0, 0.24, 1] as const
 
+/**
+ * The client wants the full cinematic experience on every device, including Windows/macOS machines
+ * with "reduce animations" turned on. Flip to true to honour the OS setting again.
+ */
+export const RESPECT_REDUCED_MOTION = false
+
+/** gsap.matchMedia query for scroll scenes: every device unless the OS setting is honoured again. */
+export const MOTION_QUERY = RESPECT_REDUCED_MOTION ? '(prefers-reduced-motion: no-preference)' : 'all'
+
 export function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    () => RESPECT_REDUCED_MOTION && typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
   useEffect(() => {
+    if (!RESPECT_REDUCED_MOTION) return
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     const on = () => setReduced(mq.matches)
     mq.addEventListener('change', on)
@@ -26,4 +36,14 @@ export function useMediaQuery(query: string) {
     return () => mq.removeEventListener('change', on)
   }, [query])
   return match
+}
+
+/**
+ * True on phones/tablets (touch, or narrow screens):
+ * scroll stays native and nothing moves with the scroll position, so the page never "swims".
+ */
+export function useCalmScroll() {
+  const reduced = usePrefersReducedMotion()
+  const touch = useMediaQuery('(hover: none), (pointer: coarse), (max-width: 899px)')
+  return reduced || touch
 }
