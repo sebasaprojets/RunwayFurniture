@@ -4,3 +4,6 @@ node_modules
 *.log
 .playwright-mcp/
 .impeccable/live/
+.env
+.env.*
+!.env.example
