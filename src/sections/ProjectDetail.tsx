@@ -100,15 +100,14 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
         </div>
 
         {p.gallery.length > 0 && (
-        <div className="mt-24 columns-1 gap-4 sm:columns-2 md:gap-6">
+        <div className="mt-24 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
           {p.gallery.map((g, i) => (
             <MaskImage
               key={g + i}
               src={g}
               alt={`${p.title} — ${t('gallery image', 'imagen de galería')} ${i + 1}`}
-              className="mb-4 break-inside-avoid md:mb-6"
+              className="aspect-[4/3]"
               parallax={0}
-              from={i % 2 ? 'left' : 'bottom'}
             />
           ))}
         </div>

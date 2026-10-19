@@ -22,7 +22,7 @@ const clips = {
 }
 
 /** Image revealed by an architectural clip-path wipe, with a gentle scroll parallax inside the frame. */
-export function MaskImage({ src, alt, className = '', imgClassName = '', from = 'bottom', parallax = 8, delay = 0, priority }: Props) {
+export function MaskImage({ src, alt, className = '', imgClassName = '', from = 'bottom', parallax = 5, delay = 0, priority }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const calm = useCalmScroll()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })

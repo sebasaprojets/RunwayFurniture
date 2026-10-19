@@ -149,10 +149,10 @@ export function OutdoorKitchens() {
             </div>
           </FadeIn>
         </div>
-        <div className="mt-16 grid grid-cols-2 gap-4 md:mt-24 md:grid-cols-12 md:gap-6">
-          <MaskImage src={a.garden} alt={t('Ardente kitchen in a garden', 'Cocina Ardente en un jardín')} className="col-span-2 aspect-[3/2] md:col-span-7" from="left" />
-          <MaskImage src={a.detail} alt={t('Ardente worktop detail', 'Detalle de la cubierta Ardente')} className="aspect-[3/4] md:col-span-5 md:aspect-auto" from="bottom" delay={0.1} />
-          <MaskImage src={a.garden2} alt={t('Ardente under garden lights', 'Ardente bajo luces de jardín')} className="aspect-[3/4] md:col-span-5 md:col-start-3 md:mt-6 md:aspect-[3/2]" from="top" delay={0.15} />
+        <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-3 md:mt-24 md:gap-6">
+          <MaskImage src={a.garden} alt={t('Ardente kitchen in a garden', 'Cocina Ardente en un jardín')} className="aspect-[4/3]" />
+          <MaskImage src={a.detail} alt={t('Ardente worktop detail', 'Detalle de la cubierta Ardente')} className="aspect-[4/3]" delay={0.1} />
+          <MaskImage src={a.garden2} alt={t('Ardente under garden lights', 'Ardente bajo luces de jardín')} className="aspect-[4/3]" delay={0.2} />
         </div>
       </div>
 
@@ -171,7 +171,7 @@ export function OutdoorKitchens() {
         </div>
         <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-6">
           {kitchens.lines.map((l, i) => (
-            <FadeIn key={l.name} delay={i * 0.08} className={i === 1 ? 'md:mt-16' : ''}>
+            <FadeIn key={l.name} delay={i * 0.08}>
               <div className="aspect-[4/3] overflow-hidden bg-graphite">
                 <img src={thumb(l.image)} alt={`Q ${l.name}`} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-luxe)] hover:scale-105" />
               </div>

@@ -94,7 +94,7 @@
     animation: grain 1.2s steps(6) infinite;
   }
   .grade {
-    filter: saturate(0.82) contrast(1.06) sepia(0.08);
+    filter: saturate(0.94) contrast(1.04) sepia(0.03);
   }
   .grid-lines {
     background-image:

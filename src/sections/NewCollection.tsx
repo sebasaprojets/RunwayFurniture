@@ -112,7 +112,7 @@ function PieceSheet({ index, onClose, onStep }: { index: number; onClose: () => 
 function Card({ piece, i, onOpen }: { piece: Piece; i: number; onOpen: () => void }) {
   const { t, tx } = useLang()
   return (
-    <FadeIn delay={(i % 5) * 0.06} className={i % 5 === 1 || i % 5 === 3 ? 'xl:mt-20' : ''}>
+    <FadeIn delay={(i % 5) * 0.06}>
       <button onClick={onOpen} className="group block w-full text-left" aria-label={`${piece.name} ${tx(piece.type)} — ${t('view details', 'ver ficha')}`}>
         <div className={`relative aspect-[5/7] overflow-hidden ${piece.dark ? 'bg-ink' : 'bg-[#ecebe8]'}`}>
           <img
@@ -178,10 +178,10 @@ export function NewCollection() {
           </div>
         </div>
 
-        <div className="mt-20 grid grid-cols-2 gap-4 md:mt-28 md:grid-cols-12 md:gap-6">
-          <MaskImage src={img.beach} alt={t('Bouffi sofa set on the sand', 'Sofás Bouffi sobre la arena')} className="col-span-2 aspect-[16/10] md:col-span-7" from="left" />
-          <MaskImage src={img.window} alt={t('Chairs facing a desert through a broken wall', 'Sillas frente al desierto a través de un muro')} className="aspect-[4/5] md:col-span-3 md:mt-24" from="bottom" delay={0.1} />
-          <MaskImage src={img.dune} alt={t('Teak chair in the dunes', 'Silla de teca en las dunas')} className="aspect-[4/5] md:col-span-2 md:-mt-12" from="top" delay={0.2} />
+        <div className="mt-20 grid grid-cols-1 gap-4 sm:grid-cols-3 md:mt-28 md:gap-6">
+          <MaskImage src={img.beach} alt={t('Bouffi sofa set on the sand', 'Sofás Bouffi sobre la arena')} className="aspect-[4/5]" />
+          <MaskImage src={img.window} alt={t('Chairs facing a desert through a broken wall', 'Sillas frente al desierto a través de un muro')} className="aspect-[4/5]" delay={0.1} />
+          <MaskImage src={img.forest} alt={t('Gazebo among the trees', 'Pérgola entre los árboles')} className="aspect-[4/5]" delay={0.2} />
         </div>
 
         {/* New 2026 */}
