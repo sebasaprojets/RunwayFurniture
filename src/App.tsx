@@ -20,6 +20,9 @@ import { Hospitality } from './sections/Hospitality'
 import { ProjectDetail } from './sections/ProjectDetail'
 import { Projects } from './sections/Projects'
 import { Statement } from './sections/Statement'
+import { SignatureHotels } from './sections/SignatureHotels'
+import { NewCollection } from './sections/NewCollection'
+import { OutdoorKitchens } from './sections/OutdoorKitchens'
 import { useLang } from './i18n'
 
 const fromHash = () => {
@@ -82,7 +85,10 @@ export default function App() {
         <CinemaReveal />
         <Projects onOpen={open} />
         <Hospitality />
+        <SignatureHotels />
         <Collections />
+        <NewCollection />
+        <OutdoorKitchens />
         <Founder />
         <FounderFilm />
         <Films />

@@ -1,6 +1,9 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { brand, navItems } from '../data/site'
+
+/** The few sections linked straight from the header; the full list lives in the menu. */
+const HEADER_LINKS = ['#projects', '#hotels', '#collections', '#kitchens', '#founder']
 import { langs, useLang } from '../i18n'
 import { easeCine, easeLuxe } from '../lib/motion'
 import { lockScroll, scrollToTarget } from '../lib/scroll'
@@ -73,7 +76,7 @@ export function Navigation({ ready }: { ready: boolean }) {
             <Logo />
           </a>
           <nav aria-label={t('Primary', 'Principal')} className={`hidden items-center gap-9 transition-opacity duration-500 lg:flex ${open ? "pointer-events-none opacity-0" : ""}`}>
-            {navItems.slice(0, 5).map((n) => (
+            {navItems.filter((n) => HEADER_LINKS.includes(n.href)).map((n) => (
               <a
                 key={n.href + n.label.en}
                 href={n.href}

@@ -6,7 +6,7 @@ import type { T } from '../i18n'
 
 /** Photography supplied by Runway (company profile, Vondom residential book, Kenkoon catalogue). */
 const realFiles = import.meta.glob<string>('../assets/img/real/*.jpg', { eager: true, import: 'default' })
-const real = (name: string) => {
+export const real = (name: string) => {
   const url = realFiles[`../assets/img/real/${name}.jpg`]
   if (!url) throw new Error(`Missing image: ${name}`)
   return url
@@ -99,7 +99,10 @@ export const films = [
 export const navItems = [
   { label: { en: 'Projects', es: 'Proyectos' }, href: '#projects', image: real('sardinera-1') },
   { label: { en: 'Hospitality', es: 'Hotelería' }, href: '#hospitality', image: real('gansevoort-pool') },
+  { label: { en: 'Hotels', es: 'Hoteles' }, href: '#hotels', image: real('hotel-st-regis-maldives') },
   { label: { en: 'Collections', es: 'Colecciones' }, href: '#collections', image: real('kenkoon-mesh-sunset') },
+  { label: { en: 'New 2026', es: 'Novedades 2026' }, href: '#new-2026', image: real('new26-flamingo-chair') },
+  { label: { en: 'Kitchens', es: 'Cocinas' }, href: '#kitchens', image: real('qrua-ardente-red') },
   { label: { en: 'Clients', es: 'Clientes' }, href: '#clients', image: real('beachclub-pool') },
   { label: { en: 'About', es: 'Nosotros' }, href: '#founder', image: founderStanding },
   { label: { en: 'Contact', es: 'Contacto' }, href: '#contact', image: real('lounge-sunset') },

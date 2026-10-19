@@ -59,6 +59,12 @@
 }
 
 @layer components {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
   .eyebrow {
     font-family: var(--font-sans);
     font-size: 0.6875rem;

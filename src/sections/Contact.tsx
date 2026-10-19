@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Button } from '../components/Button'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
@@ -11,6 +11,19 @@ export function Contact() {
   const { t, tx } = useLang()
   const [sent, setSent] = useState(false)
   const [errors, setErrors] = useState<Partial<Record<Field, string>>>({})
+  const [prefill, setPrefill] = useState('')
+
+  // "Request a quote" on a piece starts the message for the visitor.
+  useEffect(() => {
+    const on = (e: Event) => {
+      const piece = String((e as CustomEvent).detail ?? '').slice(0, 120)
+      if (!piece) return
+      setPrefill(t(`I would like a quote for: ${piece}.\n\n`, `Me gustaría cotizar: ${piece}.\n\n`))
+      setSent(false)
+    }
+    window.addEventListener('contact:prefill', on)
+    return () => window.removeEventListener('contact:prefill', on)
+  }, [t])
 
   // No backend yet: the enquiry is composed into the visitor's email client.
   const submit = (e: FormEvent<HTMLFormElement>) => {
@@ -123,7 +136,7 @@ export function Contact() {
                 </div>
               </fieldset>
               <div className="relative sm:col-span-2">
-                <textarea id="message" name="message" required maxLength={4000} rows={4} placeholder="Message" className={`${field} resize-none`} {...aria('message')} />
+                <textarea key={prefill} defaultValue={prefill} id="message" name="message" required maxLength={4000} rows={4} placeholder="Message" className={`${field} resize-none`} {...aria('message')} />
                 <label htmlFor="message" className={lbl}>{t('Tell us about your project *', 'Cuéntanos sobre tu proyecto *')}</label>
                 {err('message')}
               </div>

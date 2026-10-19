@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
+import { hotelCountries, hotels } from '../data/signature'
 import { brand } from '../data/site'
 import { useLang } from '../i18n'
 import { usePrefersReducedMotion } from '../lib/motion'
@@ -100,6 +101,21 @@ function Globe() {
       ctx.lineWidth = Math.max(1.5, w / 500)
       line(arc, 'rgba(185,84,61,.85)')
 
+      // signature hotels: small pulsing points
+      const pulse = 0.5 + 0.5 * Math.sin(rot * 0.35)
+      for (const ht of hotels) {
+        const p = project(ht.lat, ht.lon, R, cx, cy)
+        if (p.z < 0.05) continue
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, R * 0.009, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(242,240,234,.75)'
+        ctx.fill()
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, R * (0.016 + pulse * 0.012), 0, Math.PI * 2)
+        ctx.strokeStyle = `rgba(242,240,234,${0.35 - pulse * 0.25})`
+        ctx.stroke()
+      }
+
       for (const o of brand.offices) {
         const p = project(o.lat, o.lon, R, cx, cy)
         if (p.z < 0) continue
@@ -139,7 +155,7 @@ function Globe() {
     }
   }, [reduced, tx])
 
-  return <canvas ref={ref} className="aspect-square w-full" role="img" aria-label={t('Globe showing Runway studios in Montreal and Singapore', 'Globo con los estudios de Runway en Montreal y Singapur')} />
+  return <canvas ref={ref} className="aspect-square w-full" role="img" aria-label={t('Globe showing Runway studios in Montreal and Singapore and the signature hotels', 'Globo con los estudios de Runway en Montreal y Singapur y los hoteles emblemáticos')} />
 }
 
 export function Global() {
@@ -157,6 +173,10 @@ export function Global() {
                 </li>
               ))}
             </ul>
+            <p className="mt-8 flex items-center gap-4 text-sm text-bone/60">
+              <span className="inline-block size-2 rounded-full bg-gold" /> {t('Studios', 'Estudios')}
+              <span className="ml-4 inline-block size-2 rounded-full bg-bone/75" /> {t(`Signature hotels · ${hotels.length} shown, 50+ in ${hotelCountries} countries`, `Hoteles emblemáticos · ${hotels.length} en el mapa, más de 50 en ${hotelCountries} países`)}
+            </p>
           </FadeIn>
         </div>
         <div className="lg:col-span-6 lg:col-start-7">
