@@ -110,7 +110,7 @@ export function WaterCanvas({ still = false, className = '' }: { still?: boolean
 
     // Render below native resolution — water is soft, and this keeps mobile GPUs cool.
     const resize = () => {
-      const scale = Math.min(window.devicePixelRatio, 1.5) * (window.innerWidth < 768 ? 0.55 : 0.7)
+      const scale = window.innerWidth < 768 ? 0.45 : 0.5
       canvas.width = Math.max(1, Math.floor(canvas.clientWidth * scale))
       canvas.height = Math.max(1, Math.floor(canvas.clientHeight * scale))
       gl.viewport(0, 0, canvas.width, canvas.height)
@@ -128,14 +128,18 @@ export function WaterCanvas({ still = false, className = '' }: { still?: boolean
     let raf = 0
     let visible = true
     const start = performance.now() - 40000
+    // ~30 fps is plenty for slow water and halves the GPU load on modest laptops
+    let last = 0
     const draw = (now: number) => {
+      if (!still && visible) raf = requestAnimationFrame(draw)
+      if (now - last < 32 && !still) return
+      last = now
       mouse.x += (mouse.tx - mouse.x) * 0.03
       mouse.y += (mouse.ty - mouse.y) * 0.03
       gl.uniform2f(uR, canvas.width, canvas.height)
       gl.uniform1f(uT, (now - start) / 1000)
       gl.uniform2f(uM, mouse.x, mouse.y)
       gl.drawArrays(gl.TRIANGLES, 0, 3)
-      if (!still && visible) raf = requestAnimationFrame(draw)
     }
     raf = requestAnimationFrame(draw)
 
@@ -145,10 +149,16 @@ export function WaterCanvas({ still = false, className = '' }: { still?: boolean
       if (visible) raf = requestAnimationFrame(draw)
     })
     io.observe(canvas)
+    const onVis = () => {
+      cancelAnimationFrame(raf)
+      if (!document.hidden && visible) raf = requestAnimationFrame(draw)
+    }
+    document.addEventListener('visibilitychange', onVis)
 
     return () => {
       cancelAnimationFrame(raf)
       io.disconnect()
+      document.removeEventListener('visibilitychange', onVis)
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', onMove)
       gl.getExtension('WEBGL_lose_context')?.loseContext()

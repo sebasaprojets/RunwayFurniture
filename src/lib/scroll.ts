@@ -9,7 +9,7 @@ let lenis: Lenis | null = null
 /** Smooth scrolling wired into GSAP's ticker. Skipped entirely for reduced-motion users. */
 export function initSmoothScroll(reduced: boolean) {
   if (reduced || lenis) return () => {}
-  lenis = new Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) })
+  lenis = new Lenis({ lerp: 0.12 })
   lenis.on('scroll', ScrollTrigger.update)
   const tick = (time: number) => lenis?.raf(time * 1000)
   gsap.ticker.add(tick)

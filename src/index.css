@@ -91,10 +91,9 @@
     height: 200%;
     opacity: 0.07;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    animation: grain 1.2s steps(6) infinite;
   }
+  /* kept as a hook; a live CSS filter on moving photos forced a repaint every frame */
   .grade {
-    filter: saturate(0.94) contrast(1.04) sepia(0.03);
   }
   .grid-lines {
     background-image:

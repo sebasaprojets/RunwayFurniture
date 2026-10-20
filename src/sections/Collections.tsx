@@ -108,6 +108,7 @@ export function Collections() {
                 src={src}
                 alt={`${t('Runway interior collection — piece', 'Colección interior Runway — pieza')} ${i + 1}`}
                 className="aspect-[4/3]"
+                sizes="(min-width: 640px) 33vw, 100vw"
                 from="bottom"
                 delay={i * 0.08}
               />

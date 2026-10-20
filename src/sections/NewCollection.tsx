@@ -179,9 +179,9 @@ export function NewCollection() {
         </div>
 
         <div className="mt-20 grid grid-cols-1 gap-4 sm:grid-cols-3 md:mt-28 md:gap-6">
-          <MaskImage src={img.beach} alt={t('Bouffi sofa set on the sand', 'Sofás Bouffi sobre la arena')} className="aspect-[4/5]" />
-          <MaskImage src={img.window} alt={t('Chairs facing a desert through a broken wall', 'Sillas frente al desierto a través de un muro')} className="aspect-[4/5]" delay={0.1} />
-          <MaskImage src={img.forest} alt={t('Gazebo among the trees', 'Pérgola entre los árboles')} className="aspect-[4/5]" delay={0.2} />
+          <MaskImage src={img.beach} alt={t('Bouffi sofa set on the sand', 'Sofás Bouffi sobre la arena')} className="aspect-[4/5]" sizes="(min-width: 640px) 33vw, 100vw" />
+          <MaskImage src={img.window} alt={t('Chairs facing a desert through a broken wall', 'Sillas frente al desierto a través de un muro')} className="aspect-[4/5]" sizes="(min-width: 640px) 33vw, 100vw" delay={0.1} />
+          <MaskImage src={img.forest} alt={t('Gazebo among the trees', 'Pérgola entre los árboles')} className="aspect-[4/5]" sizes="(min-width: 640px) 33vw, 100vw" delay={0.2} />
         </div>
 
         {/* New 2026 */}

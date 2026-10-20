@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
-import { hospitalityScenes } from '../data/site'
+import { hospitalityScenes, thumb } from '../data/site'
 import { useLang } from '../i18n'
 import { gsap } from '../lib/scroll'
 import { scrollToTarget } from '../lib/scroll'
@@ -109,6 +109,8 @@ export function Hospitality() {
               <img
                 data-pan
                 src={s.image}
+                srcSet={`${thumb(s.image)} 1280w, ${s.image} 2000w`}
+                sizes="(min-width: 900px) 55vw, 100vw"
                 alt={`${tx(s.title)}: ${tx(s.caption)}`}
                 loading="lazy"
                 decoding="async"

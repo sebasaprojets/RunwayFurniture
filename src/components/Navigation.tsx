@@ -61,7 +61,7 @@ export function Navigation({ ready }: { ready: boolean }) {
       >
         <div
           className={`mx-auto flex items-center justify-between px-5 transition-all duration-700 md:px-10 ${
-            scrolled && !open ? 'bg-ink/70 py-4 backdrop-blur-md' : 'py-6 md:py-8'
+            scrolled && !open ? 'bg-ink/92 py-4' : 'py-6 md:py-8'
           }`}
         >
           <a

@@ -150,9 +150,9 @@ export function OutdoorKitchens() {
           </FadeIn>
         </div>
         <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-3 md:mt-24 md:gap-6">
-          <MaskImage src={a.garden} alt={t('Ardente kitchen in a garden', 'Cocina Ardente en un jardín')} className="aspect-[4/3]" />
-          <MaskImage src={a.detail} alt={t('Ardente worktop detail', 'Detalle de la cubierta Ardente')} className="aspect-[4/3]" delay={0.1} />
-          <MaskImage src={a.garden2} alt={t('Ardente under garden lights', 'Ardente bajo luces de jardín')} className="aspect-[4/3]" delay={0.2} />
+          <MaskImage src={a.garden} alt={t('Ardente kitchen in a garden', 'Cocina Ardente en un jardín')} className="aspect-[4/3]" sizes="(min-width: 640px) 33vw, 100vw" />
+          <MaskImage src={a.detail} alt={t('Ardente worktop detail', 'Detalle de la cubierta Ardente')} className="aspect-[4/3]" sizes="(min-width: 640px) 33vw, 100vw" delay={0.1} />
+          <MaskImage src={a.garden2} alt={t('Ardente under garden lights', 'Ardente bajo luces de jardín')} className="aspect-[4/3]" sizes="(min-width: 640px) 33vw, 100vw" delay={0.2} />
         </div>
       </div>
 

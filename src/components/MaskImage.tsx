@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
+import { thumb } from '../data/site'
 import { easeCine, useCalmScroll } from '../lib/motion'
 
 type Props = {
@@ -12,6 +13,8 @@ type Props = {
   parallax?: number
   delay?: number
   priority?: boolean
+  /** Rendered width hint so the browser can pick the lighter file. */
+  sizes?: string
 }
 
 const clips = {
@@ -22,7 +25,7 @@ const clips = {
 }
 
 /** Image revealed by an architectural clip-path wipe, with a gentle scroll parallax inside the frame. */
-export function MaskImage({ src, alt, className = '', imgClassName = '', from = 'bottom', parallax = 5, delay = 0, priority }: Props) {
+export function MaskImage({ src, alt, className = '', imgClassName = '', from = 'bottom', parallax = 5, delay = 0, priority, sizes = '(min-width: 640px) 50vw, 100vw' }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const calm = useCalmScroll()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
@@ -38,6 +41,8 @@ export function MaskImage({ src, alt, className = '', imgClassName = '', from = 
     >
       <motion.img
         src={src}
+        srcSet={thumb(src) === src ? undefined : `${thumb(src)} 1280w, ${src} 2000w`}
+        sizes={sizes}
         alt={alt}
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
