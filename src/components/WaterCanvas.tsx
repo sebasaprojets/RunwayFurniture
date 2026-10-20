@@ -110,7 +110,7 @@ export function WaterCanvas({ still = false, className = '' }: { still?: boolean
 
     // Render below native resolution — water is soft, and this keeps mobile GPUs cool.
     const resize = () => {
-      const scale = window.innerWidth < 768 ? 0.45 : 0.5
+      const scale = Math.min(window.devicePixelRatio, 1.5) * (window.innerWidth < 768 ? 0.55 : 0.7)
       canvas.width = Math.max(1, Math.floor(canvas.clientWidth * scale))
       canvas.height = Math.max(1, Math.floor(canvas.clientHeight * scale))
       gl.viewport(0, 0, canvas.width, canvas.height)
