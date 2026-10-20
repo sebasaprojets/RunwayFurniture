@@ -15,7 +15,7 @@ function ArdenteScene() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] })
   const clip = useTransform(p, [0, 0.6], ['inset(18% 22% 18% 22%)', 'inset(0% 0% 0% 0%)'])
-  const scale = useTransform(p, [0, 0.6], [1.25, 1])
+  const scale = useTransform(p, [0, 0.6], [1.12, 1])
   const titleY = useTransform(p, [0.25, 0.7], ['40%', '0%'])
   const titleO = useTransform(p, [0.3, 0.65], [0, 1])
   const introO = useTransform(p, [0, 0.25], [1, 0])
