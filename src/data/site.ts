@@ -433,7 +433,7 @@ export const projects: Project[] = [
       { en: 'Garden accents', es: 'Accesorios de jardín' },
     ],
     cover: real('beverly-2'),
-    gallery: [real('beverly-1'), real('beverly-0')],
+    gallery: [real('beverly-1')],
     isConcept: false,
   },
   {
@@ -517,7 +517,7 @@ export const projects: Project[] = [
       { en: 'Planters', es: 'Maceteros' },
     ],
     cover: real('herrero-1'),
-    gallery: [real('herrero-2'), real('herrero-3'), real('herrero-0')],
+    gallery: [real('herrero-2'), real('herrero-3')],
     isConcept: false,
   },
   {
@@ -545,7 +545,7 @@ export const projects: Project[] = [
       { en: 'Parasols', es: 'Sombrillas' },
     ],
     cover: real('vitacura-1'),
-    gallery: [real('vitacura-2'), real('vitacura-0')],
+    gallery: [real('vitacura-2')],
     isConcept: false,
   },
   {
@@ -601,7 +601,7 @@ export const projects: Project[] = [
       { en: 'Side tables', es: 'Mesas auxiliares' },
     ],
     cover: real('ibiza-1'),
-    gallery: [real('ibiza-0')],
+    gallery: [],
     isConcept: false,
   },
   {
@@ -629,7 +629,7 @@ export const projects: Project[] = [
       { en: 'Side tables', es: 'Mesas auxiliares' },
     ],
     cover: real('noches-1'),
-    gallery: [real('noches-2'), real('noches-0')],
+    gallery: [real('noches-2')],
     isConcept: false,
   },
   {
