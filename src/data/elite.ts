@@ -1,6 +1,7 @@
 import tablas0 from '../assets/img/real/elite-tablas-0.jpg'
 import tablas1 from '../assets/img/real/elite-tablas-1.jpg'
 import tablas2 from '../assets/img/real/elite-tablas-2.jpg'
+import tablasCover from '../assets/img/real/elite-tablas-cover.jpg'
 import type { T } from '../i18n'
 
 /** Palm fronds radiating from a crown point; reused by several drawings. */
@@ -21,7 +22,8 @@ export type Media = { kind: 'image'; src: string } | { kind: 'video'; src: strin
 export type Listing = { name: T; location: T; cover: string; media: Media[]; details?: T; price?: string }
 
 const film = (name: string): Media => ({ kind: 'video', src: `./media/elite/${name}.mp4`, poster: `./media/elite/${name}.jpg` })
-const poster = (name: string) => `./media/elite/${name}.jpg`
+/** Card cover: the film's frame cropped to 4:5 below the caption burned into the video. */
+const poster = (name: string) => `./media/elite/${name}-cover.jpg`
 
 export type EliteKind = { key: string; title: T; text: T; drawing: Drawing; listings: Listing[] }
 
@@ -128,7 +130,7 @@ export const eliteKinds: EliteKind[] = [
           en: 'A boutique hotel on a private island sanctuary: beach club by Mikasa Japanese & Nikkei cuisine, signature spa and 360° ocean views. Owned and operated by Runway Furniture.',
           es: 'Un hotel boutique en un santuario de isla privada: beach club de cocina japonesa y nikkei Mikasa, spa exclusivo y vistas de 360° al océano. Propiedad y operación de Runway Furniture.',
         },
-        cover: tablas0,
+        cover: tablasCover,
         media: [film('island-tablas'), { kind: 'image', src: tablas0 }, { kind: 'image', src: tablas1 }, { kind: 'image', src: tablas2 }],
       },
     ],

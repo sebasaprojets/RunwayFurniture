@@ -227,49 +227,18 @@ function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
         </div>
 
         {kind.listings.length > 0 ? (
-          <ul className="mt-14 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 md:mt-20 lg:grid-cols-3">
+          <ul className={`mt-14 grid gap-x-8 gap-y-20 border-t border-bone/10 pt-14 md:mt-20 md:pt-20 ${kind.listings.length > 1 ? 'sm:grid-cols-2 lg:grid-cols-3' : ''}`}>
             {kind.listings.map((l, i) => (
-              <motion.li
+              <ListingCard
                 key={l.name.en}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.9, ease: easeLuxe, delay: 0.5 + i * 0.08 }}
-                className="group flex flex-col"
-              >
-                <button
-                  onClick={() => setView(l)}
-                  className="relative block aspect-[4/5] overflow-hidden bg-smoke text-left"
-                  aria-label={`${tx(l.name)} — ${t('view photos and films', 'ver fotos y videos')}`}
-                >
-                  <img
-                    src={thumb(l.cover)}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.04]"
-                  />
-                  <span className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
-                  <span className="absolute bottom-4 left-4 flex items-center gap-3 text-[0.6875rem] font-semibold tracking-[0.24em] text-bone uppercase">
-                    <span className="grid size-10 place-items-center rounded-full border border-bone/40 bg-ink/40 backdrop-blur transition-colors duration-500 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
-                      <Play className="ml-0.5 size-3.5" strokeWidth={1.5} />
-                    </span>
-                    {count(l)}
-                  </span>
-                </button>
-                <div className="mt-5 flex items-baseline justify-between gap-4 border-t border-bone/10 pt-4">
-                  <h4 className="font-display text-3xl text-bone">{tx(l.name)}</h4>
-                  {l.price && <span className="shrink-0 text-sm text-gold">{l.price}</span>}
-                </div>
-                <p className="eyebrow mt-2 text-mineral/60">{tx(l.location)}</p>
-                {l.details && <p className="mt-3 text-sm leading-relaxed text-bone/55">{tx(l.details)}</p>}
-                <button
-                  onClick={() => ask(`${tx(l.name)} (${tx(l.location)})`)}
-                  className="mt-5 flex items-center gap-3 self-start text-[0.6875rem] font-semibold tracking-[0.24em] text-gold uppercase"
-                >
-                  {t('Request information', 'Solicitar información')}
-                  <ArrowUpRight className="size-4" strokeWidth={1.5} />
-                </button>
-              </motion.li>
+                listing={l}
+                index={i}
+                total={kind.listings.length}
+                feature={kind.listings.length === 1}
+                count={count(l)}
+                onView={() => setView(l)}
+                onAsk={() => ask(`${tx(l.name)} (${tx(l.location)})`)}
+              />
             ))}
           </ul>
         ) : (
@@ -304,6 +273,105 @@ function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
         {view && <Viewer key={view.name.en} listing={view} onClose={() => setView(null)} onAsk={() => ask(`${tx(view.name)} (${tx(view.location)})`)} />}
       </AnimatePresence>
     </motion.div>
+  )
+}
+
+/**
+ * One property: its cover, and on devices with a pointer a muted preview of the
+ * first film plays while hovering. A category with a single property shows it
+ * as a feature, image beside the text.
+ */
+function ListingCard({
+  listing: l,
+  index,
+  total,
+  feature,
+  count,
+  onView,
+  onAsk,
+}: {
+  listing: Listing
+  index: number
+  total: number
+  feature: boolean
+  count: string
+  onView: () => void
+  onAsk: () => void
+}) {
+  const { t, tx } = useLang()
+  const [hover, setHover] = useState(false)
+  const film = l.media.find((m) => m.kind === 'video')
+  const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches
+  const no = `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`
+
+  return (
+    <motion.li
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, ease: easeLuxe, delay: 0.5 + index * 0.1 }}
+      className={`group ${feature ? 'grid items-center gap-10 md:grid-cols-12 md:gap-14' : 'flex flex-col'}`}
+    >
+      <button
+        onClick={onView}
+        onPointerEnter={() => canHover && setHover(true)}
+        onPointerLeave={() => setHover(false)}
+        className={`relative block aspect-[4/5] overflow-hidden bg-smoke text-left ${feature ? 'md:col-span-6 lg:col-span-5' : ''}`}
+        aria-label={`${tx(l.name)} — ${t('view photos and films', 'ver fotos y videos')}`}
+      >
+        <img
+          src={thumb(l.cover)}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover transition-transform duration-[1.6s] ease-[var(--ease-luxe)] group-hover:scale-[1.05]"
+        />
+        {film && film.kind === 'video' && hover && (
+          <motion.video
+            src={film.src}
+            poster={film.poster}
+            autoPlay
+            muted
+            loop
+            playsInline
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
+        <span className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/0 to-ink/20" />
+        {total > 1 && <span className="absolute top-4 left-4 rounded-full bg-ink/50 px-2.5 py-1 font-sans text-[0.65rem] tracking-[0.15em] text-bone/90 backdrop-blur">{no}</span>}
+        <span className="absolute right-4 bottom-4 left-4 flex items-center justify-between gap-3 text-[0.6875rem] font-semibold tracking-[0.24em] text-bone uppercase">
+          <span>{count}</span>
+          <span className="grid size-11 place-items-center rounded-full border border-bone/40 bg-ink/40 backdrop-blur transition-colors duration-500 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
+            <Play className="ml-0.5 size-3.5" strokeWidth={1.5} />
+          </span>
+        </span>
+      </button>
+
+      <div className={feature ? 'md:col-span-6 lg:col-span-6 lg:col-start-7' : 'mt-6'}>
+        <p className="eyebrow text-gold/80">{tx(l.location)}</p>
+        <div className="mt-3 flex items-baseline justify-between gap-4">
+          <h4 className={`font-display text-bone ${feature ? 'text-5xl leading-[1.05] md:text-6xl' : 'text-3xl'}`}>{tx(l.name)}</h4>
+          {l.price && <span className="shrink-0 text-sm text-gold">{l.price}</span>}
+        </div>
+        {l.details && <p className={`mt-4 leading-relaxed text-bone/60 ${feature ? 'max-w-lg text-base' : 'text-sm'}`}>{tx(l.details)}</p>}
+        <div className={`flex flex-wrap items-center gap-x-8 gap-y-4 ${feature ? 'mt-10' : 'mt-6 border-t border-bone/10 pt-5'}`}>
+          {feature ? (
+            <Button onClick={onAsk}>{t('Request information', 'Solicitar información')}</Button>
+          ) : (
+            <button onClick={onAsk} className="flex items-center gap-3 text-[0.6875rem] font-semibold tracking-[0.24em] text-gold uppercase">
+              {t('Request information', 'Solicitar información')}
+              <ArrowUpRight className="size-4" strokeWidth={1.5} />
+            </button>
+          )}
+          <button onClick={onView} className="flex items-center gap-3 text-[0.6875rem] font-semibold tracking-[0.24em] text-bone/70 uppercase transition-colors hover:text-gold">
+            {t('Photos & films', 'Fotos y videos')}
+            <ArrowRight className="size-4" strokeWidth={1.5} />
+          </button>
+        </div>
+      </div>
+    </motion.li>
   )
 }
 
