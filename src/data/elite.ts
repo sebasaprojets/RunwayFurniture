@@ -11,7 +11,12 @@ const circle = (x: number, y: number, r: number) => `M${x - r} ${y}a${r} ${r} 0 
  */
 export type Drawing = { lines: string[]; water?: string[] }
 
-export const eliteKinds: { key: string; title: T; text: T; drawing: Drawing }[] = [
+/** A property for sale. Photos are added as they arrive from the owner. */
+export type Listing = { name: string; location: T; image: string; details?: T; price?: string }
+
+export type EliteKind = { key: string; title: T; text: T; drawing: Drawing; listings: Listing[] }
+
+export const eliteKinds: EliteKind[] = [
   {
     key: 'hotels',
     title: { en: 'Hotels', es: 'Hoteles' },
@@ -32,6 +37,7 @@ export const eliteKinds: { key: string; title: T; text: T; drawing: Drawing }[] 
         fronds(42, 92),
       ],
     },
+    listings: [],
   },
   {
     key: 'land',
@@ -51,6 +57,7 @@ export const eliteKinds: { key: string; title: T; text: T; drawing: Drawing }[] 
         'M150 50q4 -4 8 0q4 -4 8 0M172 40q3 -3 6 0q3 -3 6 0',
       ],
     },
+    listings: [],
   },
   {
     key: 'islands',
@@ -72,6 +79,7 @@ export const eliteKinds: { key: string; title: T; text: T; drawing: Drawing }[] 
       ],
       water: ['M10 131H230', 'M28 140H118M138 140H212', 'M52 149H180'],
     },
+    listings: [],
   },
   {
     key: 'condos',
@@ -92,6 +100,7 @@ export const eliteKinds: { key: string; title: T; text: T; drawing: Drawing }[] 
         circle(18, 122, 6),
       ],
     },
+    listings: [],
   },
   {
     key: 'villas',
@@ -114,6 +123,7 @@ export const eliteKinds: { key: string; title: T; text: T; drawing: Drawing }[] 
       ],
       water: ['M75 126H105M120 126H162', 'M88 130H140'],
     },
+    listings: [],
   },
 ]
 

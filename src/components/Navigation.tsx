@@ -156,7 +156,7 @@ export function Navigation({ ready }: { ready: boolean }) {
             <div className="relative flex h-full flex-col justify-between gap-10 overflow-y-auto overscroll-contain px-5 pt-28 pb-8 md:px-10 md:pt-32">
               <ul className="flex flex-col">
                 {navItems.map((n, i) => (
-                  <li key={n.label.en} className="overflow-hidden">
+                  <li key={n.label.en} className={`overflow-hidden ${n.feature ? 'mb-3 border-b border-bone/10 pb-4 md:mb-4 md:pb-5' : ''}`}>
                     <motion.a
                       href={n.href}
                       onClick={(e) => {
@@ -172,12 +172,20 @@ export function Navigation({ ready }: { ready: boolean }) {
                       className="group flex items-baseline gap-5 py-1 md:gap-8"
                     >
                       <span className="w-8 shrink-0 font-sans text-xs text-gold/80">{String(i + 1).padStart(2, '0')}</span>
-                      <span
-                        className={`display min-w-0 pr-4 text-[clamp(2.25rem,min(12vw,7.6vh),5.75rem)] transition-all duration-700 ${n.href === '#elite' ? 'leading-[1.08]' : ''} ${
-                          hovered === i ? 'translate-x-3 text-bone italic' : 'text-bone/70'
-                        }`}
-                      >
-                        {tx(n.label)}
+                      <span className="flex min-w-0 flex-col">
+                        {n.feature && (
+                          <span className="eyebrow mb-2 flex items-center gap-3 pt-2 text-gold">
+                            <span className="h-px w-6 bg-gold/60" />
+                            {n.feature.kicker}
+                          </span>
+                        )}
+                        <span
+                          className={`display pr-4 text-[clamp(2rem,min(11vw,6.6vh),5.75rem)] transition-all duration-700 ${n.feature ? 'leading-[1.02]' : ''} ${
+                            hovered === i ? 'translate-x-3 text-bone italic' : 'text-bone/70'
+                          }`}
+                        >
+                          {n.feature ? n.feature.title : tx(n.label)}
+                        </span>
                       </span>
                     </motion.a>
                   </li>

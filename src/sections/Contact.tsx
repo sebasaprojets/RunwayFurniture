@@ -16,9 +16,16 @@ export function Contact() {
   // "Request a quote" on a piece starts the message for the visitor.
   useEffect(() => {
     const on = (e: Event) => {
-      const piece = String((e as CustomEvent).detail ?? '').slice(0, 120)
+      const d = (e as CustomEvent).detail
+      // a property enquiry asks for information rather than a quote
+      const info = typeof d === 'object' && d !== null
+      const piece = String(info ? d.subject : (d ?? '')).slice(0, 120)
       if (!piece) return
-      setPrefill(t(`I would like a quote for: ${piece}.\n\n`, `Me gustaría cotizar: ${piece}.\n\n`))
+      setPrefill(
+        info
+          ? t(`I would like more information about: ${piece}.\n\n`, `Me gustaría recibir información sobre: ${piece}.\n\n`)
+          : t(`I would like a quote for: ${piece}.\n\n`, `Me gustaría cotizar: ${piece}.\n\n`),
+      )
       setSent(false)
     }
     window.addEventListener('contact:prefill', on)

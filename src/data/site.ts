@@ -97,8 +97,8 @@ export const films = [
   },
 ]
 
-export const navItems = [
-  { label: { en: 'Runway Sale Élite Project Worldwide', es: 'Runway Sale Élite Project Worldwide' }, href: '#elite', image: drawingUrl(eliteKinds[4].drawing) },
+export const navItems: { label: T; href: string; image: string; feature?: { kicker: string; title: string } }[] = [
+  { label: { en: 'Runway Sale Élite Project Worldwide', es: 'Runway Sale Élite Project Worldwide' }, href: '#elite', image: drawingUrl(eliteKinds[4].drawing), feature: { kicker: 'Runway Sale', title: 'Élite Project Worldwide' } },
   { label: { en: 'Projects', es: 'Proyectos' }, href: '#projects', image: real('sardinera-1') },
   { label: { en: 'Hospitality', es: 'Hotelería' }, href: '#hospitality', image: real('gansevoort-pool') },
   { label: { en: 'Hotels', es: 'Hoteles' }, href: '#hotels', image: real('hotel-st-regis-maldives') },
