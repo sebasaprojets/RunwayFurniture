@@ -1,4 +1,3 @@
-import tablasCover from '../assets/img/real/elite-tablas-cover.jpg'
 import type { T } from '../i18n'
 
 /** Palm fronds radiating from a crown point; reused by several drawings. */
@@ -127,7 +126,7 @@ export const eliteKinds: EliteKind[] = [
           en: 'A boutique hotel on a private island sanctuary: beach club by Mikasa Japanese & Nikkei cuisine, signature spa and 360° ocean views. Owned and operated by Runway Furniture.',
           es: 'Un hotel boutique en un santuario de isla privada: beach club de cocina japonesa y nikkei Mikasa, spa exclusivo y vistas de 360° al océano. Propiedad y operación de Runway Furniture.',
         },
-        cover: tablasCover,
+        cover: poster('island-tablas'),
         media: [film('island-tablas')],
       },
     ],
