@@ -1,6 +1,3 @@
-import tablas0 from '../assets/img/real/elite-tablas-0.jpg'
-import tablas1 from '../assets/img/real/elite-tablas-1.jpg'
-import tablas2 from '../assets/img/real/elite-tablas-2.jpg'
 import tablasCover from '../assets/img/real/elite-tablas-cover.jpg'
 import type { T } from '../i18n'
 
@@ -131,7 +128,7 @@ export const eliteKinds: EliteKind[] = [
           es: 'Un hotel boutique en un santuario de isla privada: beach club de cocina japonesa y nikkei Mikasa, spa exclusivo y vistas de 360° al océano. Propiedad y operación de Runway Furniture.',
         },
         cover: tablasCover,
-        media: [film('island-tablas'), { kind: 'image', src: tablas0 }, { kind: 'image', src: tablas1 }, { kind: 'image', src: tablas2 }],
+        media: [film('island-tablas')],
       },
     ],
   },
