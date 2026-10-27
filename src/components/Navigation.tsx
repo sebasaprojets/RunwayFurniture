@@ -171,9 +171,9 @@ export function Navigation({ ready }: { ready: boolean }) {
                       transition={{ duration: 0.9, ease: easeLuxe, delay: 0.25 + i * 0.06 }}
                       className="group flex items-baseline gap-5 py-1 md:gap-8"
                     >
-                      <span className="w-8 font-sans text-xs text-gold/80">0{i + 1}</span>
+                      <span className="w-8 shrink-0 font-sans text-xs text-gold/80">{String(i + 1).padStart(2, '0')}</span>
                       <span
-                        className={`display text-[clamp(2.25rem,min(12vw,8.5vh),5.75rem)] transition-all duration-700 ${
+                        className={`display min-w-0 pr-4 text-[clamp(2.25rem,min(12vw,7.6vh),5.75rem)] transition-all duration-700 ${n.href === '#elite' ? 'leading-[1.08]' : ''} ${
                           hovered === i ? 'translate-x-3 text-bone italic' : 'text-bone/70'
                         }`}
                       >

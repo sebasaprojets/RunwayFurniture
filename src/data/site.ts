@@ -3,6 +3,7 @@ import founderStanding from '../assets/img/founder-standing.jpg'
 import founderSeated from '../assets/img/founder-seated.jpg'
 
 import type { T } from '../i18n'
+import { drawingUrl, eliteKinds } from './elite'
 
 /** Photography supplied by Runway (company profile, Vondom residential book, Kenkoon catalogue). */
 const realFiles = import.meta.glob<string>('../assets/img/real/*.jpg', { eager: true, import: 'default' })
@@ -97,6 +98,7 @@ export const films = [
 ]
 
 export const navItems = [
+  { label: { en: 'Runway Sale Élite Project Worldwide', es: 'Runway Sale Élite Project Worldwide' }, href: '#elite', image: drawingUrl(eliteKinds[4].drawing) },
   { label: { en: 'Projects', es: 'Proyectos' }, href: '#projects', image: real('sardinera-1') },
   { label: { en: 'Hospitality', es: 'Hotelería' }, href: '#hospitality', image: real('gansevoort-pool') },
   { label: { en: 'Hotels', es: 'Hoteles' }, href: '#hotels', image: real('hotel-st-regis-maldives') },

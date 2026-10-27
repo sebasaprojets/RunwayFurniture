@@ -7,6 +7,7 @@ import { useCalmScroll, usePrefersReducedMotion } from './lib/motion'
 import { initSmoothScroll, lockScroll, ScrollTrigger } from './lib/scroll'
 import { ScrollProgress } from './components/ScrollProgress'
 import { CinemaReveal } from './sections/CinemaReveal'
+import { Elite } from './sections/Elite'
 import { Clients } from './sections/Clients'
 import { Collections } from './sections/Collections'
 import { Films } from './sections/Films'
@@ -83,6 +84,7 @@ export default function App() {
         <Hero ready={ready} revealed={revealed} reduced={reduced} />
         <Statement />
         <CinemaReveal />
+        <Elite />
         <Projects onOpen={open} />
         <Hospitality />
         <SignatureHotels />
