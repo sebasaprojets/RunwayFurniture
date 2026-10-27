@@ -1,3 +1,6 @@
+import tablas0 from '../assets/img/real/elite-tablas-0.jpg'
+import tablas1 from '../assets/img/real/elite-tablas-1.jpg'
+import tablas2 from '../assets/img/real/elite-tablas-2.jpg'
 import type { T } from '../i18n'
 
 /** Palm fronds radiating from a crown point; reused by several drawings. */
@@ -11,8 +14,14 @@ const circle = (x: number, y: number, r: number) => `M${x - r} ${y}a${r} ${r} 0 
  */
 export type Drawing = { lines: string[]; water?: string[] }
 
-/** A property for sale. Photos are added as they arrive from the owner. */
-export type Listing = { name: string; location: T; image: string; details?: T; price?: string }
+/** A photo or a film of a property; films keep their poster for the card and while loading. */
+export type Media = { kind: 'image'; src: string } | { kind: 'video'; src: string; poster: string }
+
+/** A property for sale. Photos and films are added as they arrive from the owner. */
+export type Listing = { name: T; location: T; cover: string; media: Media[]; details?: T; price?: string }
+
+const film = (name: string): Media => ({ kind: 'video', src: `./media/elite/${name}.mp4`, poster: `./media/elite/${name}.jpg` })
+const poster = (name: string) => `./media/elite/${name}.jpg`
 
 export type EliteKind = { key: string; title: T; text: T; drawing: Drawing; listings: Listing[] }
 
@@ -37,7 +46,28 @@ export const eliteKinds: EliteKind[] = [
         fronds(42, 92),
       ],
     },
-    listings: [],
+    listings: [
+      {
+        name: { en: 'Overwater Resort', es: 'Resort sobre el agua' },
+        location: { en: 'New project · Location on request', es: 'Nuevo proyecto · Ubicación bajo solicitud' },
+        details: {
+          en: 'A new vision at sea level: villas with private pools set on a lagoon, joined by curved walkways.',
+          es: 'Una nueva visión a nivel del mar: villas con piscina privada sobre la laguna, unidas por pasarelas curvas.',
+        },
+        cover: poster('resort-overwater'),
+        media: [film('resort-overwater')],
+      },
+      {
+        name: { en: 'Beachfront Resort', es: 'Resort frente al mar' },
+        location: { en: 'Location on request', es: 'Ubicación bajo solicitud' },
+        details: {
+          en: 'A resort between the jungle and the shore, with direct access to the beach.',
+          es: 'Un resort entre la selva y la orilla, con acceso directo a la playa.',
+        },
+        cover: poster('resort-beach'),
+        media: [film('resort-beach')],
+      },
+    ],
   },
   {
     key: 'land',
@@ -57,7 +87,18 @@ export const eliteKinds: EliteKind[] = [
         'M150 50q4 -4 8 0q4 -4 8 0M172 40q3 -3 6 0q3 -3 6 0',
       ],
     },
-    listings: [],
+    listings: [
+      {
+        name: { en: 'Beachfront Land with Hotel Project', es: 'Terreno frente al mar con proyecto hotelero' },
+        location: { en: 'Location on request', es: 'Ubicación bajo solicitud' },
+        details: {
+          en: 'A hillside plot running down to the beach, with a terraced hotel project: villas with pools, ocean views and a beach club.',
+          es: 'Un lote en ladera que baja hasta la playa, con proyecto hotelero en terrazas: villas con piscina, vista al mar y club de playa.',
+        },
+        cover: poster('land-beach'),
+        media: [film('land-beach')],
+      },
+    ],
   },
   {
     key: 'islands',
@@ -79,7 +120,18 @@ export const eliteKinds: EliteKind[] = [
       ],
       water: ['M10 131H230', 'M28 140H118M138 140H212', 'M52 149H180'],
     },
-    listings: [],
+    listings: [
+      {
+        name: { en: 'Tablas Island Retreat', es: 'Tablas Island Retreat' },
+        location: { en: 'Tablas Island, Romblon · Philippines', es: 'Isla Tablas, Romblon · Filipinas' },
+        details: {
+          en: 'A boutique hotel on a private island sanctuary: beach club by Mikasa Japanese & Nikkei cuisine, signature spa and 360° ocean views. Owned and operated by Runway Furniture.',
+          es: 'Un hotel boutique en un santuario de isla privada: beach club de cocina japonesa y nikkei Mikasa, spa exclusivo y vistas de 360° al océano. Propiedad y operación de Runway Furniture.',
+        },
+        cover: tablas0,
+        media: [film('island-tablas'), { kind: 'image', src: tablas0 }, { kind: 'image', src: tablas1 }, { kind: 'image', src: tablas2 }],
+      },
+    ],
   },
   {
     key: 'condos',
@@ -100,7 +152,18 @@ export const eliteKinds: EliteKind[] = [
         circle(18, 122, 6),
       ],
     },
-    listings: [],
+    listings: [
+      {
+        name: { en: 'Luxury Residences', es: 'Residencias de lujo' },
+        location: { en: 'Location on request', es: 'Ubicación bajo solicitud' },
+        details: {
+          en: 'Apartments in a landmark tower facing the park and the water, with a private terrace and open-plan interiors.',
+          es: 'Apartamentos en una torre emblemática frente al parque y el agua, con terraza privada e interiores abiertos.',
+        },
+        cover: poster('condo-tower'),
+        media: [film('condo-tower')],
+      },
+    ],
   },
   {
     key: 'villas',
@@ -123,7 +186,28 @@ export const eliteKinds: EliteKind[] = [
       ],
       water: ['M75 126H105M120 126H162', 'M88 130H140'],
     },
-    listings: [],
+    listings: [
+      {
+        name: { en: 'Mountain Villa · Bugatti Collection', es: 'Villa de montaña · Colección Bugatti' },
+        location: { en: 'Location on request', es: 'Ubicación bajo solicitud' },
+        details: {
+          en: 'Stone and timber above the clouds: an infinity pool, floor-to-ceiling windows and valley views from every room.',
+          es: 'Piedra y madera sobre las nubes: piscina infinita, ventanales de piso a techo y vista al valle desde cada estancia.',
+        },
+        cover: poster('villa-mountain'),
+        media: [film('villa-mountain')],
+      },
+      {
+        name: { en: 'Contemporary Villa', es: 'Villa contemporánea' },
+        location: { en: 'Location on request', es: 'Ubicación bajo solicitud' },
+        details: {
+          en: 'Sculptural architecture, a lit pool and timber decks among the palms.',
+          es: 'Arquitectura escultórica, piscina iluminada y decks de madera entre palmeras.',
+        },
+        cover: poster('villa-modern'),
+        media: [film('villa-modern')],
+      },
+    ],
   },
 ]
 

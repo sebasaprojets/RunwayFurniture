@@ -1,8 +1,8 @@
-import { ArrowUpRight, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUpRight, Play, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
-import { eliteKinds, type Drawing, type EliteKind } from '../data/elite'
+import { eliteKinds, type Drawing, type EliteKind, type Listing } from '../data/elite'
 import { thumb } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
@@ -146,12 +146,16 @@ function CineTitle() {
 function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
   const { t, tx } = useLang()
   const closeRef = useRef<HTMLButtonElement>(null)
+  const [view, setView] = useState<Listing | null>(null)
+  const viewing = useRef(false)
+  viewing.current = view !== null
 
   useEffect(() => {
     const last = document.activeElement as HTMLElement | null
     closeRef.current?.focus()
     lockScroll(true)
-    const key = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    // while the viewer is open, Escape belongs to it
+    const key = (e: KeyboardEvent) => e.key === 'Escape' && !viewing.current && onClose()
     window.addEventListener('keydown', key)
     return () => {
       window.removeEventListener('keydown', key)
@@ -159,6 +163,17 @@ function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
       last?.focus()
     }
   }, [onClose])
+
+  const count = (l: Listing) => {
+    const v = l.media.filter((m) => m.kind === 'video').length
+    const p = l.media.length - v
+    return [
+      p > 0 && `${p} ${p === 1 ? t('photo', 'foto') : t('photos', 'fotos')}`,
+      v > 0 && `${v} ${v === 1 ? t('film', 'video') : t('films', 'videos')}`,
+    ]
+      .filter(Boolean)
+      .join(' · ')
+  }
 
   const ask = (subject: string) => {
     onClose()
@@ -215,31 +230,40 @@ function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
           <ul className="mt-14 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 md:mt-20 lg:grid-cols-3">
             {kind.listings.map((l, i) => (
               <motion.li
-                key={l.name}
+                key={l.name.en}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, ease: easeLuxe, delay: 0.5 + i * 0.08 }}
                 className="group flex flex-col"
               >
-                <div className="relative aspect-[4/3] overflow-hidden bg-smoke">
+                <button
+                  onClick={() => setView(l)}
+                  className="relative block aspect-[4/5] overflow-hidden bg-smoke text-left"
+                  aria-label={`${tx(l.name)} — ${t('view photos and films', 'ver fotos y videos')}`}
+                >
                   <img
-                    src={thumb(l.image)}
-                    srcSet={thumb(l.image) === l.image ? undefined : `${thumb(l.image)} 1280w, ${l.image} 2000w`}
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    alt={`${l.name} — ${tx(l.location)}`}
+                    src={thumb(l.cover)}
+                    alt=""
                     loading="lazy"
                     decoding="async"
                     className="h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.04]"
                   />
-                </div>
+                  <span className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
+                  <span className="absolute bottom-4 left-4 flex items-center gap-3 text-[0.6875rem] font-semibold tracking-[0.24em] text-bone uppercase">
+                    <span className="grid size-10 place-items-center rounded-full border border-bone/40 bg-ink/40 backdrop-blur transition-colors duration-500 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
+                      <Play className="ml-0.5 size-3.5" strokeWidth={1.5} />
+                    </span>
+                    {count(l)}
+                  </span>
+                </button>
                 <div className="mt-5 flex items-baseline justify-between gap-4 border-t border-bone/10 pt-4">
-                  <h4 className="font-display text-3xl text-bone">{l.name}</h4>
+                  <h4 className="font-display text-3xl text-bone">{tx(l.name)}</h4>
                   {l.price && <span className="shrink-0 text-sm text-gold">{l.price}</span>}
                 </div>
                 <p className="eyebrow mt-2 text-mineral/60">{tx(l.location)}</p>
                 {l.details && <p className="mt-3 text-sm leading-relaxed text-bone/55">{tx(l.details)}</p>}
                 <button
-                  onClick={() => ask(`${l.name} (${tx(l.location)})`)}
+                  onClick={() => ask(`${tx(l.name)} (${tx(l.location)})`)}
                   className="mt-5 flex items-center gap-3 self-start text-[0.6875rem] font-semibold tracking-[0.24em] text-gold uppercase"
                 >
                   {t('Request information', 'Solicitar información')}
@@ -274,6 +298,121 @@ function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
             </div>
           </motion.div>
         )}
+      </div>
+
+      <AnimatePresence>
+        {view && <Viewer key={view.name.en} listing={view} onClose={() => setView(null)} onAsk={() => ask(`${tx(view.name)} (${tx(view.location)})`)} />}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+/** Full-screen photos and films of one property, one at a time, with a strip to jump between them. */
+function Viewer({ listing, onClose, onAsk }: { listing: Listing; onClose: () => void; onAsk: () => void }) {
+  const { t, tx } = useLang()
+  const [i, setI] = useState(0)
+  const n = listing.media.length
+  const step = useCallback((d: number) => setI((x) => (x + d + n) % n), [n])
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const m = listing.media[i]
+
+  useEffect(() => {
+    const last = document.activeElement as HTMLElement | null
+    closeRef.current?.focus()
+    const key = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowRight') step(1)
+      if (e.key === 'ArrowLeft') step(-1)
+    }
+    window.addEventListener('keydown', key)
+    return () => {
+      window.removeEventListener('keydown', key)
+      last?.focus()
+    }
+  }, [onClose, step])
+
+  const round = 'grid size-11 shrink-0 place-items-center rounded-full border border-bone/20 text-bone transition-colors hover:bg-bone hover:text-ink'
+
+  return (
+    <motion.div
+      role="dialog"
+      aria-modal="true"
+      aria-label={tx(listing.name)}
+      className="fixed inset-0 z-[130] flex flex-col bg-ink/95 backdrop-blur-md"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="flex items-center justify-between gap-4 px-5 py-4 md:px-10">
+        <div className="min-w-0">
+          <p className="truncate font-display text-2xl text-bone md:text-3xl">{tx(listing.name)}</p>
+          <p className="eyebrow mt-1 truncate text-mineral/60">{tx(listing.location)}</p>
+        </div>
+        <button ref={closeRef} onClick={onClose} className={round} aria-label={t('Close', 'Cerrar')}>
+          <X className="size-4" strokeWidth={1.5} />
+        </button>
+      </div>
+
+      <div className="relative flex min-h-0 flex-1 items-center justify-center px-5 md:px-24">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0.97, filter: 'blur(8px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.6, ease: easeLuxe }}
+            className="flex h-full w-full items-center justify-center"
+          >
+            {m.kind === 'video' ? (
+              <video
+                src={m.src}
+                poster={m.poster}
+                className="max-h-full max-w-full bg-ink object-contain"
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
+              />
+            ) : (
+              <img src={m.src} alt={`${tx(listing.name)} — ${i + 1} / ${n}`} className="max-h-full max-w-full object-contain" decoding="async" />
+            )}
+          </motion.div>
+        </AnimatePresence>
+        {n > 1 && (
+          <>
+            <button onClick={() => step(-1)} className={`${round} absolute left-2 bg-ink/50 backdrop-blur md:left-8`} aria-label={t('Previous', 'Anterior')}>
+              <ArrowLeft className="size-4" strokeWidth={1.5} />
+            </button>
+            <button onClick={() => step(1)} className={`${round} absolute right-2 bg-ink/50 backdrop-blur md:right-8`} aria-label={t('Next', 'Siguiente')}>
+              <ArrowRight className="size-4" strokeWidth={1.5} />
+            </button>
+          </>
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 md:px-10">
+        {n > 1 ? (
+          <div className="flex gap-2 overflow-x-auto">
+            {listing.media.map((x, j) => (
+              <button
+                key={x.src}
+                onClick={() => setI(j)}
+                className={`relative h-14 w-10 shrink-0 overflow-hidden border transition-opacity ${j === i ? 'border-gold opacity-100' : 'border-transparent opacity-50 hover:opacity-90'}`}
+                aria-label={`${j + 1} / ${n}`}
+                aria-current={j === i || undefined}
+              >
+                <img src={x.kind === 'video' ? x.poster : thumb(x.src)} alt="" className="h-full w-full object-cover" loading="lazy" />
+                {x.kind === 'video' && <Play className="absolute inset-0 m-auto size-3.5 text-bone" strokeWidth={1.5} />}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <span />
+        )}
+        <Button onClick={onAsk}>{t('Request information', 'Solicitar información')}</Button>
       </div>
     </motion.div>
   )
