@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { brand } from '../data/site'
-import { langChosen, langNames, langs, useLang, type Lang } from '../i18n'
+import { useLang } from '../i18n'
 import { easeCine, easeLuxe } from '../lib/motion'
 import { RunwaySymbol, RunwaySymbolAnimated } from './RunwayLogo'
 
@@ -19,52 +19,35 @@ const metal = {
  *  1. In a warm dark room the red drop swells and its four bubbles bud off it like liquid.
  *  2. RUNWAY rises letter by letter in brushed champagne, a light passes across it,
  *     FURNITURE settles and the hairlines draw out on either side of INTERNATIONAL.
- *  3. The visitor picks English or Español (first visit), or the site opens on its own
- *     in the language they chose before.
- *  4. The room parts like two doors onto the site.
- * Any key or a click on the background also enters. Reduced motion skips straight to a fade.
+ *  3. The room parts like two doors onto the site, on its own (the language is
+ *     switched from the menu, never asked here).
+ * Any key or a click also enters at once. Reduced motion skips straight to a fade.
  */
 export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; onReveal?: () => void; reduced: boolean }) {
-  const { lang, setLang, t } = useLang()
+  const { t } = useLang()
   const [phase, setPhase] = useState<'intro' | 'open' | 'done'>('intro')
-  const [ask] = useState(() => !langChosen())
-  const [choices, setChoices] = useState(false)
   const opening = useRef(false)
 
-  const enter = useCallback(
-    (l?: Lang) => {
-      if (opening.current) return
-      opening.current = true
-      if (l) setLang(l)
-      setPhase('open')
-      onReveal?.()
-      window.setTimeout(() => {
-        setPhase('done')
-        onDone()
-      }, reduced ? 300 : 1500)
-    },
-    [onDone, onReveal, reduced, setLang],
-  )
+  const enter = useCallback(() => {
+    if (opening.current) return
+    opening.current = true
+    setPhase('open')
+    onReveal?.()
+    window.setTimeout(() => {
+      setPhase('done')
+      onDone()
+    }, reduced ? 300 : 1500)
+  }, [onDone, onReveal, reduced])
 
   useEffect(() => {
-    if (reduced) {
-      if (!ask) enter()
-      else setChoices(true)
-      return
-    }
-    // first visit: ask for the language; returning visitors chose before, so the doors open by themselves
-    const timers = [ask ? window.setTimeout(() => setChoices(true), 4300) : window.setTimeout(() => enter(), 4000)]
-    const key = (e: KeyboardEvent) => {
-      if (e.key === 'Tab') return
-      if (e.target instanceof HTMLButtonElement && (e.key === 'Enter' || e.key === ' ')) return
-      enter()
-    }
+    const timer = window.setTimeout(enter, reduced ? 400 : 4800)
+    const key = () => enter()
     window.addEventListener('keydown', key)
     return () => {
-      timers.forEach(clearTimeout)
+      clearTimeout(timer)
       window.removeEventListener('keydown', key)
     }
-  }, [reduced, ask, enter])
+  }, [reduced, enter])
 
   const open = phase === 'open'
   const letters = 'RUNWAY'.split('')
@@ -103,7 +86,7 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
             </>
           )}
 
-          <button className="absolute inset-0 cursor-default" tabIndex={-1} aria-hidden onClick={() => !ask && enter()} />
+          <button className="absolute inset-0 cursor-default" tabIndex={-1} aria-hidden onClick={enter} />
 
           <motion.div
             className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
@@ -182,35 +165,6 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
               {t('Hospitality · Residential · Contract · Bespoke', 'Hotelería · Residencial · Contract · A medida')} — {t('Since', 'Desde')} {brand.since}
             </motion.p>
 
-            {/* language: asked on a first visit, offered as a shortcut otherwise */}
-            <div className="pointer-events-auto mt-[5vmin] h-24">
-              <AnimatePresence>
-                {choices && (
-                  <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: easeLuxe }} className="flex flex-col items-center gap-4">
-                    <p className="text-[0.6rem] tracking-[0.4em] text-[#d9c4a0]/70 uppercase">Choose your language · Elige tu idioma</p>
-                    <div className="flex gap-3">
-                      {langs.map((l, i) => (
-                        <motion.button
-                          key={l}
-                          onClick={() => enter(l)}
-                          autoFocus={ask && l === lang}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.7, ease: easeLuxe, delay: 0.1 + i * 0.08 }}
-                          className={`group relative overflow-hidden rounded-full border px-7 py-3 text-[0.7rem] font-semibold tracking-[0.28em] uppercase transition-colors duration-500 ${
-                            l === lang ? 'border-[#c9a66b] text-[#0b0a09]' : 'border-[#c9a66b]/40 text-[#efe4d0] hover:border-[#c9a66b]'
-                          }`}
-                          lang={l}
-                        >
-                          <span className={`absolute inset-0 origin-bottom rounded-full bg-[#c9a66b] transition-transform duration-500 ease-[var(--ease-luxe)] ${l === lang ? 'scale-y-100' : 'scale-y-0 group-hover:scale-y-100'}`} />
-                          <span className="relative group-hover:text-[#0b0a09]">{langNames[l]}</span>
-                        </motion.button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
           </motion.div>
 
           <motion.p

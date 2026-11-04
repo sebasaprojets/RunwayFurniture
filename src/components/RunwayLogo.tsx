@@ -81,20 +81,19 @@ export function RunwaySymbolAnimated({ className = '', delay = 0 }: { className?
           d={BLOB}
           fill={`url(#${id}-red)`}
           style={{ transformBox: 'fill-box', transformOrigin: '50% 55%' }}
-          initial={{ scale: 0.05, opacity: 0 }}
-          animate={{ scale: [0.05, 1.06, 1], opacity: 1 }}
-          transition={{ delay, duration: 1.3, ease: easeLuxe, times: [0, 0.7, 1] }}
+          // fades in already half-grown, so no lone red speck shows before the drop forms
+          initial={{ scale: 0.4, opacity: 0 }}
+          animate={{ scale: [0.4, 1.05, 1], opacity: [0, 1, 1] }}
+          transition={{ delay, duration: 1.4, ease: easeLuxe, times: [0, 0.65, 1] }}
         />
         {BUBBLES.map((b, i) => (
           <motion.circle
             key={b.cy}
-            cx={b.cx}
-            cy={b.cy}
-            r={b.r}
             fill={`url(#${id}-bub)`}
-            style={{ transformBox: 'fill-box', transformOrigin: '50% 50%' }}
-            initial={{ x: 405 - b.cx, y: 440 - b.cy, scale: 0.4, opacity: 0 }}
-            animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+            // positions are animated in the drawing's own units, so the bubbles bud
+            // straight out of the drop at any rendered size
+            initial={{ cx: 430, cy: 400, r: b.r * 0.4, opacity: 0 }}
+            animate={{ cx: b.cx, cy: b.cy, r: b.r, opacity: 1 }}
             transition={{ delay: delay + 0.75 + i * 0.22, duration: 1.1, ease: easeLuxe }}
           />
         ))}

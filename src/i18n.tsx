@@ -2,8 +2,6 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 export type Lang = 'en' | 'es'
 export const langs: Lang[] = ['en', 'es']
-/** Each language named in itself, for the language choice on the opening screen. */
-export const langNames: Record<Lang, string> = { en: 'English', es: 'Español' }
 
 /** A piece of copy in every supported language. */
 export type T = Record<Lang, string>
@@ -19,16 +17,6 @@ const meta = {
     en: 'Runway Furniture International — luxury hospitality, residential and bespoke furniture since 2009. Montreal · Singapore · Worldwide.',
     es: 'Runway Furniture International — mobiliario hotelero de lujo, residencial y a medida desde 2009. Montreal · Singapur · Todo el mundo.',
   },
-}
-
-/** True once the visitor has picked a language (or arrived with ?lang=), so the intro need not ask again. */
-export function langChosen(): boolean {
-  if (new URLSearchParams(window.location.search).has('lang')) return true
-  try {
-    return localStorage.getItem(STORAGE_KEY) !== null
-  } catch {
-    return false
-  }
 }
 
 /** ?lang=es wins (shareable links), then the visitor's last choice, then the browser language. */
