@@ -92,11 +92,13 @@ export function Films() {
           <FadeIn className="lg:col-span-8">
             <Film film={main} />
           </FadeIn>
-          {rest.map((f, i) => (
-            <FadeIn key={f.poster} className="lg:col-span-4 lg:mt-48" delay={0.1 * (i + 1)}>
-              <Film film={f} />
-            </FadeIn>
-          ))}
+          <div className="grid gap-16 lg:col-span-4 lg:mt-48">
+            {rest.map((f, i) => (
+              <FadeIn key={f.poster} delay={0.1 * (i + 1)}>
+                <Film film={f} />
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </div>
     </section>
