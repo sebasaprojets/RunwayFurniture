@@ -4,6 +4,7 @@ import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
 import { hotelCountries, hotels } from '../data/signature'
 import { brand, thumb } from '../data/site'
+import { presence } from '../data/portfolio'
 import { useLang } from '../i18n'
 import { usePrefersReducedMotion } from '../lib/motion'
 
@@ -438,6 +439,19 @@ export function Global() {
               {brand.regions.map((r) => (
                 <li key={r.en} className="border-b border-bone/10 py-4 font-display text-2xl text-bone/80">
                   {tx(r)}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-10 max-w-md font-display text-2xl leading-snug text-bone/80">
+              {t(
+                'A global FF&E partner, delivering tailored furniture solutions for the world’s leading hospitality, residential and commercial projects.',
+                'Un socio global de FF&E que entrega soluciones de mobiliario a medida para los principales proyectos hoteleros, residenciales y comerciales del mundo.',
+              )}
+            </p>
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {presence.map((p) => (
+                <li key={p.en} className="rounded-full border border-bone/15 px-4 py-2 text-xs text-bone/70">
+                  {tx(p)}
                 </li>
               ))}
             </ul>

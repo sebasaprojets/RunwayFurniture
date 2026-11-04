@@ -25,9 +25,12 @@ const placesEs: Record<string, string> = {
   Cyprus: 'Chipre',
   UK: 'Reino Unido',
   Moscow: 'Moscú',
+  Canada: 'Canadá',
+  Aruba: 'Aruba',
+  Sestroretsk: 'Sestroretsk',
 }
 
-/** Hotels and resorts by region, then private clients — as listed in the Runway company profile. */
+/** Hotels and resorts by region, then private clients — as listed in the Runway company portfolio. */
 export function Clients() {
   const { lang, t, tx } = useLang()
   return (

@@ -9,6 +9,10 @@ import { ScrollProgress } from './components/ScrollProgress'
 import { WhatsAppButton } from './components/WhatsAppButton'
 import { CinemaReveal } from './sections/CinemaReveal'
 import { Elite } from './sections/Elite'
+import { Awards } from './sections/Awards'
+import { ConceptReality } from './sections/ConceptReality'
+import { Factory } from './sections/Factory'
+import { Story } from './sections/Story'
 import { Clients } from './sections/Clients'
 import { Collections } from './sections/Collections'
 import { Films } from './sections/Films'
@@ -84,17 +88,21 @@ export default function App() {
       <main id="main">
         <Hero ready={ready} revealed={revealed} reduced={reduced} />
         <Statement />
+        <Story />
         <CinemaReveal />
         <Elite />
         <Projects onOpen={open} />
         <Hospitality />
+        <ConceptReality />
         <SignatureHotels />
         <Collections />
         <NewCollection />
         <OutdoorKitchens />
+        <Factory />
         <Founder />
         <FounderFilm />
         <Films />
+        <Awards />
         <Clients />
         <Global />
         <Contact />

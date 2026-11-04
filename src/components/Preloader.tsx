@@ -1,313 +1,226 @@
-import { AnimatePresence, motion, useAnimationControls } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { brand } from '../data/site'
+import { langChosen, langNames, langs, useLang, type Lang } from '../i18n'
 import { easeCine, easeLuxe } from '../lib/motion'
-import { useLang } from '../i18n'
+import { RunwaySymbol, RunwaySymbolAnimated } from './RunwayLogo'
 
-const SERIF = 'Instrument Serif, Georgia, serif'
+const WORD = 'Josefin Sans, Manrope, system-ui, sans-serif'
+/** Brushed champagne metal, like the letters on the portfolio cover. */
+const metal = {
+  backgroundImage: 'linear-gradient(180deg, #fbf1dc 0%, #e3cba0 38%, #a98654 62%, #e9d6ae 100%)',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  color: 'transparent',
+} as const
 
 /**
- * Opening title sequence, directed like a film's main titles:
- *  1. Letterboxed black frame, film grain, a gold hairline frame draws itself.
- *  2. The gilded "R" monogram resolves from soft focus; a specular highlight travels across the metal.
- *  3. The wordmark tightens into place letter by letter; opening credits fade through.
- *  4. The camera dives through the counter of the R into the hero scene while the bars retract.
- * Skippable (click / key), and reduced to a simple fade for prefers-reduced-motion.
+ * Opening screen built on the company logo:
+ *  1. In a warm dark room the red drop swells and its four bubbles bud off it like liquid.
+ *  2. RUNWAY rises letter by letter in brushed champagne, a light passes across it,
+ *     FURNITURE settles and the hairlines draw out on either side of INTERNATIONAL.
+ *  3. The visitor picks English or Español (first visit), or the site opens on its own
+ *     in the language they chose before.
+ *  4. The room parts like two doors onto the site.
+ * Any key or a click on the background also enters. Reduced motion skips straight to a fade.
  */
 export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; onReveal?: () => void; reduced: boolean }) {
-  const { t, tx } = useLang()
-  const [phase, setPhase] = useState<'title' | 'dive' | 'done'>('title')
-  const [count, setCount] = useState(0)
-  const [credit, setCredit] = useState(-1)
-  const finished = useRef(false)
-  const diving = useRef(false)
-  const dive = useAnimationControls()
+  const { lang, setLang, t } = useLang()
+  const [phase, setPhase] = useState<'intro' | 'open' | 'done'>('intro')
+  const [ask] = useState(() => !langChosen())
+  const [choices, setChoices] = useState(false)
+  const opening = useRef(false)
 
-  const credits = [
-    `${t('Est.', 'Desde')} ${brand.since}`,
-    `${brand.offices.map((o) => tx(o.cityLabel)).join('  ·  ')}  ·  ${t('Worldwide', 'Todo el mundo')}`,
-    t('Creating extraordinary spaces', 'Creamos espacios extraordinarios'),
-  ]
-
-  const finish = () => {
-    if (finished.current) return
-    finished.current = true
-    onReveal?.()
-    setPhase('done')
-    onDone()
-  }
-
-  const startDive = async () => {
-    if (diving.current) return
-    diving.current = true
-    setPhase('dive')
-    onReveal?.()
-    await dive.start('dive')
-    finish()
-  }
+  const enter = useCallback(
+    (l?: Lang) => {
+      if (opening.current) return
+      opening.current = true
+      if (l) setLang(l)
+      setPhase('open')
+      onReveal?.()
+      window.setTimeout(() => {
+        setPhase('done')
+        onDone()
+      }, reduced ? 300 : 1500)
+    },
+    [onDone, onReveal, reduced, setLang],
+  )
 
   useEffect(() => {
     if (reduced) {
-      const t = setTimeout(finish, 400)
-      return () => clearTimeout(t)
+      if (!ask) enter()
+      else setChoices(true)
+      return
     }
-    // loading counter (eased, cinematic rather than literal)
-    const start = performance.now()
-    let raf = 0
-    const tick = (now: number) => {
-      const p = Math.min(1, (now - start) / 3600)
-      setCount(Math.round((1 - Math.pow(1 - p, 3)) * 100))
-      if (p < 1) raf = requestAnimationFrame(tick)
+    // first visit: ask for the language; returning visitors chose before, so the doors open by themselves
+    const timers = [ask ? window.setTimeout(() => setChoices(true), 4300) : window.setTimeout(() => enter(), 4000)]
+    const key = (e: KeyboardEvent) => {
+      if (e.key === 'Tab') return
+      if (e.target instanceof HTMLButtonElement && (e.key === 'Enter' || e.key === ' ')) return
+      enter()
     }
-    raf = requestAnimationFrame(tick)
-    const timers = [
-      setTimeout(() => setCredit(0), 2100),
-      setTimeout(() => setCredit(1), 2900),
-      setTimeout(() => setCredit(2), 3700),
-      setTimeout(startDive, 4500),
-    ]
-    const skip = () => startDive()
-    window.addEventListener('keydown', skip)
+    window.addEventListener('keydown', key)
     return () => {
-      cancelAnimationFrame(raf)
       timers.forEach(clearTimeout)
-      window.removeEventListener('keydown', skip)
+      window.removeEventListener('keydown', key)
     }
-  }, [reduced])
+  }, [reduced, ask, enter])
 
-  if (reduced)
-    return (
-      <AnimatePresence>
-        {phase !== 'done' && <motion.div className="fixed inset-0 z-[100] bg-ink" exit={{ opacity: 0 }} transition={{ duration: 0.6 }} aria-hidden />}
-      </AnimatePresence>
-    )
-
+  const open = phase === 'open'
   const letters = 'RUNWAY'.split('')
 
   return (
     <AnimatePresence>
       {phase !== 'done' && (
-        <motion.div
-          className="fixed inset-0 z-[100] cursor-pointer overflow-hidden"
-          onClick={startDive}
-          exit={{ opacity: 0, transition: { duration: 0.4 } }}
-          role="presentation"
-        >
-          {/* Black frame with an R-shaped aperture that scales open during the dive */}
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden>
-            <defs>
-              <mask id="intro-aperture" maskUnits="userSpaceOnUse" x="0" y="0" width="1600" height="900">
-                <rect width="1600" height="900" fill="white" />
-                <motion.text
-                  x="800"
-                  y="560"
-                  textAnchor="middle"
-                  fontFamily={SERIF}
-                  fontSize="300"
-                  fill="black"
-                  style={{ transformBox: 'view-box', transformOrigin: '782px 470px' }}
-                  initial={{ scale: 0.0001, opacity: 0 }}
-                  animate={dive}
-                  variants={{ dive: { scale: [1, 1.05, 46], opacity: [1, 1, 1], transition: { duration: 2.1, times: [0, 0.25, 1], ease: easeCine } } }}
-                >
-                  R
-                </motion.text>
-              </mask>
-            </defs>
-            <motion.rect
-              width="1600"
-              height="900"
-              fill="#0A0A0A"
-              mask="url(#intro-aperture)"
-              animate={dive}
-              variants={{ dive: { opacity: [1, 1, 0], transition: { duration: 2.1, times: [0, 0.75, 1] } } }}
-            />
-          </svg>
+        <motion.div className="fixed inset-0 z-[100] overflow-hidden" role="dialog" aria-modal="true" aria-label="Runway Furniture International" exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+          {/* the room: two doors that part to reveal the site */}
+          {(['left', 'right'] as const).map((side) => (
+            <motion.div
+              key={side}
+              className={`absolute inset-y-0 ${side === 'left' ? 'left-0' : 'right-0'} w-1/2 bg-[#0b0a09]`}
+              animate={open ? { x: side === 'left' ? '-101%' : '101%' } : { x: 0 }}
+              transition={{ duration: reduced ? 0.3 : 1.3, ease: easeCine, delay: reduced ? 0 : 0.25 }}
+            >
+              <div
+                className={`absolute inset-y-0 ${side === 'left' ? 'right-0' : 'left-0'} w-px bg-gradient-to-b from-transparent via-[#c9a66b]/40 to-transparent`}
+                style={{ opacity: open ? 1 : 0, transition: 'opacity .3s' }}
+              />
+            </motion.div>
+          ))}
 
-          {/* atmosphere: grain + a slow warm light leak */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-70 mix-blend-screen">
-            <div className="grain" />
-          </div>
-          <motion.div
-            className="pointer-events-none absolute -inset-1/4 bg-[radial-gradient(40%_30%_at_50%_50%,rgba(184,154,106,.16),transparent_70%)]"
-            initial={{ x: '-30%', opacity: 0 }}
-            animate={phase === 'dive' ? { opacity: 0 } : { x: '20%', opacity: 1 }}
-            transition={{ duration: 5, ease: 'easeInOut' }}
-          />
+          {!reduced && (
+            <>
+              <div className="pointer-events-none absolute inset-0 opacity-60 mix-blend-screen" style={{ opacity: open ? 0 : 0.6, transition: 'opacity .4s' }}>
+                <div className="grain" />
+              </div>
+              {/* warm light from above, as on the cover's lit wall */}
+              <motion.div
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_45%_at_50%_38%,rgba(201,140,90,.22),rgba(120,40,30,.08)_55%,transparent_75%)]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: open ? 0 : 1 }}
+                transition={{ duration: open ? 0.4 : 2.4, ease: 'easeOut' }}
+              />
+            </>
+          )}
 
-          {/* Title card */}
+          <button className="absolute inset-0 cursor-default" tabIndex={-1} aria-hidden onClick={() => !ask && enter()} />
+
           <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center"
-            animate={phase === 'dive' ? { opacity: 0, scale: 1.06, filter: 'blur(6px)' } : {}}
+            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
+            animate={open ? { opacity: 0, scale: 1.08, filter: 'blur(8px)' } : { opacity: 1 }}
             transition={{ duration: 0.6, ease: easeLuxe }}
           >
-            {/* architectural hairline frame */}
-            <svg className="absolute h-[62vmin] w-[62vmin] text-gold/50" viewBox="0 0 100 100" aria-hidden>
-              {[
-                'M 2 14 L 2 2 L 14 2',
-                'M 86 2 L 98 2 L 98 14',
-                'M 98 86 L 98 98 L 86 98',
-                'M 14 98 L 2 98 L 2 86',
-              ].map((d, i) => (
-                <motion.path
-                  key={d}
-                  d={d}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="0.25"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.4, ease: easeLuxe, delay: 0.2 + i * 0.08 }}
-                />
-              ))}
-              <motion.circle
-                cx="50"
-                cy="50"
-                r="47"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="0.12"
-                strokeOpacity="0.5"
-                initial={{ pathLength: 0, rotate: -90 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 2.6, ease: easeLuxe, delay: 0.4 }}
-                style={{ transformOrigin: '50px 50px' }}
-              />
-            </svg>
+            {reduced ? (
+              <RunwaySymbol className="h-[18vmin] max-h-40 w-auto" />
+            ) : (
+              <RunwaySymbolAnimated className="h-[22vmin] max-h-52 min-h-24 w-auto drop-shadow-[0_18px_40px_rgba(160,20,20,0.35)]" delay={0.3} />
+            )}
 
-            {/* Gilded monogram */}
-            <motion.svg
-              viewBox="0 0 200 220"
-              className="relative h-[24vmin] max-h-48 min-h-28 w-auto drop-shadow-[0_8px_40px_rgba(184,154,106,0.25)]"
-              initial={{ opacity: 0, scale: 1.12, filter: 'blur(14px)' }}
-              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-              transition={{ duration: 2, ease: easeLuxe, delay: 0.6 }}
+            <h1 className="sr-only">Runway Furniture International</h1>
+            <div className="relative mt-[3.2vmin] flex overflow-hidden pt-[0.08em]" style={{ fontFamily: WORD }} aria-hidden>
+              {letters.map((l, i) => (
+                <span key={i} className="inline-block overflow-hidden">
+                  <motion.span
+                    className="inline-block text-[clamp(2.9rem,10vw,6.4rem)] leading-none font-light tracking-[0.04em]"
+                    style={metal}
+                    initial={reduced ? false : { y: '110%', opacity: 0 }}
+                    animate={{ y: '0%', opacity: 1 }}
+                    transition={{ duration: 1.2, ease: easeLuxe, delay: 1.9 + i * 0.07 }}
+                  >
+                    {l}
+                  </motion.span>
+                </span>
+              ))}
+              {/* a light passing over the metal */}
+              {!reduced && (
+                <motion.span
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/45 to-transparent mix-blend-overlay"
+                  initial={{ x: '-120%' }}
+                  animate={{ x: '120%' }}
+                  transition={{ duration: 1.6, ease: 'easeInOut', delay: 3.1 }}
+                />
+              )}
+            </div>
+            <motion.p
+              className="mt-[1.6vmin] text-[clamp(0.8rem,2.2vw,1.35rem)] font-normal text-[#e9dcc4] uppercase"
+              style={{ fontFamily: WORD }}
+              initial={reduced ? false : { opacity: 0, letterSpacing: '1.1em' }}
+              animate={{ opacity: 1, letterSpacing: '0.62em' }}
+              transition={{ duration: 1.6, ease: easeLuxe, delay: 2.5 }}
               aria-hidden
             >
-              <defs>
-                <linearGradient id="gold-metal" x1="0" y1="0" x2="0.35" y2="1">
-                  <stop offset="0" stopColor="#f6e7c1" />
-                  <stop offset="0.22" stopColor="#c9a66b" />
-                  <stop offset="0.45" stopColor="#7d5a32" />
-                  <stop offset="0.58" stopColor="#d9bd84" />
-                  <stop offset="0.75" stopColor="#a07d4a" />
-                  <stop offset="1" stopColor="#5e4224" />
-                </linearGradient>
-                <linearGradient id="gold-sheen" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stopColor="#fff" stopOpacity="0" />
-                  <stop offset="0.5" stopColor="#fffaf0" stopOpacity="0.95" />
-                  <stop offset="1" stopColor="#fff" stopOpacity="0" />
-                </linearGradient>
-                <clipPath id="r-clip">
-                  <text x="100" y="186" textAnchor="middle" fontFamily={SERIF} fontSize="230">
-                    R
-                  </text>
-                </clipPath>
-              </defs>
-              {/* engraved depth: dark offset + bevel highlight */}
-              <text x="101.5" y="188" textAnchor="middle" fontFamily={SERIF} fontSize="230" fill="#000" opacity="0.6">
-                R
-              </text>
-              <text x="100" y="186" textAnchor="middle" fontFamily={SERIF} fontSize="230" fill="url(#gold-metal)">
-                R
-              </text>
-              <text x="99.4" y="185.2" textAnchor="middle" fontFamily={SERIF} fontSize="230" fill="none" stroke="#fff5dc" strokeOpacity="0.35" strokeWidth="0.6">
-                R
-              </text>
-              {/* travelling specular highlight */}
-              <g clipPath="url(#r-clip)">
-                <motion.rect
-                  y="-20"
-                  width="70"
-                  height="260"
-                  fill="url(#gold-sheen)"
-                  transform="skewX(-18)"
-                  initial={{ x: -120 }}
-                  animate={{ x: 320 }}
-                  transition={{ duration: 1.8, ease: 'easeInOut', delay: 1.9, repeat: 1, repeatDelay: 1.2 }}
-                  style={{ mixBlendMode: 'overlay' }}
-                />
-              </g>
-            </motion.svg>
-
-            {/* wordmark */}
-            <div className="relative mt-6 flex font-display text-3xl text-bone md:text-5xl" aria-label="Runway">
-              {letters.map((l, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, filter: 'blur(10px)', letterSpacing: '0.9em', y: 6 }}
-                  animate={{ opacity: 1, filter: 'blur(0px)', letterSpacing: '0.38em', y: 0 }}
-                  transition={{ duration: 1.6, ease: easeLuxe, delay: 1.3 + i * 0.07 }}
-                >
-                  {l}
-                </motion.span>
-              ))}
-            </div>
-            <div className="relative mt-5 flex items-center gap-4">
-              <motion.span className="h-px bg-gradient-to-r from-transparent to-gold/70" initial={{ width: 0 }} animate={{ width: 64 }} transition={{ duration: 1.4, ease: easeLuxe, delay: 1.9 }} />
+              <span className="mr-[-0.62em]">Furniture</span>
+            </motion.p>
+            <div className="mt-[1.4vmin] flex items-center gap-4" aria-hidden>
+              <motion.span className="h-px origin-right bg-gradient-to-r from-transparent to-[#c9a66b]" style={{ width: 'clamp(2.5rem,8vw,5.5rem)' }} initial={reduced ? false : { scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.2, ease: easeLuxe, delay: 2.9 }} />
               <motion.span
-                className="eyebrow text-[0.6rem] text-gold"
-                initial={{ opacity: 0, letterSpacing: '0.7em' }}
-                animate={{ opacity: 1, letterSpacing: '0.42em' }}
-                transition={{ duration: 1.6, ease: easeLuxe, delay: 2 }}
+                className="text-[clamp(0.62rem,1.5vw,0.9rem)] tracking-[0.4em] text-[#d9c4a0] uppercase"
+                style={{ fontFamily: WORD }}
+                initial={reduced ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 3 }}
               >
-                Furniture International
+                <span className="mr-[-0.4em]">International</span>
               </motion.span>
-              <motion.span className="h-px bg-gradient-to-l from-transparent to-gold/70" initial={{ width: 0 }} animate={{ width: 64 }} transition={{ duration: 1.4, ease: easeLuxe, delay: 1.9 }} />
+              <motion.span className="h-px origin-left bg-gradient-to-l from-transparent to-[#c9a66b]" style={{ width: 'clamp(2.5rem,8vw,5.5rem)' }} initial={reduced ? false : { scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.2, ease: easeLuxe, delay: 2.9 }} />
             </div>
 
-            {/* opening credits */}
-            <div className="absolute bottom-[16vh] h-6 overflow-hidden text-center">
-              <AnimatePresence mode="wait">
-                {credit >= 0 && (
-                  <motion.p
-                    key={credit}
-                    className="font-display text-lg text-mineral/80 italic md:text-xl"
-                    initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
-                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, y: -14, filter: 'blur(4px)' }}
-                    transition={{ duration: 0.6, ease: easeLuxe }}
-                  >
-                    {credits[credit]}
-                  </motion.p>
+            <motion.p
+              className="mt-[4.5vmin] font-display text-[clamp(1.15rem,2.6vw,1.7rem)] text-[#efe4d0]/85 italic"
+              initial={reduced ? false : { opacity: 0, y: 12, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 1.2, ease: easeLuxe, delay: 3.5 }}
+            >
+              {t('Creating extraordinary spaces worldwide', 'Creando espacios extraordinarios en todo el mundo')}
+            </motion.p>
+            <motion.p
+              className="mt-3 text-[0.62rem] tracking-[0.32em] text-[#d9c4a0]/60 uppercase"
+              initial={reduced ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 3.8 }}
+            >
+              {t('Hospitality · Residential · Contract · Bespoke', 'Hotelería · Residencial · Contract · A medida')} — {t('Since', 'Desde')} {brand.since}
+            </motion.p>
+
+            {/* language: asked on a first visit, offered as a shortcut otherwise */}
+            <div className="pointer-events-auto mt-[5vmin] h-24">
+              <AnimatePresence>
+                {choices && (
+                  <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: easeLuxe }} className="flex flex-col items-center gap-4">
+                    <p className="text-[0.6rem] tracking-[0.4em] text-[#d9c4a0]/70 uppercase">Choose your language · Elige tu idioma</p>
+                    <div className="flex gap-3">
+                      {langs.map((l, i) => (
+                        <motion.button
+                          key={l}
+                          onClick={() => enter(l)}
+                          autoFocus={ask && l === lang}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.7, ease: easeLuxe, delay: 0.1 + i * 0.08 }}
+                          className={`group relative overflow-hidden rounded-full border px-7 py-3 text-[0.7rem] font-semibold tracking-[0.28em] uppercase transition-colors duration-500 ${
+                            l === lang ? 'border-[#c9a66b] text-[#0b0a09]' : 'border-[#c9a66b]/40 text-[#efe4d0] hover:border-[#c9a66b]'
+                          }`}
+                          lang={l}
+                        >
+                          <span className={`absolute inset-0 origin-bottom rounded-full bg-[#c9a66b] transition-transform duration-500 ease-[var(--ease-luxe)] ${l === lang ? 'scale-y-100' : 'scale-y-0 group-hover:scale-y-100'}`} />
+                          <span className="relative group-hover:text-[#0b0a09]">{langNames[l]}</span>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
           </motion.div>
 
-          {/* letterbox bars + slate details */}
-          {(['top', 'bottom'] as const).map((side) => (
-            <motion.div
-              key={side}
-              className={`absolute inset-x-0 ${side}-0 flex h-[9vh] items-center justify-between bg-ink px-5 md:px-10 ${side === 'top' ? 'origin-top' : 'origin-bottom'}`}
-              initial={{ scaleY: 1 }}
-              animate={phase === 'dive' ? { scaleY: 0 } : { scaleY: 1 }}
-              transition={{ duration: 1.2, ease: easeCine, delay: 0.3 }}
-            >
-              <motion.span
-                className="eyebrow text-[0.6rem] text-bone/60"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: phase === 'dive' ? 0 : 1 }}
-                transition={{ delay: phase === 'dive' ? 0 : 0.8 }}
-              >
-                {side === 'top' ? 'Runway Furniture International' : <><span className="md:hidden">{t('Tap to enter', 'Toca para entrar')}</span><span className="hidden md:inline">{t('Click or press any key to enter', 'Haz clic o pulsa cualquier tecla para entrar')}</span></>}
-              </motion.span>
-              <motion.span
-                className={`eyebrow text-[0.6rem] text-bone/60 tabular-nums ${side === 'bottom' ? 'max-md:hidden' : ''}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: phase === 'dive' ? 0 : 1 }}
-                transition={{ delay: phase === 'dive' ? 0 : 0.8 }}
-              >
-                {side === 'top' ? `${String(count).padStart(3, '0')} %` : 'Montreal — Singapore'}
-              </motion.span>
-            </motion.div>
-          ))}
-          {/* progress hairline */}
-          <motion.div
-            className="absolute inset-x-0 top-[9vh] h-px origin-left bg-gold/60"
-            style={{ scaleX: count / 100 }}
-            animate={phase === 'dive' ? { opacity: 0 } : {}}
-          />
+          <motion.p
+            className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-[0.58rem] tracking-[0.36em] text-[#d9c4a0]/45 uppercase"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: open ? 0 : 1 }}
+            transition={{ delay: open ? 0 : 1.2 }}
+          >
+            Montreal · Singapore · Worldwide
+          </motion.p>
         </motion.div>
       )}
     </AnimatePresence>
