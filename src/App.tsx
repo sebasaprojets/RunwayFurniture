@@ -6,6 +6,7 @@ import { projects, type Project } from './data/site'
 import { useCalmScroll, usePrefersReducedMotion } from './lib/motion'
 import { initSmoothScroll, lockScroll, ScrollTrigger } from './lib/scroll'
 import { ScrollProgress } from './components/ScrollProgress'
+import { WhatsAppButton } from './components/WhatsAppButton'
 import { CinemaReveal } from './sections/CinemaReveal'
 import { Elite } from './sections/Elite'
 import { Clients } from './sections/Clients'
@@ -99,6 +100,7 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
+      <WhatsAppButton ready={ready} />
       <AnimatePresence>{project && <ProjectDetail key="detail" project={project} onClose={close} onNavigate={open} />}</AnimatePresence>
     </LayoutGroup>
   )

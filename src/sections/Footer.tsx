@@ -1,7 +1,7 @@
 import { ArrowUp } from 'lucide-react'
 import { motion } from 'motion/react'
 import { BRAND_SERIF } from '../components/BrandMark'
-import { brand, navItems } from '../data/site'
+import { brand, navItems, whatsappUrl } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
@@ -48,6 +48,11 @@ export function Footer() {
               <li className="pt-3">
                 <a href={`mailto:${brand.contactEmail}`} className="break-all transition-colors hover:text-gold">
                   {brand.contactEmail}
+                </a>
+              </li>
+              <li>
+                <a href={whatsappUrl(t('Hello, I would like more information about Runway Furniture.', 'Hola, me gustaría recibir información sobre Runway Furniture.'))} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-gold">
+                  WhatsApp {brand.whatsappLabel}
                 </a>
               </li>
             </ul>

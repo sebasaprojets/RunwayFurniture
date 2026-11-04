@@ -59,11 +59,20 @@ export const brand = {
     role: { en: 'Founder · Director · Designer', es: 'Fundador · Director · Diseñador' },
     quote: { en: 'Your lifestyle is my source of inspiration.', es: 'Tu estilo de vida es mi fuente de inspiración.' },
   },
-  /** Enquiries address from the company profile — used by the contact form (mailto). */
-  contactEmail: 'info@runwayfurniture.com',
+  /** Enquiries address — used by the contact form (mailto). */
+  contactEmail: 'runwayfurnitureh@gmail.com',
+  /** WhatsApp number in international digits (wa.me format) and as shown on the page. */
+  whatsapp: '18298815152',
+  whatsappLabel: '+1 829 881 5152',
   website: 'www.runwayfurniture.com',
   award: { en: 'Canadian Excellence Award 2008', es: 'Canadian Excellence Award 2008' },
 }
+
+/** A WhatsApp chat with Runway, opened with the visitor's message already written. */
+export const whatsappUrl = (text: string) => `https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(text)}`
+
+/** Opens the chat in a new tab (the app on phones), leaving the site where it was. */
+export const openWhatsApp = (text: string) => window.open(whatsappUrl(text), '_blank', 'noopener,noreferrer')
 
 /** Optional cinematic film for the hero. Drop an mp4 in /public/media and set the path. */
 export const heroVideo: { src: string; poster?: string } | null = null

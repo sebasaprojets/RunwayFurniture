@@ -2,7 +2,8 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Button } from '../components/Button'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
-import { brand, categories, categoryLabel, showcase } from '../data/site'
+import { WhatsAppIcon } from '../components/WhatsAppButton'
+import { brand, categories, categoryLabel, showcase, whatsappUrl } from '../data/site'
 import { useLang } from '../i18n'
 
 type Field = 'name' | 'email' | 'message'
@@ -90,8 +91,17 @@ export function Contact() {
                 </div>
               ))}
             </dl>
-            <a href={`mailto:${brand.contactEmail}`} className="mt-10 inline-block font-display text-2xl text-bone transition-colors hover:text-gold md:text-3xl">
+            <a href={`mailto:${brand.contactEmail}`} className="mt-10 inline-block font-display text-2xl break-all text-bone transition-colors hover:text-gold md:text-3xl">
               {brand.contactEmail}
+            </a>
+            <a
+              href={whatsappUrl(t('Hello, I would like more information about Runway Furniture.', 'Hola, me gustaría recibir información sobre Runway Furniture.'))}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 flex items-center gap-3 font-display text-2xl text-bone transition-colors hover:text-gold md:text-3xl"
+            >
+              <WhatsAppIcon className="size-6 text-gold" />
+              {brand.whatsappLabel}
             </a>
           </FadeIn>
         </div>

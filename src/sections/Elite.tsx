@@ -1,18 +1,20 @@
 import { ArrowLeft, ArrowRight, ArrowUpRight, Play, X } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useInView } from 'motion/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
 import { eliteKinds, type Drawing, type EliteKind, type Listing } from '../data/elite'
-import { thumb } from '../data/site'
-import { useLang } from '../i18n'
+import { openWhatsApp, thumb } from '../data/site'
+import { useLang, type T } from '../i18n'
 import { easeLuxe } from '../lib/motion'
-import { lockScroll, scrollToTarget } from '../lib/scroll'
+import { lockScroll } from '../lib/scroll'
 
-/** Ask the contact form to start an information request about a property or category. */
-const enquire = (subject: string) => {
-  window.dispatchEvent(new CustomEvent('contact:prefill', { detail: { subject } }))
-  scrollToTarget('#contact')
-}
+type Translate = (en: string, es: string) => string
+
+/** Opens a WhatsApp chat with Runway, the request about a property or category already written. */
+const enquire = (t: Translate, subject: string) =>
+  openWhatsApp(t(`Hello, I would like more information about: ${subject}.`, `Hola, me gustaría recibir información sobre: ${subject}.`))
+
+const subjectOf = (tx: (v: T) => string, l: Listing) => `${tx(l.name)} (${tx(l.location)})`
 
 /** Runway Sale — hotels, land, islands, condominiums and villas, each as a line drawing that sketches itself in. */
 export function Elite() {
@@ -72,7 +74,7 @@ export function Elite() {
               'Las propiedades se comparten de forma privada bajo solicitud. Cuéntenos qué busca y dónde.',
             )}
           </p>
-          <Button onClick={() => enquire('Runway Sale — Élite Project Worldwide')}>{t('Request the portfolio', 'Solicitar el portafolio')}</Button>
+          <Button onClick={() => enquire(t, 'Runway Sale — Élite Project Worldwide')}>{t('Request the portfolio', 'Solicitar el portafolio')}</Button>
         </div>
       </div>
 
@@ -146,7 +148,7 @@ function CineTitle() {
 function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
   const { t, tx } = useLang()
   const closeRef = useRef<HTMLButtonElement>(null)
-  const [view, setView] = useState<Listing | null>(null)
+  const [view, setView] = useState<number | null>(null)
   const viewing = useRef(false)
   viewing.current = view !== null
 
@@ -175,11 +177,7 @@ function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
       .join(' · ')
   }
 
-  const ask = (subject: string) => {
-    onClose()
-    // wait for the sheet to leave and release the scroll lock
-    window.setTimeout(() => enquire(subject), 850)
-  }
+  const ask = (subject: string) => enquire(t, subject)
 
   return (
     <motion.div
@@ -236,8 +234,8 @@ function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
                 total={kind.listings.length}
                 feature={kind.listings.length === 1}
                 count={count(l)}
-                onView={() => setView(l)}
-                onAsk={() => ask(`${tx(l.name)} (${tx(l.location)})`)}
+                onView={() => setView(i)}
+                onAsk={() => ask(subjectOf(tx, l))}
               />
             ))}
           </ul>
@@ -270,15 +268,15 @@ function Listings({ kind, onClose }: { kind: EliteKind; onClose: () => void }) {
       </div>
 
       <AnimatePresence>
-        {view && <Viewer key={view.name.en} listing={view} onClose={() => setView(null)} onAsk={() => ask(`${tx(view.name)} (${tx(view.location)})`)} />}
+        {view !== null && <Viewer key="viewer" listings={kind.listings} start={view} onClose={() => setView(null)} onAsk={(l) => ask(subjectOf(tx, l))} />}
       </AnimatePresence>
     </motion.div>
   )
 }
 
 /**
- * One property: its cover, and on devices with a pointer a muted preview of the
- * first film plays while hovering. A category with a single property shows it
+ * One property: its cover, and a muted preview of the first film that plays while
+ * hovering, or on touch screens while the card is in view. A category with a single property shows it
  * as a feature, image beside the text.
  */
 function ListingCard({
@@ -302,6 +300,10 @@ function ListingCard({
   const [hover, setHover] = useState(false)
   const film = l.media.find((m) => m.kind === 'video')
   const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches
+  // on touch screens there is no hover: the preview plays while the card is well in view
+  const coverRef = useRef<HTMLButtonElement>(null)
+  const inView = useInView(coverRef, { amount: 0.6 })
+  const preview = canHover ? hover : inView
   const no = `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`
 
   return (
@@ -312,6 +314,7 @@ function ListingCard({
       className={`group ${feature ? 'grid items-center gap-10 md:grid-cols-12 md:gap-14' : 'flex flex-col'}`}
     >
       <button
+        ref={coverRef}
         onClick={onView}
         onPointerEnter={() => canHover && setHover(true)}
         onPointerLeave={() => setHover(false)}
@@ -325,7 +328,7 @@ function ListingCard({
           decoding="async"
           className="h-full w-full object-cover transition-transform duration-[1.6s] ease-[var(--ease-luxe)] group-hover:scale-[1.05]"
         />
-        {film && film.kind === 'video' && hover && (
+        {film && film.kind === 'video' && preview && (
           <motion.video
             src={film.src}
             poster={film.poster}
@@ -375,14 +378,25 @@ function ListingCard({
   )
 }
 
-/** Full-screen photos and films of one property, one at a time, with a strip to jump between them. */
-function Viewer({ listing, onClose, onAsk }: { listing: Listing; onClose: () => void; onAsk: () => void }) {
+/**
+ * Full-screen photos and films of a category, one at a time. Arrows, the keyboard
+ * or a swipe move through every property in turn; the strip jumps straight to one.
+ */
+function Viewer({ listings, start, onClose, onAsk }: { listings: Listing[]; start: number; onClose: () => void; onAsk: (l: Listing) => void }) {
   const { t, tx } = useLang()
-  const [i, setI] = useState(0)
-  const n = listing.media.length
-  const step = useCallback((d: number) => setI((x) => (x + d + n) % n), [n])
+  const slides = listings.flatMap((l) => l.media.map((m) => ({ l, m })))
+  const n = slides.length
+  const [i, setI] = useState(() => slides.findIndex((x) => x.l === listings[start]))
+  const [dir, setDir] = useState(1)
+  const step = useCallback(
+    (d: number) => {
+      setDir(d)
+      setI((x) => (x + d + n) % n)
+    },
+    [n],
+  )
   const closeRef = useRef<HTMLButtonElement>(null)
-  const m = listing.media[i]
+  const { l, m } = slides[i]
 
   useEffect(() => {
     const last = document.activeElement as HTMLElement | null
@@ -405,7 +419,7 @@ function Viewer({ listing, onClose, onAsk }: { listing: Listing; onClose: () => 
     <motion.div
       role="dialog"
       aria-modal="true"
-      aria-label={tx(listing.name)}
+      aria-label={tx(l.name)}
       className="fixed inset-0 z-[130] flex flex-col bg-ink/95 backdrop-blur-md"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -413,39 +427,53 @@ function Viewer({ listing, onClose, onAsk }: { listing: Listing; onClose: () => 
       transition={{ duration: 0.5 }}
     >
       <div className="flex items-center justify-between gap-4 px-5 py-4 md:px-10">
-        <div className="min-w-0">
-          <p className="truncate font-display text-2xl text-bone md:text-3xl">{tx(listing.name)}</p>
-          <p className="eyebrow mt-1 truncate text-mineral/60">{tx(listing.location)}</p>
+        <AnimatePresence mode="wait">
+          <motion.div key={l.name.en} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: easeLuxe }} className="min-w-0">
+            <p className="truncate font-display text-2xl text-bone md:text-3xl">{tx(l.name)}</p>
+            <p className="eyebrow mt-1 truncate text-mineral/60">{tx(l.location)}</p>
+          </motion.div>
+        </AnimatePresence>
+        <div className="flex shrink-0 items-center gap-4">
+          {n > 1 && (
+            <span className="font-sans text-xs text-bone/60" aria-live="polite">
+              {String(i + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}
+            </span>
+          )}
+          <button ref={closeRef} onClick={onClose} className={round} aria-label={t('Close', 'Cerrar')}>
+            <X className="size-4" strokeWidth={1.5} />
+          </button>
         </div>
-        <button ref={closeRef} onClick={onClose} className={round} aria-label={t('Close', 'Cerrar')}>
-          <X className="size-4" strokeWidth={1.5} />
-        </button>
       </div>
 
-      <div className="relative flex min-h-0 flex-1 items-center justify-center px-5 md:px-24">
-        <AnimatePresence mode="wait">
+      <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-5 md:px-24">
+        <AnimatePresence mode="wait" custom={dir}>
           <motion.div
             key={i}
-            initial={{ opacity: 0, scale: 0.97, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, scale: 1.02 }}
+            custom={dir}
+            variants={{
+              enter: (d: number) => ({ opacity: 0, x: d * 60, filter: 'blur(8px)' }),
+              show: { opacity: 1, x: 0, filter: 'blur(0px)' },
+              leave: (d: number) => ({ opacity: 0, x: d * -60 }),
+            }}
+            initial="enter"
+            animate="show"
+            exit="leave"
             transition={{ duration: 0.6, ease: easeLuxe }}
-            className="flex h-full w-full items-center justify-center"
+            // swipe on touch screens; the drag snaps back and the gesture picks the direction
+            drag={n > 1 ? 'x' : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.35}
+            dragDirectionLock
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -60 || info.velocity.x < -400) step(1)
+              else if (info.offset.x > 60 || info.velocity.x > 400) step(-1)
+            }}
+            className="flex h-full w-full touch-pan-y items-center justify-center"
           >
             {m.kind === 'video' ? (
-              <video
-                src={m.src}
-                poster={m.poster}
-                className="max-h-full max-w-full bg-ink object-contain"
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-                preload="metadata"
-              />
+              <video src={m.src} poster={m.poster} className="max-h-full max-w-full bg-ink object-contain" autoPlay muted loop playsInline controls preload="metadata" />
             ) : (
-              <img src={m.src} alt={`${tx(listing.name)} — ${i + 1} / ${n}`} className="max-h-full max-w-full object-contain" decoding="async" />
+              <img src={m.src} alt={`${tx(l.name)} — ${i + 1} / ${n}`} className="pointer-events-none max-h-full max-w-full object-contain select-none" decoding="async" draggable={false} />
             )}
           </motion.div>
         </AnimatePresence>
@@ -463,24 +491,27 @@ function Viewer({ listing, onClose, onAsk }: { listing: Listing; onClose: () => 
 
       <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 md:px-10">
         {n > 1 ? (
-          <div className="flex gap-2 overflow-x-auto">
-            {listing.media.map((x, j) => (
+          <div className="flex max-w-full gap-2 overflow-x-auto">
+            {slides.map((x, j) => (
               <button
-                key={x.src}
-                onClick={() => setI(j)}
+                key={x.m.src}
+                onClick={() => {
+                  setDir(j > i ? 1 : -1)
+                  setI(j)
+                }}
                 className={`relative h-14 w-10 shrink-0 overflow-hidden border transition-opacity ${j === i ? 'border-gold opacity-100' : 'border-transparent opacity-50 hover:opacity-90'}`}
-                aria-label={`${j + 1} / ${n}`}
+                aria-label={`${tx(x.l.name)} — ${j + 1} / ${n}`}
                 aria-current={j === i || undefined}
               >
-                <img src={x.kind === 'video' ? x.poster : thumb(x.src)} alt="" className="h-full w-full object-cover" loading="lazy" />
-                {x.kind === 'video' && <Play className="absolute inset-0 m-auto size-3.5 text-bone" strokeWidth={1.5} />}
+                <img src={x.m.kind === 'video' ? x.m.poster : thumb(x.m.src)} alt="" className="h-full w-full object-cover" loading="lazy" />
+                {x.m.kind === 'video' && <Play className="absolute inset-0 m-auto size-3.5 text-bone" strokeWidth={1.5} />}
               </button>
             ))}
           </div>
         ) : (
           <span />
         )}
-        <Button onClick={onAsk}>{t('Request information', 'Solicitar información')}</Button>
+        <Button onClick={() => onAsk(l)}>{t('Request information', 'Solicitar información')}</Button>
       </div>
     </motion.div>
   )
