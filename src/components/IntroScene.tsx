@@ -110,14 +110,27 @@ export function IntroScene({
       return
     }
     let disposed = false
-    // render at the screen's full sharpness (retina included), capped so huge 4K+ displays stay smooth
-    const dpr = Math.min(window.devicePixelRatio || 1, 2, 4200 / Math.max(window.innerWidth, 1))
-    renderer.setPixelRatio(dpr)
+    // Quality tiers, from full retina sharpness down to a light mode. Phones and small machines start
+    // one step lower; if frames still run slow the scene steps down on its own so motion stays fluid.
+    const device = Math.min(window.devicePixelRatio || 1, 2, 4200 / Math.max(window.innerWidth, 1))
+    const nav = navigator as Navigator & { deviceMemory?: number }
+    const modest = (nav.hardwareConcurrency || 8) <= 4 || (nav.deviceMemory || 8) <= 4 || Math.min(window.innerWidth, window.innerHeight) < 600
+    const TIERS = [
+      { dpr: device, blur: true },
+      { dpr: Math.min(device, 1.5), blur: true },
+      { dpr: Math.min(device, 1.15), blur: false },
+      { dpr: Math.min(device, 0.85), blur: false },
+    ]
+    let tier = modest ? 1 : 0
+    renderer.setPixelRatio(TIERS[tier].dpr)
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.05
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    // only the camera moves, so the soft shadows are computed once instead of every frame
+    renderer.shadowMap.autoUpdate = false
+    renderer.shadowMap.needsUpdate = true
     el.appendChild(renderer.domElement)
     renderer.domElement.style.cssText = 'display:block;width:100%;height:100%'
 
@@ -140,7 +153,7 @@ export function IntroScene({
     const key = new THREE.DirectionalLight('#fff6ec', 2.4)
     key.position.set(-4, 9, 5)
     key.castShadow = true
-    const big = Math.min(window.innerWidth, window.innerHeight) > 700
+    const big = !modest && Math.min(window.innerWidth, window.innerHeight) > 700
     key.shadow.mapSize.set(big ? 4096 : 2048, big ? 4096 : 2048)
     key.shadow.radius = 9
     key.shadow.blurSamples = 20
@@ -197,7 +210,7 @@ export function IntroScene({
 
     const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 60)
     // multisampled, high-precision buffer: clean edges and smooth gradients on the lacquer
-    const target = new THREE.WebGLRenderTarget(1, 1, { samples: 4, type: THREE.HalfFloatType })
+    const target = new THREE.WebGLRenderTarget(1, 1, { samples: modest ? 2 : 4, type: THREE.HalfFloatType })
     const composer = new EffectComposer(renderer, target)
     composer.addPass(new RenderPass(scene, camera))
     const bokeh = new BokehPass(scene, camera, { focus: 3, aperture: 0.01, maxblur: 0.014 })
@@ -229,22 +242,49 @@ export function IntroScene({
     }
     resize()
     window.addEventListener('resize', resize)
+    const applyTier = () => {
+      renderer.setPixelRatio(TIERS[tier].dpr)
+      composer.setPixelRatio(TIERS[tier].dpr)
+      resize()
+    }
+    applyTier()
+    // compile every shader up front so the first seconds of the flight never stutter
+    renderer.compile(scene, camera)
 
     const pos = new THREE.Vector3()
     const look = new THREE.Vector3()
+    const heroPos = new THREE.Vector3()
+    const times: number[] = []
+    let last = 0
+    let frames = 0
     let start = -1
     let raf = 0
     let readySent = false
     let settleSent = false
     const frame = (now: number) => {
-      if (start < 0) start = now
+      // the first frame only warms the GPU up; the film's clock starts on the next one
+      frames++
+      if (frames === 2) start = now
+      if (frames > 3 && !still) {
+        times.push(now - last)
+        if (times.length >= 14) {
+          const sorted = [...times].sort((a, b) => a - b)
+          // median frame over ~24ms (below ~40fps): drop one quality step
+          if (sorted[7] > 24 && tier < TIERS.length - 1) {
+            tier++
+            applyTier()
+          }
+          times.length = 0
+        }
+      }
+      last = now
       const probe = (window as { __introT?: number }).__introT
-      const t = still ? FLIGHT + 2 : typeof probe === 'number' ? probe : Math.max(0, (now - start) / 1000)
+      const t = still ? FLIGHT + 2 : typeof probe === 'number' ? probe : start < 0 ? 0 : Math.max(0, (now - start) / 1000)
       const u = easeInOut(Math.min(t / FLIGHT, 1))
       posCurve.getPoint(u, pos)
       lookCurve.getPoint(u, look)
       // blend the last stretch into a hero position that fits the screen, then drift slowly
-      const heroPos = heroLook.clone().addScaledVector(heroDir, heroDist)
+      heroPos.copy(heroLook).addScaledVector(heroDir, heroDist)
       const k = THREE.MathUtils.smoothstep(u, 0.72, 1)
       pos.lerp(heroPos, k)
       const drift = Math.max(0, t - FLIGHT)
@@ -259,6 +299,8 @@ export function IntroScene({
       bokehUniforms.focus.value = dist
       // shallow focus while close, opening up to a crisp product shot at the end
       bokehUniforms.aperture.value = THREE.MathUtils.lerp(0.014, 0.0006, k)
+      // the depth-of-field pass is the heaviest step: skipped once the shot is sharp, or on light tiers
+      bokeh.enabled = TIERS[tier].blur && k < 0.97
       const sw = THREE.MathUtils.smoothstep(t, FLIGHT - 0.1, FLIGHT + 2.3)
       sweep.position.x = THREE.MathUtils.lerp(-9, 9, sw)
       sweep.intensity = 14 * Math.sin(Math.PI * sw)
