@@ -56,7 +56,7 @@ export const brand = {
     { en: 'Middle East', es: 'Medio Oriente' },
   ] satisfies T[],
   founder: {
-    name: 'Roberto Castillo',
+    name: 'Roberto Castle',
     role: { en: 'Founder · Director · Designer', es: 'Fundador · Director · Diseñador' },
     quote: { en: 'Your lifestyle is my source of inspiration.', es: 'Tu estilo de vida es mi fuente de inspiración.' },
   },
@@ -108,8 +108,8 @@ export const films = [
   {
     title: { en: 'Meet Runway', es: 'Conozca Runway' },
     caption: {
-      en: 'Roberto Castillo, CEO & creative director, and Ivelisse Castillo, international executive director, present the company — from the showroom to the workshop.',
-      es: 'Roberto Castillo, CEO y director creativo, e Ivelisse Castillo, directora ejecutiva internacional, presentan la empresa: del showroom al taller.',
+      en: 'Roberto Castle, CEO & creative director, and Ivelisse Castillo, international executive director, present the company — from the showroom to the workshop.',
+      es: 'Roberto Castle, CEO y director creativo, e Ivelisse Castillo, directora ejecutiva internacional, presentan la empresa: del showroom al taller.',
     },
     youtube: undefined as string | undefined,
     src: './media/runway-presentation.mp4',
