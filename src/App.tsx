@@ -40,8 +40,23 @@ export default function App() {
   const { t } = useLang()
   const reduced = usePrefersReducedMotion()
   const calm = useCalmScroll()
-  const [ready, setReady] = useState(false)
-  const [revealed, setRevealed] = useState(false)
+  // The opening film plays when someone arrives; reloading or coming back in the same tab goes straight to the site.
+  const [intro] = useState(() => {
+    try {
+      return sessionStorage.getItem('runway-intro') !== '1'
+    } catch {
+      return true // storage blocked: show the opening
+    }
+  })
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('runway-intro', '1')
+    } catch {
+      /* ignore */
+    }
+  }, [])
+  const [ready, setReady] = useState(!intro)
+  const [revealed, setRevealed] = useState(!intro)
   const onReveal = useCallback(() => setRevealed(true), [])
   const [project, setProject] = useState<Project | null>(fromHash)
   const onReady = useCallback(() => setReady(true), [])
@@ -83,7 +98,7 @@ export default function App() {
         {t('Skip to content', 'Saltar al contenido')}
       </a>
       <ScrollProgress />
-      <Preloader onDone={onReady} onReveal={onReveal} reduced={reduced} />
+      {intro && <Preloader onDone={onReady} onReveal={onReveal} reduced={reduced} />}
       <Navigation ready={ready} />
       <main id="main">
         <Hero ready={ready} revealed={revealed} reduced={reduced} />

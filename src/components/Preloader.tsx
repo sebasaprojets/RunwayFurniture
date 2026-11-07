@@ -57,16 +57,17 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
   const fallback = useCallback(() => {
     setFlat(true)
     setReady(true)
-    window.setTimeout(() => setSettled(true), reduced ? 0 : 1600)
+    window.setTimeout(() => setSettled(true), reduced ? 0 : 1300)
   }, [reduced])
   useEffect(() => {
-    if (!ready || (window as { __introT?: number }).__introT !== undefined) return
-    const timer = window.setTimeout(enter, reduced ? 1400 : flat ? 5200 : 7800)
+    // a short moment to read the titles once they are in, then the site
+    if (!settled || (window as { __introT?: number }).__introT !== undefined) return
+    const timer = window.setTimeout(enter, reduced ? 1400 : 2900)
     return () => clearTimeout(timer)
-  }, [ready, reduced, flat, enter])
+  }, [settled, reduced, enter])
 
   const open = phase === 'open'
-  const late = reduced ? 0.1 : 0.15
+  const late = 0
 
   return (
     <AnimatePresence>
@@ -110,23 +111,23 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
           {settled && (
             <div className="pointer-events-none absolute inset-x-0 bottom-[9vh] flex flex-col items-center px-6 text-center">
               <div className="flex items-center gap-4" aria-hidden>
-                <motion.span className="h-px origin-right bg-gradient-to-r from-transparent to-[#8c0d14]" style={{ width: 'clamp(2rem,7vw,5rem)' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.2, ease: easeLuxe, delay: late }} />
+                <motion.span className="h-px origin-right bg-gradient-to-r from-transparent to-[#8c0d14]" style={{ width: 'clamp(2rem,7vw,5rem)' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.9, ease: easeLuxe, delay: late }} />
                 <motion.span
                   className="text-[clamp(0.7rem,1.7vw,1rem)] tracking-[0.5em] text-[#2a2420] uppercase sm:whitespace-nowrap"
                   style={{ fontFamily: WORD }}
                   initial={{ opacity: 0, letterSpacing: '0.9em' }}
                   animate={{ opacity: 1, letterSpacing: '0.5em' }}
-                  transition={{ duration: 1.4, ease: easeLuxe, delay: late }}
+                  transition={{ duration: 1, ease: easeLuxe, delay: late }}
                 >
                   <span className="mr-[-0.5em]">Furniture International</span>
                 </motion.span>
-                <motion.span className="h-px origin-left bg-gradient-to-l from-transparent to-[#8c0d14]" style={{ width: 'clamp(2rem,7vw,5rem)' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.2, ease: easeLuxe, delay: late }} />
+                <motion.span className="h-px origin-left bg-gradient-to-l from-transparent to-[#8c0d14]" style={{ width: 'clamp(2rem,7vw,5rem)' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.9, ease: easeLuxe, delay: late }} />
               </div>
               <motion.p
                 className="mt-4 font-display text-[clamp(1.1rem,2.5vw,1.6rem)] text-[#1d1916]/85 italic"
                 initial={{ opacity: 0, y: 10, filter: 'blur(6px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 1.2, ease: easeLuxe, delay: late + 0.5 }}
+                transition={{ duration: 0.9, ease: easeLuxe, delay: late + 0.2 }}
               >
                 {t('Creating extraordinary spaces worldwide', 'Creando espacios extraordinarios en todo el mundo')}
               </motion.p>
@@ -134,7 +135,7 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
                 className="mt-3 text-[0.6rem] tracking-[0.32em] text-[#2a2420]/55 uppercase"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: late + 0.9 }}
+                transition={{ duration: 0.8, delay: late + 0.35 }}
               >
                 {t('Hospitality · Residential · Contract · Bespoke', 'Hotelería · Residencial · Contract · A medida')} — {t('Since', 'Desde')} {brand.since}
               </motion.p>

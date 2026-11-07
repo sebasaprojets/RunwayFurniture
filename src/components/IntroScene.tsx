@@ -24,7 +24,7 @@ const SHOTS = [
   { pos: [-2.4, 1.75, 3.4], look: [-0.15, 0.5, 1.3] },
   { pos: [0, 9.6, 7.4], look: [0, 0, 1.25] },
 ] as const
-const FLIGHT = 4.6
+const FLIGHT = 3.9
 
 function easeInOut(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
@@ -308,7 +308,8 @@ export function IntroScene({
       sweep.lookAt(0, 0.5, 0.6)
       if (lite) renderer.render(scene, camera)
       else composer.render()
-      if (!settleSent && t >= FLIGHT - 0.15) {
+      // titles come in as the camera eases into the final shot, already clear of the mark
+      if (!settleSent && t >= FLIGHT - 0.55) {
         settleSent = true
         onSettle?.()
       }
