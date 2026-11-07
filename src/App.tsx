@@ -40,21 +40,12 @@ export default function App() {
   const { t } = useLang()
   const reduced = usePrefersReducedMotion()
   const calm = useCalmScroll()
-  // The opening film plays when someone arrives; reloading or coming back in the same tab goes straight to the site.
+  // The opening film plays every time someone opens the site; it is skipped only when the page is
+  // reloaded (or reached with the browser's back/forward buttons).
   const [intro] = useState(() => {
-    try {
-      return sessionStorage.getItem('runway-intro') !== '1'
-    } catch {
-      return true // storage blocked: show the opening
-    }
+    const nav = performance.getEntriesByType?.('navigation')[0] as PerformanceNavigationTiming | undefined
+    return !nav || (nav.type !== 'reload' && nav.type !== 'back_forward')
   })
-  useEffect(() => {
-    try {
-      sessionStorage.setItem('runway-intro', '1')
-    } catch {
-      /* ignore */
-    }
-  }, [])
   const [ready, setReady] = useState(!intro)
   const [revealed, setRevealed] = useState(!intro)
   const onReveal = useCallback(() => setRevealed(true), [])
