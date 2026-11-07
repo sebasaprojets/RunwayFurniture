@@ -88,14 +88,19 @@ export function IntroScene({
   onSettle,
   onFallback,
   still = false,
+  paused = false,
 }: {
   onReady?: () => void
   onSettle?: () => void
   /** called when the device has no real graphics acceleration; the opening then uses the flat logo */
   onFallback?: () => void
   still?: boolean
+  /** stop drawing (the studio is lifting away); the last frame stays on screen */
+  paused?: boolean
 }) {
   const host = useRef<HTMLDivElement>(null)
+  const pausedRef = useRef(paused)
+  pausedRef.current = paused
 
   useEffect(() => {
     const el = host.current
@@ -110,18 +115,18 @@ export function IntroScene({
       return
     }
     let disposed = false
-    // Quality tiers, from full retina sharpness down to a light mode. Phones and small machines start
-    // one step lower; if frames still run slow the scene steps down on its own so motion stays fluid.
+    // Two paths. Desktops get the full film: retina sharpness, multisampling and real depth of field.
+    // Phones and tablets ("lite") draw straight to the screen with the GPU's own antialiasing and no
+    // depth-of-field pass, which is what produced grain and stutter on mobile GPUs.
+    // If frames still run slow, the resolution steps down gently, never below a crisp floor.
     const device = Math.min(window.devicePixelRatio || 1, 2, 4200 / Math.max(window.innerWidth, 1))
     const nav = navigator as Navigator & { deviceMemory?: number }
-    const modest = (nav.hardwareConcurrency || 8) <= 4 || (nav.deviceMemory || 8) <= 4 || Math.min(window.innerWidth, window.innerHeight) < 600
-    const TIERS = [
-      { dpr: device, blur: true },
-      { dpr: Math.min(device, 1.5), blur: true },
-      { dpr: Math.min(device, 1.15), blur: false },
-      { dpr: Math.min(device, 0.85), blur: false },
-    ]
-    let tier = modest ? 1 : 0
+    const coarse = window.matchMedia?.('(pointer: coarse)').matches ?? false
+    const lite = coarse || (nav.hardwareConcurrency || 8) <= 4 || (nav.deviceMemory || 8) <= 4 || Math.min(window.innerWidth, window.innerHeight) < 600
+    const TIERS = lite
+      ? [{ dpr: Math.min(device, 2) }, { dpr: Math.min(device, 1.75) }, { dpr: Math.min(device, 1.5) }]
+      : [{ dpr: device }, { dpr: Math.min(device, 1.5) }, { dpr: Math.min(device, 1.25) }]
+    let tier = 0
     renderer.setPixelRatio(TIERS[tier].dpr)
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.ACESFilmicToneMapping
@@ -153,7 +158,7 @@ export function IntroScene({
     const key = new THREE.DirectionalLight('#fff6ec', 2.4)
     key.position.set(-4, 9, 5)
     key.castShadow = true
-    const big = !modest && Math.min(window.innerWidth, window.innerHeight) > 700
+    const big = !lite && Math.min(window.innerWidth, window.innerHeight) > 700
     key.shadow.mapSize.set(big ? 4096 : 2048, big ? 4096 : 2048)
     key.shadow.radius = 9
     key.shadow.blurSamples = 20
@@ -199,18 +204,10 @@ export function IntroScene({
     print.rotation.x = -Math.PI / 2
     print.position.set(L.centre.x, DEPTH + 0.026, L.centre.z)
     scene.add(print)
-    // redraw once the brand font has arrived
-    document.fonts?.load('400 64px "Josefin Sans"').then(() => {
-      if (disposed) return
-      const fresh = lettering()
-      ;(print.material as THREE.MeshStandardMaterial).map?.dispose()
-      ;(print.material as THREE.MeshStandardMaterial).map = fresh.tex
-      ;(print.material as THREE.MeshStandardMaterial).needsUpdate = true
-    })
 
     const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 60)
     // multisampled, high-precision buffer: clean edges and smooth gradients on the lacquer
-    const target = new THREE.WebGLRenderTarget(1, 1, { samples: modest ? 2 : 4, type: THREE.HalfFloatType })
+    const target = new THREE.WebGLRenderTarget(1, 1, { samples: 4, type: THREE.HalfFloatType })
     const composer = new EffectComposer(renderer, target)
     composer.addPass(new RenderPass(scene, camera))
     const bokeh = new BokehPass(scene, camera, { focus: 3, aperture: 0.01, maxblur: 0.014 })
@@ -228,11 +225,11 @@ export function IntroScene({
       const w = el.clientWidth || window.innerWidth
       const h = el.clientHeight || window.innerHeight
       renderer.setSize(w, h, false)
-      composer.setSize(w, h)
+      if (!lite) composer.setSize(w, h)
       camera.aspect = w / h
       camera.updateProjectionMatrix()
       // keep the whole mark in frame on narrow screens
-      const halfW = 3.25
+      const halfW = camera.aspect < 1 ? 3.7 : 3.25
       const tanH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
       heroDist = Math.max(14, halfW / (tanH * camera.aspect))
       // the studio fades into white only beyond the hero shot, so the mark stays crisp
@@ -244,7 +241,7 @@ export function IntroScene({
     window.addEventListener('resize', resize)
     const applyTier = () => {
       renderer.setPixelRatio(TIERS[tier].dpr)
-      composer.setPixelRatio(TIERS[tier].dpr)
+      if (!lite) composer.setPixelRatio(TIERS[tier].dpr)
       resize()
     }
     applyTier()
@@ -257,6 +254,7 @@ export function IntroScene({
     const times: number[] = []
     let last = 0
     let frames = 0
+    let blurOn = !lite
     let start = -1
     let raf = 0
     let readySent = false
@@ -270,9 +268,12 @@ export function IntroScene({
         if (times.length >= 14) {
           const sorted = [...times].sort((a, b) => a - b)
           // median frame over ~24ms (below ~40fps): drop one quality step
-          if (sorted[7] > 24 && tier < TIERS.length - 1) {
-            tier++
-            applyTier()
+          if (sorted[7] > 24) {
+            if (!lite && blurOn) blurOn = false
+            else if (tier < TIERS.length - 1) {
+              tier++
+              applyTier()
+            }
           }
           times.length = 0
         }
@@ -300,12 +301,13 @@ export function IntroScene({
       // shallow focus while close, opening up to a crisp product shot at the end
       bokehUniforms.aperture.value = THREE.MathUtils.lerp(0.014, 0.0006, k)
       // the depth-of-field pass is the heaviest step: skipped once the shot is sharp, or on light tiers
-      bokeh.enabled = TIERS[tier].blur && k < 0.97
+      bokeh.enabled = blurOn && k < 0.97
       const sw = THREE.MathUtils.smoothstep(t, FLIGHT - 0.1, FLIGHT + 2.3)
       sweep.position.x = THREE.MathUtils.lerp(-9, 9, sw)
       sweep.intensity = 14 * Math.sin(Math.PI * sw)
       sweep.lookAt(0, 0.5, 0.6)
-      composer.render()
+      if (lite) renderer.render(scene, camera)
+      else composer.render()
       if (!settleSent && t >= FLIGHT - 0.15) {
         settleSent = true
         onSettle?.()
@@ -314,9 +316,24 @@ export function IntroScene({
         readySent = true
         onReady?.()
       }
-      if (!still) raf = requestAnimationFrame(frame)
+      if (!still && !pausedRef.current) raf = requestAnimationFrame(frame)
     }
-    raf = requestAnimationFrame(frame)
+    // the lettering is drawn once, with the brand font already loaded, so nothing is re-uploaded mid-flight
+    const fontReady = Promise.race([
+      document.fonts?.load('400 64px "Josefin Sans"') ?? Promise.resolve(),
+      new Promise((r) => setTimeout(r, 1500)),
+    ])
+    fontReady.then(() => {
+      if (disposed) return
+      const fresh = lettering()
+      const mat = print.material as THREE.MeshStandardMaterial
+      mat.map?.dispose()
+      mat.map = fresh.tex
+      mat.needsUpdate = true
+      renderer.initTexture(fresh.tex)
+      renderer.compile(scene, camera)
+      raf = requestAnimationFrame(frame)
+    })
 
     return () => {
       disposed = true

@@ -44,12 +44,13 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
     return () => window.removeEventListener('keydown', key)
   }, [enter])
   useEffect(() => {
-    if (ready) return
+    if (ready || (window as { __introT?: number }).__introT !== undefined) return
     const cap = window.setTimeout(enter, 9000)
     return () => clearTimeout(cap)
   }, [ready, enter])
   // whatever happens, nobody waits more than 14 seconds
   useEffect(() => {
+    if ((window as { __introT?: number }).__introT !== undefined) return
     const cap = window.setTimeout(enter, 14000)
     return () => clearTimeout(cap)
   }, [enter])
@@ -96,15 +97,12 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
             </div>
           ) : (
             <Suspense fallback={null}>
-              <IntroScene still={reduced} onReady={() => setReady(true)} onSettle={() => setSettled(true)} onFallback={fallback} />
+              <IntroScene still={reduced} paused={open} onReady={() => setReady(true)} onSettle={() => setSettled(true)} onFallback={fallback} />
             </Suspense>
           )}
 
-          {/* studio vignette and a whisper of film grain */}
+          {/* studio vignette */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_45%,transparent_55%,rgba(40,30,25,.22))]" />
-          <div className="pointer-events-none absolute inset-0 opacity-[0.07] mix-blend-multiply">
-            <div className="grain" />
-          </div>
 
           <button className="absolute inset-0 cursor-default" tabIndex={-1} aria-hidden onClick={enter} />
 
