@@ -135,18 +135,19 @@ export function Preloader({
           <h1 className="sr-only">Runway Furniture International</h1>
           {settled && (
             <div className="pointer-events-none absolute inset-x-0 bottom-[9vh] flex flex-col items-center px-6 text-center">
-              <div className="flex items-center gap-4" aria-hidden>
-                <motion.span className="h-px origin-right bg-gradient-to-r from-transparent to-[#8c0d14]" style={{ width: 'clamp(2rem,7vw,5rem)' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.9, ease: easeLuxe, delay: late }} />
+              <div className="flex items-center gap-3 sm:gap-4" aria-hidden>
+                <motion.span className="h-px shrink-0 origin-right bg-gradient-to-r from-transparent to-[#8c0d14]" style={{ width: 'clamp(1.25rem,7vw,5rem)' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.9, ease: easeLuxe, delay: late }} />
+                {/* always one line: the words open out with a transform, so the layout never re-wraps mid-animation */}
                 <motion.span
-                  className="text-[clamp(0.7rem,1.7vw,1rem)] tracking-[0.5em] text-[#2a2420] uppercase sm:whitespace-nowrap"
+                  className="text-[clamp(0.68rem,1.7vw,1rem)] tracking-[0.3em] whitespace-nowrap text-[#2a2420] uppercase min-[400px]:tracking-[0.4em] sm:tracking-[0.5em]"
                   style={{ fontFamily: WORD }}
-                  initial={{ opacity: 0, letterSpacing: '0.9em' }}
-                  animate={{ opacity: 1, letterSpacing: '0.5em' }}
+                  initial={{ opacity: 0, scaleX: 1.14 }}
+                  animate={{ opacity: 1, scaleX: 1 }}
                   transition={{ duration: 1, ease: easeLuxe, delay: late }}
                 >
-                  <span className="mr-[-0.5em]">Furniture International</span>
+                  <span className="mr-[-0.3em] min-[400px]:mr-[-0.4em] sm:mr-[-0.5em]">Furniture International</span>
                 </motion.span>
-                <motion.span className="h-px origin-left bg-gradient-to-l from-transparent to-[#8c0d14]" style={{ width: 'clamp(2rem,7vw,5rem)' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.9, ease: easeLuxe, delay: late }} />
+                <motion.span className="h-px shrink-0 origin-left bg-gradient-to-l from-transparent to-[#8c0d14]" style={{ width: 'clamp(1.25rem,7vw,5rem)' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.9, ease: easeLuxe, delay: late }} />
               </div>
               <motion.p
                 className="mt-4 font-display text-[clamp(1.1rem,2.5vw,1.6rem)] text-[#1d1916]/85 italic"
