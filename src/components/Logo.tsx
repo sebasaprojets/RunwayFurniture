@@ -11,7 +11,7 @@ export function Logo({ className = '' }: { className?: string }) {
         <span className="size-1 rotate-45 bg-gold" />
         <span className="h-px w-5 bg-gradient-to-l from-transparent to-gold" />
       </span>
-      <span className="mt-1.5 text-[0.46rem] font-semibold tracking-[0.36em] text-gold uppercase">Furniture International</span>
+      <span className="mt-1.5 text-[0.46rem] font-semibold tracking-[0.26em] whitespace-nowrap text-gold uppercase min-[360px]:tracking-[0.36em]">Furniture International</span>
     </span>
   )
 }

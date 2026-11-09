@@ -19,7 +19,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   const { lang, t, tx } = useLang()
 
   return (
-    <section ref={ref} id="top" className="relative h-[100svh] min-h-[640px] overflow-hidden bg-ink" aria-label={t('Introduction', 'Introducción')}>
+    <section ref={ref} id="top" className="relative min-h-[100svh] overflow-hidden bg-ink" aria-label={t('Introduction', 'Introducción')}>
       {/* Film — revealed through an expanding architectural aperture */}
       <motion.div
         className="absolute inset-0"
@@ -86,7 +86,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
 
       <Seal show={ready} reduced={reduced} />
 
-      <motion.div style={calm ? undefined : { y: contentY, opacity: fade }} className="relative z-10 flex h-full flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
+      <motion.div style={calm ? undefined : { y: contentY, opacity: fade }} className="relative z-10 flex min-h-[100svh] flex-col justify-end px-5 pt-28 pb-10 md:px-10 md:pt-56 md:pb-14">
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -115,7 +115,8 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
                 stagger={0.08}
                 text={t('Creating\nExtraordinary\nSpaces Worldwide', 'Creamos\nespacios\nextraordinarios')}
                 accent={['Extraordinary', 'extraordinarios']}
-                className={`display text-bone uppercase sm:text-[11vw] lg:text-[7.4vw] ${lang === 'es' ? 'text-[12.4vw]' : 'text-[15vw]'}`}
+                // sized by both width and height, so short screens (in-app browsers, landscape) never push it under the menu
+                className={`display text-bone uppercase sm:text-[min(11vw,9svh)] lg:text-[min(7.4vw,12.5svh)] ${lang === 'es' ? 'text-[min(12.4vw,8.4svh)]' : 'text-[min(15vw,9.2svh)]'}`}
               />
             )}
           </div>
@@ -234,7 +235,7 @@ function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
       initial={{ opacity: 0, scale: 0.8, rotate: -40 }}
       animate={show ? { opacity: 1, scale: 1, rotate: 0 } : {}}
       transition={{ duration: 1.6, ease: easeLuxe, delay: 1 }}
-      className="group absolute top-[26%] right-5 z-20 hidden size-32 md:right-10 md:block lg:top-[24%] lg:size-36"
+      className="group absolute top-[26%] right-5 z-20 hidden size-32 md:right-10 md:block lg:top-[24%] lg:size-36 [@media(max-height:780px)]:!hidden"
       aria-label={t('Explore our work', 'Ver proyectos')}
     >
       <svg viewBox="0 0 200 200" className={`absolute inset-0 h-full w-full text-bone/70 ${reduced ? '' : 'animate-[spin_24s_linear_infinite]'}`}>
