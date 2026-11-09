@@ -72,8 +72,11 @@ void main(){
   gl_FragColor=vec4(col,1.);
 }`
 
-export function WaterCanvas({ still = false, className = '' }: { still?: boolean; className?: string }) {
+export function WaterCanvas({ still = false, paused = false, className = '' }: { still?: boolean; paused?: boolean; className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  // while the opening film plays on top, the water holds one frame so the two never compete for the GPU
+  const pausedRef = useRef(paused)
+  const resumeRef = useRef<() => void>(() => {})
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
@@ -131,8 +134,8 @@ export function WaterCanvas({ still = false, className = '' }: { still?: boolean
     // ~30 fps is plenty for slow water and halves the GPU load on modest laptops
     let last = 0
     const draw = (now: number) => {
-      if (!still && visible) raf = requestAnimationFrame(draw)
-      if (now - last < 32 && !still) return
+      if (!still && visible && !pausedRef.current) raf = requestAnimationFrame(draw)
+      if (now - last < 32 && !still && !pausedRef.current) return
       last = now
       mouse.x += (mouse.tx - mouse.x) * 0.03
       mouse.y += (mouse.ty - mouse.y) * 0.03
@@ -142,6 +145,10 @@ export function WaterCanvas({ still = false, className = '' }: { still?: boolean
       gl.drawArrays(gl.TRIANGLES, 0, 3)
     }
     raf = requestAnimationFrame(draw)
+    resumeRef.current = () => {
+      cancelAnimationFrame(raf)
+      if (visible && !document.hidden) raf = requestAnimationFrame(draw)
+    }
 
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting
@@ -164,6 +171,11 @@ export function WaterCanvas({ still = false, className = '' }: { still?: boolean
       gl.getExtension('WEBGL_lose_context')?.loseContext()
     }
   }, [still])
+
+  useEffect(() => {
+    pausedRef.current = paused
+    if (!paused) resumeRef.current()
+  }, [paused])
 
   if (failed)
     return <div className={`${className} bg-[radial-gradient(120%_90%_at_20%_100%,#0b4a52_0%,#05202a_45%,#030b10_100%)]`} />

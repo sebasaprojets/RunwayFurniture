@@ -31,7 +31,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
           {heroVideo ? (
             <video className="h-full w-full object-cover" src={heroVideo.src} poster={heroVideo.poster} autoPlay muted loop playsInline />
           ) : (
-            <WaterCanvas still={reduced} className="absolute inset-0" />
+            <WaterCanvas still={reduced} paused={!revealed} className="absolute inset-0" />
           )}
 
           {/* Structural glass floor — steel mullions in perspective, like standing above the sea */}
@@ -56,7 +56,8 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         {/* grading + legibility */}
         <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-transparent to-ink/80" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/50 via-transparent to-transparent" />
-        <div className="absolute inset-0 overflow-hidden mix-blend-overlay">
+        {/* plain blending: an overlay blend over the moving water was recomposited every frame */}
+        <div className="absolute inset-0 overflow-hidden opacity-60">
           <div className="grain" />
         </div>
       </motion.div>
@@ -200,15 +201,31 @@ function Timecode({ show }: { show: boolean }) {
   useEffect(() => {
     const start = performance.now()
     let raf = 0
+    let last = -1
+    let visible = true
     const pad = (n: number) => String(n).padStart(2, '0')
     const tick = (now: number) => {
       const f = Math.floor(((now - start) / 1000) * 24)
-      const s = Math.floor(f / 24)
-      if (ref.current) ref.current.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${pad(f % 24)}`
-      raf = requestAnimationFrame(tick)
+      // only touch the page when the frame number actually changes (24 times a second)
+      if (f !== last && ref.current) {
+        last = f
+        const s = Math.floor(f / 24)
+        ref.current.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${pad(f % 24)}`
+      }
+      if (visible) raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    // stop counting while the hero is scrolled away
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting
+      cancelAnimationFrame(raf)
+      if (visible) raf = requestAnimationFrame(tick)
+    })
+    if (ref.current) io.observe(ref.current)
+    return () => {
+      cancelAnimationFrame(raf)
+      io.disconnect()
+    }
   }, [])
   return (
     <motion.div

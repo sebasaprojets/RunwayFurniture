@@ -66,7 +66,8 @@ function Globe() {
     let W = 0
     let R = 0
     const size = () => {
-      dpr = Math.min(window.devicePixelRatio, 2)
+      // phones redraw the globe at 1.5x: sharp on their screens, far lighter to draw every frame
+      dpr = Math.min(window.devicePixelRatio, matchMedia('(pointer: coarse)').matches ? 1.5 : 2)
       W = canvas.clientWidth * dpr
       canvas.width = W
       canvas.height = W

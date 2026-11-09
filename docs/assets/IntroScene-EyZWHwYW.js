@@ -1,4 +1,4 @@
-import{a as zi,j as K9}from"./motion-DGZmB8ks.js";import{B as $9,a as j9}from"./index-CwXP9Lbn.js";import"./gsap-BmiAM98Q.js";/**
+import{a as zi,j as K9}from"./motion-DGZmB8ks.js";import{B as $9,a as j9}from"./index-CtKRisoy.js";import"./gsap-BmiAM98Q.js";/**
  * @license
  * Copyright 2010-2024 Three.js Authors
  * SPDX-License-Identifier: MIT
