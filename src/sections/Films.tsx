@@ -1,4 +1,5 @@
 import { ArrowUpRight, Play } from 'lucide-react'
+import { useInView } from 'motion/react'
 import { useRef, useState } from 'react'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
@@ -10,9 +11,12 @@ function Film({ film }: { film: (typeof films)[number] }) {
   const { t, tx } = useLang()
   const ref = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
+  // a video's poster downloads as soon as it exists, so it is only set once the film is near the screen
+  const box = useRef<HTMLElement>(null)
+  const near = useInView(box, { once: true, margin: '800px 0px' })
 
   return (
-    <figure>
+    <figure ref={box}>
       <div className="relative aspect-video overflow-hidden bg-smoke">
         {film.youtube && playing ? (
           <iframe
@@ -29,7 +33,7 @@ function Film({ film }: { film: (typeof films)[number] }) {
         ) : (
         <video
           ref={ref}
-          poster={film.poster}
+          poster={near ? film.poster : undefined}
           preload="none"
           playsInline
           controls={playing}

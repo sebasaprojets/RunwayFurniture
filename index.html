@@ -29,9 +29,23 @@
         "slogan": "Creating extraordinary spaces worldwide"
       }
     </script>
+    <script src="./boot.js"></script>
+    <style>
+      /* Instant first screen: the studio colour and the red mark, painted before any script loads. */
+      html { background: #f3f1ee; }
+      html.no-intro { background: #0a0a0a; }
+      #splash { position: fixed; inset: 0; display: grid; place-items: center; background: #f3f1ee; }
+      #splash svg { width: min(34vmin, 220px); height: auto; opacity: 0; animation: splash-in 0.9s 0.1s ease-out forwards; }
+      html.no-intro #splash { display: none; }
+      @keyframes splash-in { to { opacity: 1; } }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="splash" aria-hidden="true">
+        <svg viewBox="110 55 592 535"><defs><linearGradient id="sr" x1="0" y1="0.2" x2="1" y2="0.8"><stop offset="0" stop-color="#7e0d12"/><stop offset="0.45" stop-color="#b8161b"/><stop offset="1" stop-color="#ec3a2b"/></linearGradient></defs><path fill="url(#sr)" d="M120 445C120 390 160 345 215 345C265 345 300 365 340 378C390 392 440 392 490 382C530 374 560 372 600 378C655 386 692 430 692 478C692 535 650 580 600 580C555 580 525 555 490 525C455 497 420 485 385 488C345 492 310 515 280 532C255 545 235 548 215 548C160 548 120 500 120 445Z"/><g fill="#c11b1e"><circle cx="430" cy="312" r="62"/><circle cx="494" cy="221" r="39"/><circle cx="512" cy="138" r="26"/><circle cx="525" cy="77" r="12"/></g></svg>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

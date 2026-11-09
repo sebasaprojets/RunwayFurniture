@@ -17,7 +17,18 @@ const WORD = 'Josefin Sans, Manrope, system-ui, sans-serif'
  *  3. The studio lifts away like a curtain onto the site, on its own.
  * Any key or a click enters at once. Reduced motion shows the finished shot and fades.
  */
-export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; onReveal?: () => void; reduced: boolean }) {
+export function Preloader({
+  onDone,
+  onReveal,
+  onSettle,
+  reduced,
+}: {
+  onDone: () => void
+  onReveal?: () => void
+  /** the camera has come to rest (or the film is skipped): a quiet moment to build the rest of the site */
+  onSettle?: () => void
+  reduced: boolean
+}) {
   const { t } = useLang()
   const [phase, setPhase] = useState<'intro' | 'open' | 'done'>('intro')
   const [ready, setReady] = useState(false)
@@ -29,13 +40,16 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
   const enter = useCallback(() => {
     if (opening.current) return
     opening.current = true
+    onSettle?.()
     setPhase('open')
     onReveal?.()
     window.setTimeout(() => {
       setPhase('done')
+      // the page behind is dark: no cream showing if the browser bounces at the edges
+      document.documentElement.style.background = '#0a0a0a'
       onDone()
     }, reduced ? 400 : 1300)
-  }, [onDone, onReveal, reduced])
+  }, [onDone, onReveal, onSettle, reduced])
 
   // the film runs from the moment the scene is on screen; a hard cap keeps a slow device from waiting forever
   useEffect(() => {
@@ -43,11 +57,6 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
     window.addEventListener('keydown', key)
     return () => window.removeEventListener('keydown', key)
   }, [enter])
-  useEffect(() => {
-    if (ready || (window as { __introT?: number }).__introT !== undefined) return
-    const cap = window.setTimeout(enter, 9000)
-    return () => clearTimeout(cap)
-  }, [ready, enter])
   // whatever happens, nobody waits more than 14 seconds
   useEffect(() => {
     if ((window as { __introT?: number }).__introT !== undefined) return
@@ -59,6 +68,16 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
     setReady(true)
     window.setTimeout(() => setSettled(true), reduced ? 0 : 1300)
   }, [reduced])
+  // on a slow connection the 3D scene may still be downloading: after a few seconds the mark
+  // builds itself in 2D instead, so nobody stares at an empty screen
+  useEffect(() => {
+    if (ready || (window as { __introT?: number }).__introT !== undefined) return
+    const cap = window.setTimeout(fallback, 4500)
+    return () => clearTimeout(cap)
+  }, [ready, fallback])
+  useEffect(() => {
+    if (settled) onSettle?.()
+  }, [settled, onSettle])
   useEffect(() => {
     // a short moment to read the titles once they are in, then the site
     if (!settled || (window as { __introT?: number }).__introT !== undefined) return
@@ -97,9 +116,15 @@ export function Preloader({ onDone, onReveal, reduced }: { onDone: () => void; o
               </motion.p>
             </div>
           ) : (
+            <>
+              {/* the same mark as the instant first screen, held until the 3D scene is on screen */}
+              <div className="pointer-events-none absolute inset-0 grid place-items-center transition-opacity duration-500" style={{ opacity: ready ? 0 : 1 }} aria-hidden>
+                <RunwaySymbol className="h-auto w-[min(34vmin,220px)]" />
+              </div>
             <Suspense fallback={null}>
               <IntroScene still={reduced} paused={open} onReady={() => setReady(true)} onSettle={() => setSettled(true)} onFallback={fallback} />
             </Suspense>
+            </>
           )}
 
           {/* studio vignette */}

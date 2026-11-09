@@ -32,10 +32,29 @@ function securityMeta(): Plugin {
   }
 }
 
+/**
+ * Points the boot script at the opening film's 3D chunk, so a first visit starts downloading it
+ * straight away (in parallel with the rest of the site) instead of after the main script runs.
+ */
+function preloadIntro(): Plugin {
+  return {
+    name: 'preload-intro',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        const chunk = Object.values(ctx.bundle ?? {}).find((c) => c.type === 'chunk' && c.name === 'IntroScene')
+        if (!chunk) return html
+        return html.replace('<script src="./boot.js"></script>', `<script src="./boot.js" data-intro="./${chunk.fileName}"></script>`)
+      },
+    },
+  }
+}
+
 // Relative base so the build works on GitHub Pages, sub-paths and static CDNs.
 export default defineConfig({
   base: './',
-  plugins: [react(), tailwindcss(), securityMeta()],
+  plugins: [react(), tailwindcss(), securityMeta(), preloadIntro()],
   build: {
     outDir: 'docs',
     emptyOutDir: true,

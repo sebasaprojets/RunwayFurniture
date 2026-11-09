@@ -58,11 +58,20 @@ function Globe() {
     const graticule = geoGraticule10()
     let world: Awaited<ReturnType<typeof loadWorld>> | null = null
     let alive = true
-    loadWorld().then((w) => {
-      if (!alive) return
-      world = w
-      draw()
-    })
+    // the map data (land and borders) is fetched only when the globe is coming into view
+    const near = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return
+        near.disconnect()
+        loadWorld().then((w) => {
+          if (!alive) return
+          world = w
+          draw()
+        })
+      },
+      { rootMargin: '1200px 0px' },
+    )
+    near.observe(canvas)
 
     let dpr = 1
     let W = 0
@@ -391,6 +400,7 @@ function Globe() {
 
     return () => {
       alive = false
+      near.disconnect()
       cancelAnimationFrame(raf)
       io.disconnect()
       ro.disconnect()

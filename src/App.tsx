@@ -47,6 +47,15 @@ export default function App() {
     return !nav || (nav.type !== 'reload' && nav.type !== 'back_forward')
   })
   const [ready, setReady] = useState(!intro)
+  // During the opening film only the hero is built: the rest of the site (and its photos) waits until
+  // the camera comes to rest, so the film downloads and plays without competing for the connection.
+  const [rest, setRest] = useState(!intro)
+  const onSettle = useCallback(() => setRest(true), [])
+  useEffect(() => {
+    if (!rest) return
+    const id = requestAnimationFrame(() => ScrollTrigger.refresh())
+    return () => cancelAnimationFrame(id)
+  }, [rest])
   const [revealed, setRevealed] = useState(!intro)
   const onReveal = useCallback(() => setRevealed(true), [])
   const [project, setProject] = useState<Project | null>(fromHash)
@@ -89,10 +98,12 @@ export default function App() {
         {t('Skip to content', 'Saltar al contenido')}
       </a>
       <ScrollProgress />
-      {intro && <Preloader onDone={onReady} onReveal={onReveal} reduced={reduced} />}
+      {intro && <Preloader onDone={onReady} onReveal={onReveal} onSettle={onSettle} reduced={reduced} />}
       <Navigation ready={ready} />
       <main id="main">
         <Hero ready={ready} revealed={revealed} reduced={reduced} />
+        {rest && (
+          <>
         <Statement />
         <Story />
         <CinemaReveal />
@@ -112,8 +123,10 @@ export default function App() {
         <Clients />
         <Global />
         <Contact />
+          </>
+        )}
       </main>
-      <Footer />
+      {rest && <Footer />}
       <WhatsAppButton ready={ready} />
       <AnimatePresence>{project && <ProjectDetail key="detail" project={project} onClose={close} onNavigate={open} />}</AnimatePresence>
     </LayoutGroup>
