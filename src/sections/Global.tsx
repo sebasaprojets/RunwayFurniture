@@ -51,7 +51,9 @@ function Globe() {
   useEffect(() => {
     const canvas = ref.current!
     const ctx = canvas.getContext('2d')!
-    const projection = geoOrthographic().clipAngle(90).precision(0.6)
+    const coarse = matchMedia('(pointer: coarse)').matches
+    // coarser resampling on phones: the coastlines look the same at their size and cost far less to trace
+    const projection = geoOrthographic().clipAngle(90).precision(coarse ? 1.4 : 0.6)
     const path = geoPath(projection, ctx)
     const graticule = geoGraticule10()
     let world: Awaited<ReturnType<typeof loadWorld>> | null = null
@@ -89,6 +91,14 @@ function Globe() {
     let tick = 0
     // a point chosen by click or button stays open; hover only previews
     let pinned = false
+    let tipFor: string | number | null = null
+    let tipW = 224
+    let tipH = 120
+    // while the page is being scrolled, the idle spin redraws less often so scrolling stays smooth
+    let scrolledAt = 0
+    const onScroll = () => (scrolledAt = performance.now())
+    window.addEventListener('scroll', onScroll, { passive: true })
+    let drawnAt = 0
 
     const flyTo = (lat: number, lon: number) => {
       fly = { from: [lambda, phi], to: [lambda + (((-lon - lambda) % 360) + 540) % 360 - 180, Math.max(-50, Math.min(50, -lat * 0.85))], t0: performance.now() }
@@ -230,8 +240,14 @@ function Globe() {
           tip.style.opacity = s.vis ? '1' : '0'
           // open toward the globe's centre so the card never leaves the frame
           const cw = W / dpr
-          const tw = tip.offsetWidth || 224
-          const th = tip.offsetHeight || 120
+          // measure the card once per point (reading layout every frame forced a reflow while scrolling)
+          if (tipFor !== act.id) {
+            tipFor = act.id
+            tipW = tip.offsetWidth || 224
+            tipH = tip.offsetHeight || 120
+          }
+          const tw = tipW
+          const th = tipH
           const px = s.x / dpr
           const py = s.y / dpr
           let x = px + (s.x > c ? -16 - tw : 16)
@@ -267,7 +283,13 @@ function Globe() {
           phi += (-22 - phi) * 0.01
         }
       }
-      draw()
+      // full frame rate while someone drags or the globe flies to a point; a calmer pace for the idle spin
+      const busy = dragging || fly || Math.abs(vel) > 0.01
+      const gap = busy ? 0 : now - scrolledAt < 160 ? 90 : coarse ? 33 : 16
+      if (now - drawnAt >= gap) {
+        drawnAt = now
+        draw()
+      }
       if (visible) raf = requestAnimationFrame(loop)
     }
     const wake = () => {
@@ -373,6 +395,7 @@ function Globe() {
       io.disconnect()
       ro.disconnect()
       document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('scroll', onScroll)
       canvas.removeEventListener('pointerdown', down)
       canvas.removeEventListener('pointermove', move)
       canvas.removeEventListener('pointerup', up)

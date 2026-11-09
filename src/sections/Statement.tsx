@@ -39,7 +39,7 @@ export function Statement() {
       </div>
 
 
-      <motion.div style={{ x }} className="mt-24 flex whitespace-nowrap md:mt-32" aria-hidden>
+      <motion.div style={{ x }} className="mt-24 flex whitespace-nowrap will-change-transform md:mt-32" aria-hidden>
         {(t('Luxury Hospitality|Residential|Bespoke Furniture|Montreal|Singapore|Worldwide|Luxury Hospitality|Residential', 'Hotelería de lujo|Residencial|Mobiliario a medida|Montreal|Singapur|Todo el mundo|Hotelería de lujo|Residencial')).split('|').map((w, i) => (
           <span key={i} className="display flex items-center text-[15vw] text-transparent md:text-[8vw]" style={{ WebkitTextStroke: '1px rgba(210,196,174,.22)' }}>
             {w}

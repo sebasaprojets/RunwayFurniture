@@ -14,8 +14,14 @@ function ArdenteScene() {
   const { t } = useLang()
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] })
-  const clip = useTransform(p, [0, 0.6], ['inset(18% 22% 18% 22%)', 'inset(0% 0% 0% 0%)'])
-  const scale = useTransform(p, [0, 0.6], [1.12, 1])
+  // The window opens from the centre. Done with transforms only (a frame scaled up while the photo
+  // inside is scaled back by the same amount), which the GPU handles on its own; animating
+  // clip-path repainted the whole photo on every scroll frame.
+  const sx = useTransform(p, [0, 0.6], [0.56, 1])
+  const sy = useTransform(p, [0, 0.6], [0.64, 1])
+  const zoom = useTransform(p, [0, 0.6], [1.12, 1])
+  const ix = useTransform(() => zoom.get() / sx.get())
+  const iy = useTransform(() => zoom.get() / sy.get())
   const titleY = useTransform(p, [0.25, 0.7], ['40%', '0%'])
   const titleO = useTransform(p, [0.3, 0.65], [0, 1])
   const introO = useTransform(p, [0, 0.25], [1, 0])
@@ -23,9 +29,9 @@ function ArdenteScene() {
   return (
     <div ref={ref} className="relative h-[230svh]">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
-        <motion.div style={{ clipPath: clip }} className="absolute inset-0">
+        <motion.div style={{ scaleX: sx, scaleY: sy }} className="absolute inset-0 overflow-hidden will-change-transform">
           <motion.img
-            style={{ scale }}
+            style={{ scaleX: ix, scaleY: iy }}
             src={kitchens.ardente.red}
             alt={t('Ardente fire kitchen on a red backdrop', 'Cocina de fuego Ardente sobre fondo rojo')}
             className="h-full w-full object-cover"

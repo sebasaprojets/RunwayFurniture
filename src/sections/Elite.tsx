@@ -8,6 +8,8 @@ import { useLang, type T } from '../i18n'
 import { easeLuxe } from '../lib/motion'
 import { lockScroll } from '../lib/scroll'
 
+const TOUCH = typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches
+
 type Translate = (en: string, es: string) => string
 
 /** Opens a WhatsApp chat with Runway, the request about a property or category already written. */
@@ -114,7 +116,8 @@ function CineTitle() {
                   <motion.span
                     className="inline-block origin-bottom will-change-transform"
                     variants={{
-                      hide: { y: '105%', rotateX: -70, opacity: 0, filter: 'blur(14px)' },
+                      // a lighter blur on phones: twenty letters blurring at once is heavy for mobile chips
+                      hide: { y: '105%', rotateX: -70, opacity: 0, filter: TOUCH ? 'blur(4px)' : 'blur(14px)' },
                       show: {
                         y: '0%',
                         rotateX: 0,
