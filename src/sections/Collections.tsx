@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
+import { Pic } from '../components/Pic'
 import { useState } from 'react'
 import { FadeIn } from '../components/FadeIn'
 import { MaskImage } from '../components/MaskImage'
@@ -36,8 +37,8 @@ export function Collections() {
           <div className="lg:col-span-7">
             <div className="relative aspect-[16/10] overflow-hidden bg-smoke">
               <AnimatePresence mode="sync">
+                <Pic key={c.name} src={c.image} sizes="(min-width: 1024px) 58vw, 100vw">
                 <motion.img
-                  key={c.name}
                   src={c.image}
                   alt={`${kenkoon.name} — ${c.name}`}
                   initial={{ clipPath: 'inset(0% 0% 100% 0%)', scale: 1.1 }}
@@ -46,6 +47,7 @@ export function Collections() {
                   className="absolute inset-0 h-full w-full object-cover"
                   loading="lazy"
                 />
+                </Pic>
               </AnimatePresence>
             </div>
             <AnimatePresence mode="wait">

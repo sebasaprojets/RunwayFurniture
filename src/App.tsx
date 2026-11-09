@@ -2,6 +2,7 @@ import { AnimatePresence, LayoutGroup } from 'motion/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Navigation } from './components/Navigation'
 import { Preloader } from './components/Preloader'
+import { picReady } from './components/Pic'
 import { projects, type Project } from './data/site'
 import { useCalmScroll, usePrefersReducedMotion } from './lib/motion'
 import { initSmoothScroll, lockScroll, ScrollTrigger } from './lib/scroll'
@@ -49,8 +50,12 @@ export default function App() {
   const [ready, setReady] = useState(!intro)
   // During the opening film only the hero is built: the rest of the site (and its photos) waits until
   // the camera comes to rest, so the film downloads and plays without competing for the connection.
-  const [rest, setRest] = useState(!intro)
-  const onSettle = useCallback(() => setRest(true), [])
+  // (and the photo table is in, so every photo is requested in its light version from the start)
+  const [rest, setRest] = useState(false)
+  const onSettle = useCallback(() => void picReady.then(() => setRest(true)), [])
+  useEffect(() => {
+    if (!intro) void picReady.then(() => setRest(true))
+  }, [intro])
   useEffect(() => {
     if (!rest) return
     const id = requestAnimationFrame(() => ScrollTrigger.refresh())

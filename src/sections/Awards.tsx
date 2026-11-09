@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { Pic } from '../components/Pic'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
 import { awards } from '../data/portfolio'
@@ -35,7 +36,9 @@ export function Awards() {
               className={`group ${i === 4 ? 'col-span-2 mx-auto w-1/2 sm:col-span-1 sm:w-auto' : ''}`}
             >
               <div className="relative overflow-hidden shadow-[0_30px_60px_-30px_rgba(0,0,0,.8)] transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:-translate-y-2">
-                <img src={a.image} alt={tx(a.name)} loading="lazy" decoding="async" className="h-auto w-full" />
+                <Pic src={a.image} sizes="(min-width: 768px) 25vw, 50vw">
+                  <img src={a.image} alt={tx(a.name)} loading="lazy" decoding="async" className="h-auto w-full" />
+                </Pic>
                 <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
               </div>
               <p className="mt-4 text-center text-xs leading-relaxed text-bone/60">{tx(a.name)}</p>

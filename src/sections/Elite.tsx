@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowRight, ArrowUpRight, Play, X } from 'lucide-react'
+import { Pic } from '../components/Pic'
 import { AnimatePresence, motion, useInView } from 'motion/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
@@ -324,6 +325,7 @@ function ListingCard({
         className={`relative block aspect-[4/5] overflow-hidden bg-smoke text-left ${feature ? 'md:col-span-6 lg:col-span-5' : ''}`}
         aria-label={`${tx(l.name)} — ${t('view photos and films', 'ver fotos y videos')}`}
       >
+        <Pic src={l.cover} sizes={feature ? '(min-width: 1024px) 42vw, (min-width: 768px) 50vw, 100vw' : '(min-width: 1024px) 30vw, (min-width: 768px) 50vw, 100vw'}>
         <img
           src={thumb(l.cover)}
           alt=""
@@ -331,6 +333,7 @@ function ListingCard({
           decoding="async"
           className="h-full w-full object-cover transition-transform duration-[1.6s] ease-[var(--ease-luxe)] group-hover:scale-[1.05]"
         />
+        </Pic>
         {film && film.kind === 'video' && preview && (
           <motion.video
             src={film.src}
@@ -476,7 +479,9 @@ function Viewer({ listings, start, onClose, onAsk }: { listings: Listing[]; star
             {m.kind === 'video' ? (
               <video src={m.src} poster={m.poster} className="max-h-full max-w-full bg-ink object-contain" autoPlay muted loop playsInline controls preload="metadata" />
             ) : (
-              <img src={m.src} alt={`${tx(l.name)} — ${i + 1} / ${n}`} className="pointer-events-none max-h-full max-w-full object-contain select-none" decoding="async" draggable={false} />
+              <Pic src={m.src} sizes="100vw" blur={false}>
+                <img src={m.src} alt={`${tx(l.name)} — ${i + 1} / ${n}`} className="pointer-events-none max-h-full max-w-full object-contain select-none" decoding="async" draggable={false} />
+              </Pic>
             )}
           </motion.div>
         </AnimatePresence>
@@ -506,7 +511,9 @@ function Viewer({ listings, start, onClose, onAsk }: { listings: Listing[]; star
                 aria-label={`${tx(x.l.name)} — ${j + 1} / ${n}`}
                 aria-current={j === i || undefined}
               >
-                <img src={x.m.kind === 'video' ? x.m.poster : thumb(x.m.src)} alt="" className="h-full w-full object-cover" loading="lazy" />
+                <Pic src={x.m.kind === 'video' ? x.m.poster : x.m.src} sizes="120px">
+                  <img src={x.m.kind === 'video' ? x.m.poster : thumb(x.m.src)} alt="" className="h-full w-full object-cover" loading="lazy" />
+                </Pic>
                 {x.m.kind === 'video' && <Play className="absolute inset-0 m-auto size-3.5 text-bone" strokeWidth={1.5} />}
               </button>
             ))}

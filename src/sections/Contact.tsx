@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { Pic } from '../components/Pic'
 import { Button } from '../components/Button'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
@@ -70,7 +71,9 @@ export function Contact() {
 
   return (
     <section id="contact" className="relative overflow-hidden bg-graphite" aria-labelledby="contact-title">
-      <img src={showcase.contact} alt="" className="grade absolute inset-0 h-full w-full object-cover opacity-20" loading="lazy" />
+      <Pic src={showcase.contact}>
+        <img src={showcase.contact} alt="" className="grade absolute inset-0 h-full w-full object-cover opacity-20" loading="lazy" />
+      </Pic>
       <div className="absolute inset-0 bg-gradient-to-b from-graphite via-graphite/90 to-graphite" />
       <div className="relative mx-auto grid max-w-[1600px] gap-16 px-5 py-28 md:px-10 md:py-40 lg:grid-cols-12">
         <div className="lg:col-span-5">

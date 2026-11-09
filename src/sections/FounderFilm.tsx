@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
+import { Pic } from '../components/Pic'
 import { brand, images } from '../data/site'
 import { useLang } from '../i18n'
 import { MOTION_QUERY } from '../lib/motion'
@@ -26,7 +27,9 @@ export function FounderFilm() {
   return (
     <section ref={root} className="relative h-[100svh] overflow-hidden bg-ink" aria-label={tx(brand.founder.quote)}>
       <div className="absolute inset-y-0 right-0 w-full overflow-hidden md:w-[58%]">
+        <Pic src={images.founderDeck}>
         <img data-img src={images.founderDeck} alt={t(`${brand.founder.name} overlooking a Caribbean bay`, `${brand.founder.name} frente a una bahía del Caribe`)} className="grade h-full w-full object-cover object-[50%_18%]" loading="lazy" />
+        </Pic>
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/20 to-transparent max-md:from-ink/80 max-md:via-ink/50" />
       </div>
       <div data-bar-t className="absolute inset-x-0 top-0 h-[12%] bg-ink" />

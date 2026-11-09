@@ -1,7 +1,7 @@
 """Builds lighter AVIF copies of every photo (originals stay untouched as the fallback).
 
 For each photo in src/assets/img (and img/real), writes public/img/<name>-<width>.avif at
-640/1080/1600/2400 px wide (only those smaller than the original) plus the original width,
+640/1200/1600/2400 px wide (only those smaller than the original) plus the original width,
 and src/data/imgmeta.json with { name: [width, height, tiny blurred preview] }.
 Run: python3 scripts/optimize-images.py   (skips files already built)
 """
@@ -12,7 +12,7 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'public', 'img')
 META = os.path.join(ROOT, 'src', 'data', 'imgmeta.json')
-STEPS = (640, 1080, 1600, 2400)
+STEPS = (640, 1200, 1600, 2400)
 
 
 def widths(w):

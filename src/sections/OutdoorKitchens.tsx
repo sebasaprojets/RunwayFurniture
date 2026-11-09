@@ -1,4 +1,5 @@
 import { motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from 'motion/react'
+import { Pic } from '../components/Pic'
 import { useRef, useState } from 'react'
 import { Button } from '../components/Button'
 import { FadeIn } from '../components/FadeIn'
@@ -30,6 +31,7 @@ function ArdenteScene() {
     <div ref={ref} className="relative h-[230svh]">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <motion.div style={{ scaleX: sx, scaleY: sy }} className="absolute inset-0 overflow-hidden will-change-transform">
+          <Pic src={kitchens.ardente.red}>
           <motion.img
             style={{ scaleX: ix, scaleY: iy }}
             src={kitchens.ardente.red}
@@ -38,6 +40,7 @@ function ArdenteScene() {
             loading="lazy"
             decoding="async"
           />
+          </Pic>
           <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/10 to-transparent" />
         </motion.div>
         <motion.p style={{ opacity: introO }} className="eyebrow absolute top-[10svh] left-1/2 -translate-x-1/2 text-center whitespace-nowrap text-gold">
@@ -76,7 +79,11 @@ const steps = [
 function Layer({ src, alt, p, range, first, last }: { src: string; alt: string; p: MotionValue<number>; range: [number, number, number, number]; first?: boolean; last?: boolean }) {
   const opacity = useTransform(p, range, [first ? 1 : 0, 1, 1, last ? 1 : 0])
   const scale = useTransform(p, [range[0], range[3]], [1.06, 1])
-  return <motion.img style={{ opacity, scale }} src={src} alt={alt} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+  return (
+    <Pic src={src}>
+      <motion.img style={{ opacity, scale }} src={src} alt={alt} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+    </Pic>
+  )
 }
 
 /** Tavolo: three photographs and three lines of copy, swapped by scroll position. */
@@ -179,7 +186,9 @@ export function OutdoorKitchens() {
           {kitchens.lines.map((l, i) => (
             <FadeIn key={l.name} delay={i * 0.08}>
               <div className="aspect-[4/3] overflow-hidden bg-graphite">
-                <img src={thumb(l.image)} alt={`Q ${l.name}`} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-luxe)] hover:scale-105" />
+                <Pic src={l.image} sizes="(min-width: 768px) 33vw, 100vw">
+                  <img src={thumb(l.image)} alt={`Q ${l.name}`} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-luxe)] hover:scale-105" />
+                </Pic>
               </div>
               <p className="mt-5 flex items-baseline gap-4">
                 <span className="text-[0.65rem] text-bone/40 tabular-nums">0{i + 1}</span>

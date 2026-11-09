@@ -1,4 +1,5 @@
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
+import { Pic } from '../components/Pic'
 import { ArrowUpRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { RevealText } from '../components/RevealText'
@@ -111,6 +112,7 @@ function ProjectCard({
     >
       <button onClick={() => onOpen(p)} className="group block w-full text-left" aria-label={`${t('Open project', 'Abrir proyecto')}: ${p.title}`}>
         <motion.div layoutId={`cover-${p.slug}`} className="relative aspect-[4/3] overflow-hidden bg-graphite">
+          <Pic src={p.cover} sizes="(min-width: 1024px) 34vw, (min-width: 640px) 50vw, 100vw">
           <img
             src={thumb(p.cover)}
             alt=""
@@ -118,6 +120,7 @@ function ProjectCard({
             decoding="async"
             className="grade h-full w-full object-cover transition-transform duration-[1.6s] ease-[var(--ease-luxe)] group-hover:scale-[1.06] group-focus-visible:scale-[1.06]"
           />
+          </Pic>
           <div className="absolute inset-0 hidden bg-gradient-to-t from-ink/80 via-ink/0 to-ink/0 opacity-0 transition-opacity duration-700 group-hover:opacity-100 md:block" />
           {p.isConcept && (
             <span className="eyebrow absolute top-4 left-4 rounded-full border border-bone/25 bg-ink/40 px-3 py-1.5 text-[0.6rem] text-bone/80 backdrop-blur-sm">

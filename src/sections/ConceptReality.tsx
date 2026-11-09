@@ -1,4 +1,5 @@
 import { Armchair, BedDouble, Building2, Flower2, UtensilsCrossed } from 'lucide-react'
+import { Pic } from '../components/Pic'
 import { AnimatePresence, motion, useInView } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { FadeIn } from '../components/FadeIn'
@@ -117,8 +118,8 @@ export function ConceptReality() {
           <div className="lg:col-span-8">
             <div className="relative aspect-[1800/820] overflow-hidden bg-smoke">
               <AnimatePresence initial={false}>
+                <Pic key={item.image} src={item.image} sizes="(min-width: 1024px) 66vw, 100vw">
                 <motion.img
-                  key={item.image}
                   src={item.image}
                   srcSet={`${thumb(item.image)} 960w, ${item.image} 1800w`}
                   sizes="(min-width: 1024px) 60vw, 100vw"
@@ -129,6 +130,7 @@ export function ConceptReality() {
                   exit={{ opacity: 1 }}
                   transition={{ duration: 1.2, ease: easeCine }}
                 />
+                </Pic>
               </AnimatePresence>
             </div>
             <AnimatePresence mode="wait">

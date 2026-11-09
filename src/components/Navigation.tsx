@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
+import { Pic } from './Pic'
 import { useEffect, useRef, useState } from 'react'
 import { brand, navItems } from '../data/site'
 
@@ -139,8 +140,8 @@ export function Navigation({ ready }: { ready: boolean }) {
             {/* category imagery cross-fades behind the list */}
             <div className="absolute inset-0">
               <AnimatePresence mode="sync">
+                <Pic key={hovered} src={navItems[hovered].image}>
                 <motion.img
-                  key={hovered}
                   src={navItems[hovered].image}
                   alt=""
                   className="grade absolute inset-0 h-full w-full object-cover"
@@ -149,6 +150,7 @@ export function Navigation({ ready }: { ready: boolean }) {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 1.4, ease: easeLuxe }}
                 />
+                </Pic>
               </AnimatePresence>
               <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/80 to-ink/30" />
             </div>

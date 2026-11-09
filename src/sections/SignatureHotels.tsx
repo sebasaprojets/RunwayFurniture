@@ -1,4 +1,5 @@
 import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
+import { Pic } from '../components/Pic'
 import { useEffect, useRef, useState } from 'react'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
@@ -107,8 +108,8 @@ export function SignatureHotels() {
             <div className="sticky top-[12vh]">
               <div className="relative aspect-[4/3] overflow-hidden bg-graphite">
                 <AnimatePresence initial={false}>
+                  <Pic key={hotel.slug} src={hotel.image} sizes="(min-width: 1024px) 58vw, 100vw">
                   <motion.img
-                    key={hotel.slug}
                     src={hotel.image}
                     alt={`${hotel.name}, ${tx(hotel.city)}`}
                     initial={{ clipPath: 'inset(100% 0% 0% 0%)', scale: 1.12 }}
@@ -118,6 +119,7 @@ export function SignatureHotels() {
                     className="grade absolute inset-0 h-full w-full object-cover"
                     decoding="async"
                   />
+                  </Pic>
                 </AnimatePresence>
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
                 <AnimatePresence mode="wait">
@@ -151,7 +153,9 @@ export function SignatureHotels() {
         {hotels.map((h, i) => (
           <li key={h.slug} className="w-[82vw] max-w-[440px] shrink-0 snap-start">
             <div className="relative aspect-[4/3] overflow-hidden bg-graphite">
-              <img src={thumb(h.image)} alt={`${h.name}, ${tx(h.city)}`} loading="lazy" decoding="async" className="grade h-full w-full object-cover" />
+              <Pic src={h.image} sizes="(min-width: 768px) 40vw, 85vw">
+                <img src={thumb(h.image)} alt={`${h.name}, ${tx(h.city)}`} loading="lazy" decoding="async" className="grade h-full w-full object-cover" />
+              </Pic>
               <span className="absolute top-4 left-4 font-display text-base text-bone/85 italic">{pad(i + 1)}</span>
             </div>
             <p className="mt-4 font-display text-2xl text-bone">{h.name}</p>

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
+import { Pic } from '../components/Pic'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
 import { hospitalityScenes, thumb } from '../data/site'
@@ -106,6 +107,7 @@ export function Hospitality() {
         {hospitalityScenes.map((s, i) => (
           <figure key={s.title.en} className="relative shrink-0 min-[900px]:w-[calc(58svh*1.5)]">
             <div className="relative aspect-[3/2] overflow-hidden bg-ink">
+              <Pic src={s.image} sizes="(min-width: 900px) 95svh, 100vw">
               <img
                 data-pan
                 src={s.image}
@@ -116,6 +118,7 @@ export function Hospitality() {
                 decoding="async"
                 className="grade absolute inset-0 h-full w-full max-w-none object-cover min-[900px]:-left-[5%] min-[900px]:w-[110%]"
               />
+              </Pic>
               <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
             </div>
             <figcaption className="mt-6 grid grid-cols-[2.5rem_1fr] gap-x-4 border-t border-bone/15 pt-5">

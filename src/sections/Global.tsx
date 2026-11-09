@@ -1,4 +1,5 @@
 import { geoDistance, geoGraticule10, geoInterpolate, geoOrthographic, geoPath, type GeoPermissibleObjects } from 'd3-geo'
+import { Pic } from '../components/Pic'
 import { useEffect, useRef, useState } from 'react'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
@@ -432,7 +433,11 @@ function Globe() {
         <div ref={tipRef} className="pointer-events-none absolute top-0 left-0 opacity-0 transition-opacity duration-300" aria-hidden={!active}>
           {active && (
             <div className="w-56 -translate-y-1/2 overflow-hidden border border-bone/15 bg-ink/90 shadow-2xl backdrop-blur-md">
-              {active.image && <img src={active.image} alt="" className="aspect-[16/10] w-full object-cover" />}
+              {active.image && (
+                <Pic src={active.image} sizes="320px">
+                  <img src={active.image} alt="" className="aspect-[16/10] w-full object-cover" />
+                </Pic>
+              )}
               <div className="px-4 py-3">
                 <p className="font-display text-xl leading-tight text-bone">{active.name}</p>
                 <p className="eyebrow mt-1 text-gold/80">{active.place}</p>

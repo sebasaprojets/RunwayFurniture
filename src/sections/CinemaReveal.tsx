@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
+import { Pic } from '../components/Pic'
 import { showcase } from '../data/site'
 import { useLang } from '../i18n'
 import { MOTION_QUERY } from '../lib/motion'
@@ -34,7 +35,9 @@ export function CinemaReveal() {
         {t('Every piece', 'Cada pieza')} <span className="text-gold italic">{t('begins', 'nace')}</span>
       </p>
       <div data-frame className="absolute inset-0 overflow-hidden">
+        <Pic src={showcase.residence}>
         <img data-img src={showcase.residence} alt={t('Sardinera House, Jávea — white villa above an infinity pool', 'Casa Sardinera, Jávea — villa blanca sobre una piscina infinita')} className="grade h-full w-full object-cover" loading="lazy" />
+        </Pic>
         <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-ink/40" />
       </div>
       <div data-bar className="absolute inset-x-0 top-0 h-[11vh] origin-top bg-ink" />

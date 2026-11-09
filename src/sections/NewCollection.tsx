@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowRight, X } from 'lucide-react'
+import { Pic } from '../components/Pic'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
@@ -64,7 +65,9 @@ function PieceSheet({ index, onClose, onStep }: { index: number; onClose: () => 
         <AnimatePresence mode="wait">
           <motion.div key={piece.slug} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.5, ease: easeLuxe }} className="flex flex-1 flex-col">
             <div className="mx-6 overflow-hidden bg-ink md:mx-8">
-              <img src={piece.image} alt={`${piece.name} ${tx(piece.type)}`} className="mx-auto max-h-[62svh] w-auto object-contain" decoding="async" />
+              <Pic src={piece.image} sizes="(min-width: 1024px) 50vw, 100vw" blur={false}>
+                <img src={piece.image} alt={`${piece.name} ${tx(piece.type)}`} className="mx-auto max-h-[62svh] w-auto object-contain" decoding="async" />
+              </Pic>
             </div>
             <div className="flex flex-1 flex-col px-6 pt-8 pb-8 md:px-8">
               <h3 id="piece-title" className="font-display text-5xl text-bone">
@@ -115,6 +118,7 @@ function Card({ piece, i, onOpen }: { piece: Piece; i: number; onOpen: () => voi
     <FadeIn delay={(i % 5) * 0.06}>
       <button onClick={onOpen} className="group block w-full text-left" aria-label={`${piece.name} ${tx(piece.type)} — ${t('view details', 'ver ficha')}`}>
         <div className={`relative aspect-[5/7] overflow-hidden ${piece.dark ? 'bg-ink' : 'bg-[#ecebe8]'}`}>
+          <Pic src={piece.image} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw">
           <img
             src={thumb(piece.image)}
             alt=""
@@ -122,6 +126,7 @@ function Card({ piece, i, onOpen }: { piece: Piece; i: number; onOpen: () => voi
             decoding="async"
             className="h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.06]"
           />
+          </Pic>
           <span className="absolute top-3 left-3 rounded-full bg-ink/80 px-2.5 py-1 text-[0.6rem] font-semibold tracking-[0.2em] text-gold uppercase backdrop-blur">
             2026
           </span>

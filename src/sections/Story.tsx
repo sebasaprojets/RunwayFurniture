@@ -1,4 +1,5 @@
 import { Armchair, BedDouble, Layers, Sofa } from 'lucide-react'
+import { Pic } from '../components/Pic'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
 import { FadeIn } from '../components/FadeIn'
@@ -30,7 +31,9 @@ export function Story() {
           <div className="relative lg:col-span-7">
             <MaskImage src={storyImages.cover} alt={t('The Runway Furniture International sign on a stone wall above an oceanfront lounge at sunset', 'El letrero de Runway Furniture International sobre un muro de piedra en una sala frente al mar al atardecer')} className="aspect-[16/10]" from="left" sizes="(min-width: 1024px) 58vw, 100vw" />
             <motion.div style={calm ? undefined : { y: drift }} className="absolute -right-4 -bottom-16 hidden w-[38%] border-[6px] border-bone shadow-2xl md:block lg:-right-10">
+              <Pic src={storyImages.lobby} sizes="(min-width: 1024px) 50vw, 100vw">
               <img src={thumb(storyImages.lobby)} alt={t('Architect’s sketch of a hotel lobby', 'Boceto arquitectónico de un lobby de hotel')} loading="lazy" className="aspect-square w-full object-cover" />
+              </Pic>
             </motion.div>
           </div>
           <div className="lg:col-span-5">
@@ -88,7 +91,9 @@ export function Story() {
                 className={`group w-[78vw] shrink-0 snap-start md:w-auto ${i % 2 ? 'md:mt-16' : ''}`}
               >
                 <div className="relative aspect-[3/4] overflow-hidden bg-smoke">
-                  <img src={thumb(v.image)} alt={tx(v.title)} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-[1.6s] ease-[var(--ease-luxe)] group-hover:scale-[1.06]" />
+                  <Pic src={v.image} sizes="(min-width: 768px) 33vw, 100vw">
+                    <img src={thumb(v.image)} alt={tx(v.title)} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-[1.6s] ease-[var(--ease-luxe)] group-hover:scale-[1.06]" />
+                  </Pic>
                   <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-terracotta transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:scale-x-100" />
                 </div>
                 <figcaption className="mt-5">

@@ -1,4 +1,5 @@
 import { motion, useScroll, useTransform } from 'motion/react'
+import { Pic } from '../components/Pic'
 import { useRef } from 'react'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
@@ -67,6 +68,7 @@ export function Factory() {
                 transition={{ duration: 1, ease: easeLuxe, delay: i * 0.08 }}
                 className={`group overflow-hidden ${wide ? 'col-span-2' : ''}`}
               >
+                <Pic src={im.src} sizes={wide ? '(min-width: 1024px) 66vw, 100vw' : '(min-width: 1024px) 33vw, 50vw'}>
                 <img
                   src={thumb(im.src)}
                   srcSet={wide ? `${thumb(im.src)} 960w, ${im.src} 1600w` : undefined}
@@ -76,6 +78,7 @@ export function Factory() {
                   decoding="async"
                   className={`w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.06] ${wide ? 'aspect-[2/1]' : 'aspect-[4/3]'}`}
                 />
+                </Pic>
               </motion.figure>
             )
           })}

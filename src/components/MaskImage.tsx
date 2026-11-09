@@ -1,4 +1,5 @@
 import { motion, useScroll, useTransform } from 'motion/react'
+import { Pic } from './Pic'
 import { useRef } from 'react'
 import { thumb } from '../data/site'
 import { easeCine, useCalmScroll } from '../lib/motion'
@@ -39,6 +40,7 @@ export function MaskImage({ src, alt, className = '', imgClassName = '', from = 
       viewport={{ once: true, margin: '0px 0px -8% 0px' }}
       transition={{ duration: 1.5, ease: easeCine, delay }}
     >
+      <Pic src={src} sizes={sizes}>
       <motion.img
         src={src}
         srcSet={thumb(src) === src ? undefined : `${thumb(src)} 1280w, ${src} 2000w`}
@@ -49,6 +51,7 @@ export function MaskImage({ src, alt, className = '', imgClassName = '', from = 
         style={calm ? undefined : { y, scale: 1 + parallax / 50 }}
         className={`grade h-full w-full object-cover ${imgClassName}`}
       />
+      </Pic>
     </motion.div>
   )
 }
