@@ -4,6 +4,7 @@ import { easeLuxe } from '../lib/motion'
 
 type Props = {
   text: string
+  id?: string
   as?: ElementType
   className?: string
   delay?: number
@@ -16,14 +17,14 @@ type Props = {
 }
 
 /** Word-by-word vertical reveal behind a mask. Line breaks: use "\n". */
-export function RevealText({ text, as: Tag = 'h2', className, delay = 0, stagger = 0.06, immediate, accent = [], accentClass = 'italic text-gold' }: Props) {
+export function RevealText({ text, id, as: Tag = 'h2', className, delay = 0, stagger = 0.06, immediate, accent = [], accentClass = 'italic text-gold' }: Props) {
   const lines = text.split('\n')
   let i = 0
   const anim = immediate
     ? { animate: 'show' as const }
     : { whileInView: 'show' as const, viewport: { once: true, margin: '0px 0px -12% 0px' } }
   return (
-    <Tag className={className} aria-label={text.replace(/\n/g, ' ')}>
+    <Tag id={id} className={className} aria-label={text.replace(/\n/g, ' ')}>
       <motion.span key={text} initial="hide" {...anim} aria-hidden className="block">
         {lines.map((line, li) => (
           <span key={li} className="block">

@@ -129,6 +129,7 @@ export const navItems: { label: T; href: string; image: string; feature?: { kick
   { label: { en: 'Kitchens', es: 'Cocinas' }, href: '#kitchens', image: real('qrua-ardente-red') },
   { label: { en: 'Clients', es: 'Clientes' }, href: '#clients', image: real('beachclub-pool') },
   { label: { en: 'About', es: 'Nosotros' }, href: '#founder', image: founderStanding },
+  { label: { en: 'Live Different', es: 'Live Different' }, href: '#live-different', image: real('ld-josefina-angel') },
   { label: { en: 'Contact', es: 'Contacto' }, href: '#contact', image: real('lounge-sunset') },
 ]
 

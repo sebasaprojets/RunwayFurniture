@@ -21,6 +21,7 @@ import { Contact } from './sections/Contact'
 import { Footer } from './sections/Footer'
 import { Founder } from './sections/Founder'
 import { FounderFilm } from './sections/FounderFilm'
+import { LiveDifferent } from './sections/LiveDifferent'
 import { Global } from './sections/Global'
 import { Hero } from './sections/Hero'
 import { Hospitality } from './sections/Hospitality'
@@ -123,6 +124,7 @@ export default function App() {
         <Factory />
         <Founder />
         <FounderFilm />
+        <LiveDifferent />
         <Films />
         <Awards />
         <Clients />

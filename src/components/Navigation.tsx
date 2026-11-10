@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { brand, navItems } from '../data/site'
 
 /** The few sections linked straight from the header; the full list lives in the menu. */
-const HEADER_LINKS = ['#projects', '#hotels', '#collections', '#kitchens', '#founder']
+const HEADER_LINKS = ['#projects', '#hotels', '#collections', '#kitchens', '#founder', '#live-different']
 import { langs, useLang } from '../i18n'
 import { easeCine, easeLuxe } from '../lib/motion'
 import { lockScroll, scrollToTarget } from '../lib/scroll'
@@ -76,7 +76,7 @@ export function Navigation({ ready }: { ready: boolean }) {
           >
             <Logo />
           </a>
-          <nav aria-label={t('Primary', 'Principal')} className={`hidden items-center gap-9 transition-opacity duration-500 lg:flex ${open ? "pointer-events-none opacity-0" : ""}`}>
+          <nav aria-label={t('Primary', 'Principal')} className={`hidden items-center gap-6 transition-opacity duration-500 lg:flex xl:gap-9 ${open ? "pointer-events-none opacity-0" : ""}`}>
             {navItems.filter((n) => HEADER_LINKS.includes(n.href)).map((n) => (
               <a
                 key={n.href + n.label.en}
@@ -85,7 +85,7 @@ export function Navigation({ ready }: { ready: boolean }) {
                   e.preventDefault()
                   go(n.href)
                 }}
-                className="group relative text-[0.6875rem] font-medium tracking-[0.24em] text-bone/80 uppercase transition-colors hover:text-bone"
+                className="group relative text-[0.6875rem] font-medium tracking-[0.24em] whitespace-nowrap text-bone/80 uppercase transition-colors hover:text-bone"
               >
                 {tx(n.label)}
                 <span className="absolute -bottom-1.5 left-0 h-px w-full origin-right scale-x-0 bg-gold transition-transform duration-500 group-hover:origin-left group-hover:scale-x-100" />
