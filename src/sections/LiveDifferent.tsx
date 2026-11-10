@@ -171,7 +171,7 @@ function CauseScene() {
           <img data-a src={img.door} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[72%_45%] will-change-transform" />
         </Pic>
         {/* cold, rainy-day light over the old house */}
-        <div data-cold className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,32,.55),rgba(8,14,20,.75))] mix-blend-multiply" />
+        <div data-cold className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,32,.5),rgba(8,14,20,.7))]" />
         <Pic src={img.home}>
           <img data-b src={img.home} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-0 will-change-transform" />
         </Pic>

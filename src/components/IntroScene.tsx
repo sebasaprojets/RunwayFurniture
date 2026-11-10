@@ -259,22 +259,39 @@ export function IntroScene({
     let raf = 0
     let readySent = false
     let settleSent = false
+    // Quality is settled BEFORE the film is shown: the opening frame is rendered unseen for a moment
+    // (behind the hairline pre-roll) and timed; a slow device steps down there, so the flight never
+    // visibly changes sharpness or loses its blur halfway through.
+    const WARM = 16
+    let rounds = 0
+    const stepDown = () => {
+      if (!lite && blurOn) blurOn = false
+      else if (tier < TIERS.length - 1) {
+        tier++
+        applyTier()
+      } else return false
+      return true
+    }
+    const median = (a: number[]) => [...a].sort((x, y) => x - y)[a.length >> 1]
     const frame = (now: number) => {
-      // the first frame only warms the GPU up; the film's clock starts on the next one
       frames++
-      if (frames === 2) start = now
-      if (frames > 3 && !still) {
-        times.push(now - last)
-        if (times.length >= 14) {
-          const sorted = [...times].sort((a, b) => a - b)
-          // median frame over ~24ms (below ~40fps): drop one quality step
-          if (sorted[7] > 24) {
-            if (!lite && blurOn) blurOn = false
-            else if (tier < TIERS.length - 1) {
-              tier++
-              applyTier()
-            }
+      if (start < 0) {
+        if (frames > 2) times.push(now - last)
+        const probing = (window as { __introT?: number }).__introT !== undefined
+        if (still || probing || times.length >= WARM) {
+          if (!still && !probing && median(times) > 22 && rounds < 3 && stepDown()) {
+            rounds++
+            times.length = 0
+          } else {
+            start = now
+            times.length = 0
           }
+        }
+      } else if (!still) {
+        // during the flight only a device that is truly struggling (under ~25fps) steps down
+        times.push(now - last)
+        if (times.length >= 20) {
+          if (median(times) > 40) stepDown()
           times.length = 0
         }
       }
@@ -313,7 +330,7 @@ export function IntroScene({
         settleSent = true
         onSettle?.()
       }
-      if (!readySent) {
+      if (!readySent && start >= 0) {
         readySent = true
         onReady?.()
       }
