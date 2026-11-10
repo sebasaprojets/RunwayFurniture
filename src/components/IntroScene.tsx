@@ -295,7 +295,7 @@ export function IntroScene({
       // in the final shot the mark is lifted into the upper part of the frame, clear of the titles below
       const w = el.clientWidth || window.innerWidth
       const h = el.clientHeight || window.innerHeight
-      camera.setViewOffset(w, h, 0, h * (w > h ? 0.025 : 0.07) * k, w, h)
+      camera.setViewOffset(w, h, 0, h * (w > h ? 0.025 : 0.045) * k, w, h)
       const dist = pos.distanceTo(look)
       bokehUniforms.focus.value = dist
       // shallow focus while close, opening up to a crisp product shot at the end

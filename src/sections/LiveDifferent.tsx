@@ -328,8 +328,9 @@ export function LiveDifferent() {
         <div className="mt-24 grid gap-12 md:mt-36 lg:grid-cols-12 lg:gap-16">
           <div className="relative lg:order-2 lg:col-span-6 lg:col-start-7">
             <MaskImage src={img.olgaria} alt={t('Olgaria Hernández, 87, at the window of her old house', 'Olgaria Hernández, de 87 años, en la ventana de su antigua casa')} className="aspect-[4/3]" from="left" sizes="(min-width: 1024px) 50vw, 100vw" />
-            <div className="relative z-10 -mt-[22%] ml-auto w-[46%] border-[6px] border-bone">
-              <MaskImage src={img.grandson} alt={t('Olgaria with her grandson', 'Olgaria con su nieto')} className="aspect-[4/5]" delay={0.2} sizes="(min-width: 1024px) 24vw, 46vw" />
+            {/* the white frame is part of the image, so it opens with it instead of waiting empty */}
+            <div className="relative z-10 -mt-[22%] ml-auto w-[46%]">
+              <MaskImage src={img.grandson} alt={t('Olgaria with her grandson', 'Olgaria con su nieto')} className="aspect-[4/5] border-[6px] border-bone" delay={0.2} sizes="(min-width: 1024px) 24vw, 46vw" />
             </div>
           </div>
           <div className="lg:order-1 lg:col-span-5 lg:self-center">

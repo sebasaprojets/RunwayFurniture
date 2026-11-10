@@ -34,14 +34,14 @@ export function Founder() {
                 parallax={4}
               />
             </motion.div>
-            <motion.div style={calm ? undefined : { y: yB }} className="relative z-20 -mt-[38%] ml-auto w-[52%] border-[6px] border-ink">
+            <motion.div style={calm ? undefined : { y: yB }} className="relative z-20 -mt-[38%] ml-auto w-[52%]">
               <MaskImage
                 src={images.founderSeated}
                 alt={t(
                   `${brand.founder.name} seated in a leather lounge chair at an oceanfront resort`,
                   `${brand.founder.name} sentado en un sillón de cuero en un resort frente al mar`,
                 )}
-                className="aspect-[4/5]"
+                className="aspect-[4/5] border-[6px] border-ink"
                 from="left"
                 delay={0.2}
                 parallax={4}
