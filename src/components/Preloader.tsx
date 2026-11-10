@@ -36,6 +36,8 @@ export function Preloader({
   const [settled, setSettled] = useState(false)
   const [flat, setFlat] = useState(false)
   const opening = useRef(false)
+  // continue the first screen's line where it is, not from zero
+  const [preroll] = useState(() => `${Math.round(150 - performance.now())}ms`)
 
   const enter = useCallback(() => {
     if (opening.current) return
@@ -68,11 +70,11 @@ export function Preloader({
     setReady(true)
     window.setTimeout(() => setSettled(true), reduced ? 0 : 1300)
   }, [reduced])
-  // on a slow connection the 3D scene may still be downloading: after a few seconds the mark
+  // on a very slow connection the 3D scene may still be downloading: after eight seconds the mark
   // builds itself in 2D instead, so nobody stares at an empty screen
   useEffect(() => {
     if (ready || (window as { __introT?: number }).__introT !== undefined) return
-    const cap = window.setTimeout(fallback, 4500)
+    const cap = window.setTimeout(fallback, 8000)
     return () => clearTimeout(cap)
   }, [ready, fallback])
   useEffect(() => {
@@ -117,13 +119,16 @@ export function Preloader({
             </div>
           ) : (
             <>
-              {/* the same mark as the instant first screen, held until the 3D scene is on screen */}
-              <div className="pointer-events-none absolute inset-0 grid place-items-center transition-opacity duration-500" style={{ opacity: ready ? 0 : 1 }} aria-hidden>
-                <RunwaySymbol className="h-auto w-[min(34vmin,220px)]" />
+              {/* the opening hairline from the instant first screen, carried on (same timing) until the
+                  3D scene is ready; then the film fades up from the studio */}
+              <div className="pointer-events-none absolute inset-0 transition-opacity duration-500" style={{ opacity: ready ? 0 : 1 }} aria-hidden>
+                <i className="preroll" style={{ animationDelay: preroll }} />
               </div>
-            <Suspense fallback={null}>
-              <IntroScene still={reduced} paused={open} onReady={() => setReady(true)} onSettle={() => setSettled(true)} onFallback={fallback} />
-            </Suspense>
+              <div className="absolute inset-0 transition-opacity duration-[900ms] ease-out" style={{ opacity: ready ? 1 : 0 }}>
+                <Suspense fallback={null}>
+                  <IntroScene still={reduced} paused={open} onReady={() => setReady(true)} onSettle={() => setSettled(true)} onFallback={fallback} />
+                </Suspense>
+              </div>
             </>
           )}
 
