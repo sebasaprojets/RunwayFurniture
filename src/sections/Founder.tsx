@@ -41,7 +41,8 @@ export function Founder() {
                   `${brand.founder.name} seated in a leather lounge chair at an oceanfront resort`,
                   `${brand.founder.name} sentado en un sillón de cuero en un resort frente al mar`,
                 )}
-                className="aspect-[4/5] border-[6px] border-ink"
+                className="aspect-[4/5]"
+                frame="border-[6px] border-ink"
                 from="left"
                 delay={0.2}
                 parallax={4}
