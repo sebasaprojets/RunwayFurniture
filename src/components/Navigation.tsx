@@ -5,6 +5,8 @@ import { brand, navItems } from '../data/site'
 
 /** The few sections linked straight from the header; the full list lives in the menu. */
 const HEADER_LINKS = ['#projects', '#hotels', '#collections', '#kitchens', '#founder', '#live-different']
+/** On narrower desktops (1024–1279px) these two wait in the menu so the header never crowds. */
+const WIDE_ONLY = ['#hotels', '#kitchens']
 import { langs, useLang } from '../i18n'
 import { easeCine, easeLuxe } from '../lib/motion'
 import { lockScroll, scrollToTarget } from '../lib/scroll'
@@ -85,7 +87,7 @@ export function Navigation({ ready }: { ready: boolean }) {
                   e.preventDefault()
                   go(n.href)
                 }}
-                className="group relative text-[0.6875rem] font-medium tracking-[0.24em] whitespace-nowrap text-bone/80 uppercase transition-colors hover:text-bone"
+                className={`group relative text-[0.6875rem] font-medium tracking-[0.24em] whitespace-nowrap text-bone/80 uppercase transition-colors hover:text-bone ${WIDE_ONLY.includes(n.href) ? 'hidden xl:inline-block' : ''}`}
               >
                 {tx(n.label)}
                 <span className="absolute -bottom-1.5 left-0 h-px w-full origin-right scale-x-0 bg-gold transition-transform duration-500 group-hover:origin-left group-hover:scale-x-100" />

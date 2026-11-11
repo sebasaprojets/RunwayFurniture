@@ -74,34 +74,35 @@ export function Story() {
 
         {/* design vision panels */}
         <div className="mt-28 md:mt-36">
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-            <RevealText text={t('Architecture &\nDesign Vision', 'Arquitectura y\nvisión de diseño')} accent={['&', 'y']} accentClass="italic text-terracotta" className="display text-[12vw] uppercase sm:text-[8vw] lg:col-span-7 lg:text-[4.6vw]" />
-            <FadeIn className="lg:col-span-4 lg:col-start-9">
-              <p className="font-display text-2xl leading-snug text-ink/75 italic">{tx(vision[0].text)}</p>
-            </FadeIn>
-          </div>
-          <div className="-mx-5 mt-14 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-4 md:mx-0 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0">
-            {vision.map((v, i) => (
-              <motion.figure
-                key={v.title.en}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-                transition={{ duration: 1, ease: easeLuxe, delay: i * 0.09 }}
-                className={`group w-[78vw] shrink-0 snap-start md:w-auto ${i % 2 ? 'md:mt-16' : ''}`}
-              >
-                <div className="relative aspect-[3/4] overflow-hidden bg-smoke">
-                  <Pic src={v.image} sizes="(min-width: 768px) 33vw, 100vw">
-                    <img src={thumb(v.image)} alt={tx(v.title)} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-[1.6s] ease-[var(--ease-luxe)] group-hover:scale-[1.06]" />
-                  </Pic>
-                  <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-terracotta transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:scale-x-100" />
-                </div>
-                <figcaption className="mt-5">
-                  <p className="font-display text-2xl leading-tight">{tx(v.title)}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-ink/60">{tx(v.text)}</p>
-                </figcaption>
-              </motion.figure>
-            ))}
+          <RevealText text={t('Architecture &\nDesign Vision', 'Arquitectura y\nvisión de diseño')} accent={['&', 'y']} accentClass="italic text-terracotta" className="display text-[12vw] uppercase sm:text-[8vw] lg:text-[4.6vw]" />
+          {/* an even grid on every screen: two columns on phones and tablets (the fifth panel spans the
+              row as a wide closing image), five aligned columns on desktop */}
+          <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-14 md:mt-16 lg:grid-cols-5 lg:gap-x-5">
+            {vision.map((v, i) => {
+              const wide = i === vision.length - 1 && vision.length % 2 === 1
+              return (
+                <motion.figure
+                  key={v.title.en}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+                  transition={{ duration: 1, ease: easeLuxe, delay: (i % 5) * 0.09 }}
+                  className={`group ${wide ? 'col-span-2 lg:col-span-1' : ''}`}
+                >
+                  <div className={`relative overflow-hidden bg-smoke ${wide ? 'aspect-[16/9] lg:aspect-[3/4]' : 'aspect-[3/4]'}`}>
+                    <Pic src={v.image} sizes={wide ? '(min-width: 1024px) 20vw, 100vw' : '(min-width: 1024px) 20vw, 50vw'}>
+                      <img src={thumb(v.image)} alt={tx(v.title)} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-[1.6s] ease-[var(--ease-luxe)] group-hover:scale-[1.06]" />
+                    </Pic>
+                    <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-terracotta transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:scale-x-100" />
+                  </div>
+                  <figcaption className="mt-4 sm:mt-5">
+                    <p className="text-[0.6rem] tracking-[0.3em] text-terracotta tabular-nums">{String(i + 1).padStart(2, '0')}</p>
+                    <p className="mt-2 font-display text-xl leading-tight sm:text-2xl">{tx(v.title)}</p>
+                    <p className="mt-2 text-[0.8rem] leading-relaxed text-ink/60 sm:text-sm">{tx(v.text)}</p>
+                  </figcaption>
+                </motion.figure>
+              )
+            })}
           </div>
         </div>
       </div>
