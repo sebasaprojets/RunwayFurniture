@@ -98,20 +98,21 @@ function PdfLink({ href, label }: { href: string; label: string }) {
   )
 }
 
-/** Before → after: as the frame scrolls through the screen the new home slides in over the old one. */
+/** Before → after: as the frame scrolls through the screen the new home slides in from the right over the old one. */
 function BeforeAfter() {
   const { t } = useLang()
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 85%', 'end 25%'] })
   const s = useTransform(scrollYProgress, [0.2, 0.75], [0.0001, 1], { clamp: true })
   const inv = useTransform(s, (v) => 1 / v)
-  const line = useTransform(s, (v) => `${v * 100}%`)
+  // the new home slides in from the right, so the old house stays on the "Before" side
+  const line = useTransform(s, (v) => `${(1 - v) * 100}%`)
   return (
     <div ref={ref} className="relative aspect-[16/9] overflow-hidden bg-smoke sm:aspect-[21/9]">
       <Pic src={img.before} sizes="(min-width: 1024px) 66vw, 100vw">
         <img src={img.before} alt={t('Before: the old house, dark and damaged', 'Antes: la casa vieja, oscura y deteriorada')} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
       </Pic>
-      <motion.div style={{ scaleX: s }} className="absolute inset-0 origin-left overflow-hidden will-change-transform">
+      <motion.div style={{ scaleX: s }} className="absolute inset-0 origin-right overflow-hidden will-change-transform">
         <Pic src={img.after} sizes="(min-width: 1024px) 66vw, 100vw">
           <motion.img
             style={{ scaleX: inv }}
@@ -119,7 +120,7 @@ function BeforeAfter() {
             alt={t('After: Josefina and Angel in their new, furnished living room', 'Después: Josefina y Ángel en su nueva sala amueblada')}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 h-full w-full origin-left object-cover"
+            className="absolute inset-0 h-full w-full origin-right object-cover"
           />
         </Pic>
       </motion.div>
