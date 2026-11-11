@@ -37,7 +37,7 @@ export function MaskImage({ src, alt, className = '', imgClassName = '', from = 
       className={`relative overflow-hidden bg-graphite ${className}`}
       initial={{ clipPath: clips[from] }}
       whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-      viewport={{ once: true, margin: '0px 0px -8% 0px' }}
+      viewport={{ once: true, amount: 0.12 }}
       transition={{ duration: 1.5, ease: easeCine, delay }}
     >
       <Pic src={src} sizes={sizes}>

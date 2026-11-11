@@ -13,12 +13,14 @@ export function FounderFilm() {
     const mm = gsap.matchMedia()
     mm.add(MOTION_QUERY, () => {
       const q = gsap.utils.selector(root)
-      const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: '+=140%', scrub: 1, pin: true } })
+      const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: '+=190%', scrub: 1, pin: true } })
       tl.fromTo(q('[data-img]'), { scale: 1.25, filter: 'brightness(0.55)' }, { scale: 1, filter: 'brightness(0.9)', ease: 'none', duration: 1.4 }, 0)
         .fromTo(q('[data-bar-t]'), { height: '50%' }, { height: '12%', ease: 'power2.inOut', duration: 0.7 }, 0)
         .fromTo(q('[data-bar-b]'), { height: '50%' }, { height: '12%', ease: 'power2.inOut', duration: 0.7 }, 0)
-        .fromTo(q('[data-char]'), { opacity: 0, y: 30 }, { opacity: 1, y: 0, stagger: 0.02, duration: 0.3 }, 0.6)
-        .fromTo(q('[data-sign]'), { opacity: 0 }, { opacity: 1, duration: 0.3 }, 1.2)
+        .fromTo(q('[data-char]'), { opacity: 0, y: 30 }, { opacity: 1, y: 0, stagger: 0.015, duration: 0.3 }, 0.5)
+        .fromTo(q('[data-sign]'), { opacity: 0 }, { opacity: 1, duration: 0.3 }, 1.15)
+        // the finished shot holds on screen for a moment before the page moves on
+        .to({}, { duration: 0.7 })
     })
     return () => mm.revert()
   }, [lang])

@@ -18,13 +18,15 @@ export function CinemaReveal() {
     mm.add(MOTION_QUERY, () => {
       const q = gsap.utils.selector(root)
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=160%', scrub: 1, pin: true },
+        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=190%', scrub: 1, pin: true },
       })
       tl.fromTo(q('[data-frame]'), { clipPath: 'inset(28% 34% 28% 34%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.inOut', duration: 1 }, 0)
         .fromTo(q('[data-img]'), { scale: 1.45 }, { scale: 1.05, ease: 'none', duration: 1.4 }, 0)
         .fromTo(q('[data-bar]'), { scaleY: 1 }, { scaleY: 0, ease: 'power2.inOut', duration: 0.6 }, 0.55)
         .fromTo(q('[data-pre]'), { opacity: 1, y: 0 }, { opacity: 0, y: -40, duration: 0.4 }, 0)
         .fromTo(q('[data-copy] > *'), { opacity: 0, y: 60 }, { opacity: 1, y: 0, stagger: 0.12, duration: 0.5 }, 0.8)
+        // hold the finished shot before the page moves on
+        .to({}, { duration: 0.5 })
     })
     return () => mm.revert()
   }, [])
