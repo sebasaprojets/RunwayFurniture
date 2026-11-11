@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sebasaprojets.github.io/RunwayFurniture/sitemap.xml
+Sitemap: https://runway-furniture.com/sitemap.xml
