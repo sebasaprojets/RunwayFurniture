@@ -4,7 +4,7 @@ import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
 import { hospitalityScenes, thumb } from '../data/site'
 import { useLang } from '../i18n'
-import { gsap } from '../lib/scroll'
+import { gsap, ScrollTrigger } from '../lib/scroll'
 import { scrollToTarget } from '../lib/scroll'
 
 /**
@@ -25,6 +25,15 @@ export function Hospitality() {
       const track = trackRef.current!
       const total = hospitalityScenes.length
       const distance = () => track.scrollWidth - window.innerWidth
+      // the gallery stays on screen a little past its last hotel, so the final frame is seen at rest
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: () => `+=${distance() + window.innerHeight * 0.45}`,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      })
       const tween = gsap.to(track, {
         x: () => -distance(),
         ease: 'none',
@@ -32,9 +41,7 @@ export function Hospitality() {
           trigger: sectionRef.current,
           start: 'top top',
           end: () => `+=${distance()}`,
-          pin: true,
           scrub: 0.6,
-          anticipatePin: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             if (progressRef.current) progressRef.current.style.transform = `scaleX(${self.progress})`

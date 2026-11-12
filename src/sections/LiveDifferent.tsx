@@ -146,7 +146,7 @@ function CauseScene() {
     mm.add(MOTION_QUERY, () => {
       const q = gsap.utils.selector(root)
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=260%', scrub: 1, pin: true },
+        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=260%', scrub: 0.6, pin: true },
       })
       tl.fromTo(q('[data-frame]'), { clipPath: 'inset(30% 36% 30% 36%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.inOut', duration: 1 }, 0)
         .fromTo(q('[data-a]'), { scale: 1.5 }, { scale: 1.08, ease: 'none', duration: 1.6 }, 0)
@@ -159,7 +159,7 @@ function CauseScene() {
         .fromTo(q('[data-glow]'), { opacity: 0 }, { opacity: 1, duration: 0.6 }, 1.6)
         .fromTo(q('[data-line2] > *'), { opacity: 0, y: 60 }, { opacity: 1, y: 0, stagger: 0.12, duration: 0.45 }, 1.8)
         // hold the finished shot before the page moves on
-        .to({}, { duration: 0.6 })
+        .to({}, { duration: 1.1 })
     })
     return () => mm.revert()
   }, [])

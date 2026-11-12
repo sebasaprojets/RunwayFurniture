@@ -13,14 +13,17 @@ export function FounderFilm() {
     const mm = gsap.matchMedia()
     mm.add(MOTION_QUERY, () => {
       const q = gsap.utils.selector(root)
-      const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: '+=190%', scrub: 1, pin: true } })
+      const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: '+=190%', scrub: 0.6, pin: true } })
       tl.fromTo(q('[data-img]'), { scale: 1.25, filter: 'brightness(0.55)' }, { scale: 1, filter: 'brightness(0.9)', ease: 'none', duration: 1.4 }, 0)
         .fromTo(q('[data-bar-t]'), { height: '50%' }, { height: '12%', ease: 'power2.inOut', duration: 0.7 }, 0)
         .fromTo(q('[data-bar-b]'), { height: '50%' }, { height: '12%', ease: 'power2.inOut', duration: 0.7 }, 0)
-        .fromTo(q('[data-char]'), { opacity: 0, y: 30 }, { opacity: 1, y: 0, stagger: 0.015, duration: 0.3 }, 0.5)
-        .fromTo(q('[data-sign]'), { opacity: 0 }, { opacity: 1, duration: 0.3 }, 1.15)
-        // the finished shot holds on screen for a moment before the page moves on
-        .to({}, { duration: 0.7 })
+        // the line types out over the same stretch of scroll in every language, however long it is
+        .fromTo(q('[data-char]'), { opacity: 0, y: 30 }, { opacity: 1, y: 0, stagger: { amount: 0.5 }, duration: 0.25 }, 0.35)
+        // then the signature, then the title beneath it
+        .fromTo(q('[data-sign]'), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3 }, 1.05)
+        .fromTo(q('[data-role]'), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.25 }, 1.2)
+        // the finished shot holds on screen (about 40% of the scene) before the page moves on
+        .to({}, { duration: 0.95 })
     })
     return () => mm.revert()
   }, [lang])
@@ -52,9 +55,9 @@ export function FounderFilm() {
             </span>
           ))}
         </p>
-        <div data-sign className="mt-8">
-          <p className="font-script text-5xl text-gold md:text-6xl">Roberto Castle</p>
-          <p className="eyebrow mt-3 text-mineral/70">{tx(brand.founder.role)}</p>
+        <div className="mt-8">
+          <p data-sign className="font-script text-5xl text-gold md:text-6xl">Roberto Castle</p>
+          <p data-role className="eyebrow mt-3 text-mineral/70">{tx(brand.founder.role)}</p>
         </div>
       </div>
     </section>
