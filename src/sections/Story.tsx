@@ -61,9 +61,9 @@ export function Story() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '0px 0px -10% 0px' }}
                 transition={{ duration: 0.9, ease: easeLuxe, delay: i * 0.08 }}
-                className="group flex flex-col items-start gap-6 bg-bone p-6 md:p-10"
+                className="flex flex-col items-start gap-6 bg-bone p-6 md:p-10"
               >
-                <span className="grid size-14 place-items-center rounded-full border border-terracotta/40 text-terracotta transition-colors duration-500 group-hover:bg-terracotta group-hover:text-bone">
+                <span className="grid size-14 place-items-center rounded-full border border-terracotta/40 text-terracotta">
                   <Icon className="size-6" strokeWidth={1.2} />
                 </span>
                 <span className="font-display text-2xl leading-tight md:text-3xl">{tx(s.title)}</span>

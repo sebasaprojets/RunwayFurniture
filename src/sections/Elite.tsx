@@ -48,24 +48,27 @@ export function Elite() {
         <ul className="mt-16 grid grid-cols-1 gap-px bg-bone/10 sm:grid-cols-2 md:mt-24 lg:grid-cols-3 xl:grid-cols-5">
           {eliteKinds.map((k, i) => (
             <li key={k.key} className="bg-ink">
-              <button
-                onClick={() => setOpen(k)}
-                className="group flex h-full w-full flex-col p-6 text-left transition-colors duration-700 hover:bg-graphite focus-visible:bg-graphite md:p-8"
-                aria-label={`${tx(k.title)} — ${t('view properties', 'ver propiedades')}`}
-              >
+              {/* the card itself is information only: just "View properties" opens the listings */}
+              <div className="flex h-full w-full flex-col p-6 text-left md:p-8">
                 <span className="flex w-full items-baseline justify-between">
                   <span className="font-sans text-xs text-gold/80">{String(i + 1).padStart(2, '0')}</span>
                   <span className="eyebrow text-mineral/40">{t('Worldwide', 'Todo el mundo')}</span>
                 </span>
                 <Sketch drawing={k.drawing} label={tx(k.title)} />
-                <span className="display block text-4xl text-bone transition-transform duration-700 group-hover:translate-x-1 md:text-5xl xl:text-[2.6vw]">{tx(k.title)}</span>
+                <h3 className="display block text-4xl text-bone md:text-5xl xl:text-[2.6vw]">{tx(k.title)}</h3>
                 <span className="mt-4 block text-sm leading-relaxed text-bone/55">{tx(k.text)}</span>
-                <span className="mt-auto flex items-center gap-3 pt-8 text-[0.6875rem] font-semibold tracking-[0.24em] text-gold uppercase">
-                  {t('View properties', 'Ver propiedades')}
-                  {k.listings.length > 0 && <span className="text-bone/50">({k.listings.length})</span>}
-                  <ArrowUpRight className="size-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" strokeWidth={1.5} />
+                <span className="mt-auto pt-8">
+                  <button
+                    onClick={() => setOpen(k)}
+                    className="group -mx-2 flex items-center gap-3 rounded-sm px-2 py-2 text-[0.6875rem] font-semibold tracking-[0.24em] text-gold uppercase transition-colors duration-300 hover:text-bone focus-visible:outline-1 focus-visible:outline-gold"
+                    aria-label={`${tx(k.title)} — ${t('view properties', 'ver propiedades')}`}
+                  >
+                    {t('View properties', 'Ver propiedades')}
+                    {k.listings.length > 0 && <span className="text-bone/50">({k.listings.length})</span>}
+                    <ArrowUpRight className="size-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" strokeWidth={1.5} />
+                  </button>
                 </span>
-              </button>
+              </div>
             </li>
           ))}
         </ul>
@@ -537,7 +540,7 @@ function Sketch({ drawing, label }: { drawing: Drawing; label: string }) {
       strokeLinejoin="round"
       role="img"
       aria-label={label}
-      className="my-10 w-full transition-transform duration-[1.2s] ease-[var(--ease-luxe)] group-hover:scale-[1.04]"
+      className="my-10 w-full"
       initial="hide"
       whileInView="show"
       viewport={{ once: true, margin: '0px 0px -15% 0px' }}
