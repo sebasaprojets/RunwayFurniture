@@ -72,7 +72,7 @@ export function SignatureHotels() {
                 'Piscinas, azoteas, beach clubs y suites amueblados para W Hotels, St. Regis, Fontainebleau, Six Senses, Conrad y Ritz-Carlton, de las Maldivas a Manhattan.',
               )}
             </p>
-            <dl className="mt-10 grid grid-cols-3 gap-px border-t border-bone/10">
+            <dl className="mt-10 grid grid-cols-3 gap-x-4 border-t border-bone/10">
               {[
                 { v: '50+', l: t('Properties', 'Propiedades') },
                 { v: String(hotelCountries), l: t('Countries', 'Países') },
@@ -80,7 +80,7 @@ export function SignatureHotels() {
               ].map((s) => (
                 <div key={s.l} className="flex flex-col pt-5">
                   <dd className="display order-1 text-4xl text-bone md:text-5xl">{s.v}</dd>
-                  <dt className="eyebrow order-2 mt-2 text-mineral/60">{s.l}</dt>
+                  <dt className="eyebrow order-2 mt-2 text-[0.6rem] tracking-[0.18em] text-mineral/60 sm:text-[0.6875rem] sm:tracking-[0.32em]">{s.l}</dt>
                 </div>
               ))}
             </dl>

@@ -34,7 +34,7 @@ export function WhatsAppButton({ ready }: { ready: boolean }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${label} — ${brand.whatsappLabel}`}
-          className="group fixed right-5 bottom-5 z-[90] flex items-center gap-3 md:right-8 md:bottom-8"
+          className="group pointer-events-none fixed right-5 bottom-5 z-[90] flex items-center gap-3 md:right-8 md:bottom-8"
           initial={{ opacity: 0, scale: 0.6, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.6, y: 20 }}
@@ -43,7 +43,8 @@ export function WhatsAppButton({ ready }: { ready: boolean }) {
           <span className="pointer-events-none hidden translate-x-2 rounded-full bg-ink/85 px-4 py-2 text-[0.65rem] font-semibold tracking-[0.2em] text-bone uppercase opacity-0 backdrop-blur transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100 md:block">
             {label}
           </span>
-          <span className="relative grid size-14 place-items-center rounded-full bg-gold text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] transition-transform duration-500 ease-[var(--ease-luxe)] group-hover:scale-110">
+          {/* only the round button takes clicks: the label beside it never covers what is underneath */}
+          <span className="pointer-events-auto relative grid size-14 place-items-center rounded-full bg-gold text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] transition-transform duration-500 ease-[var(--ease-luxe)] group-hover:scale-110">
             <span className="absolute inset-0 animate-ping rounded-full bg-gold/40 [animation-duration:2.8s]" />
             <WhatsAppIcon className="relative size-7" />
           </span>

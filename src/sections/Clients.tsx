@@ -56,22 +56,31 @@ export function Clients() {
           </FadeIn>
         </div>
 
-        <div className="mt-16 grid gap-x-10 gap-y-14 md:mt-24 md:grid-cols-2 xl:grid-cols-4">
-          {clients.regions.map((r, i) => (
-            <FadeIn key={r.region.en} delay={i * 0.08}>
-              <p className="font-display text-3xl italic">{tx(r.region)}</p>
-              <ul className="mt-5 divide-y divide-ink/10 border-y border-ink/10">
-                {r.names.map((n) => {
-                  const [name, place] = n.split(' — ')
-                  return (
-                    <li key={n} className="py-3 text-sm leading-snug">
-                      <span className="text-ink/85">{name}</span>
-                      {place && <span className="block text-xs text-ink/65">{lang === 'es' ? (placesEs[place] ?? place) : place}</span>}
-                    </li>
-                  )
-                })}
-              </ul>
-            </FadeIn>
+        {/* the four regions in two balanced halves (Caribbean + Asia, Europe + Canada & USA), each
+            region's names in two columns on wide screens: every column ends at the same height */}
+        <div className="mt-16 grid gap-x-16 gap-y-14 md:mt-24 md:grid-cols-2">
+          {[clients.regions.slice(0, 2), clients.regions.slice(2)].map((half, h) => (
+            <div key={h} className="flex flex-col gap-14">
+              {half.map((r, i) => (
+                <FadeIn key={r.region.en} delay={(h * 2 + i) * 0.08}>
+                  <p className="flex items-baseline justify-between border-b border-ink/15 pb-4">
+                    <span className="font-display text-3xl italic">{tx(r.region)}</span>
+                    <span className="text-xs text-ink/55 tabular-nums">{String(r.names.length).padStart(2, '0')}</span>
+                  </p>
+                  <ul className="gap-x-10 xl:columns-2">
+                    {r.names.map((n) => {
+                      const [name, place] = n.split(' — ')
+                      return (
+                        <li key={n} className="break-inside-avoid border-b border-ink/10 py-3 text-sm leading-snug">
+                          <span className="text-ink/85">{name}</span>
+                          {place && <span className="block text-xs text-ink/65">{lang === 'es' ? (placesEs[place] ?? place) : place}</span>}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </FadeIn>
+              ))}
+            </div>
           ))}
         </div>
 
@@ -86,7 +95,7 @@ export function Clients() {
             </p>
           </div>
           <FadeIn className="lg:col-span-8">
-            <p className="font-display text-3xl leading-snug text-ink/85 md:text-4xl">
+            <p className="font-display text-xl leading-relaxed text-ink/85 sm:text-2xl md:text-3xl md:leading-snug lg:text-4xl">
               {clients.celebrities.map((c, i) => (
                 <span key={c}>
                   {c}
