@@ -5,7 +5,7 @@ import { Preloader } from './components/Preloader'
 import { picReady } from './components/Pic'
 import { projects, type Project } from './data/site'
 import { useCalmScroll, usePrefersReducedMotion } from './lib/motion'
-import { initSmoothScroll, lockScroll, ScrollTrigger } from './lib/scroll'
+import { initSmoothScroll, lockScroll, restorePlace, ScrollTrigger } from './lib/scroll'
 import { ScrollProgress } from './components/ScrollProgress'
 import { WhatsAppButton } from './components/WhatsAppButton'
 import { CinemaReveal } from './sections/CinemaReveal'
@@ -79,6 +79,8 @@ export default function App() {
     const id = requestAnimationFrame(() => {
       ScrollTrigger.sort()
       ScrollTrigger.refresh()
+      // and the visitor stays on the part of the page they were reading
+      restorePlace()
     })
     return () => cancelAnimationFrame(id)
   }, [lang])

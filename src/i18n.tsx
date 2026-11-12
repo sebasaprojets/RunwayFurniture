@@ -1,3 +1,4 @@
+import { holdPlace } from './lib/scroll'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 
 export type Lang = 'en' | 'es'
@@ -64,6 +65,8 @@ export function LangProvider({ children }: { children: ReactNode }) {
     } catch {
       /* storage unavailable */
     }
+    // the page reflows in the new language: remember where the visitor is, App puts them back
+    holdPlace()
     setLangState(l)
   }, [])
   const value = useMemo<Ctx>(

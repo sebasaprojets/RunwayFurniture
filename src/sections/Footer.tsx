@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowUpRight } from 'lucide-react'
+import { ArrowUp } from 'lucide-react'
 import { motion } from 'motion/react'
 import { BRAND_SERIF } from '../components/BrandMark'
 import { brand, navItems, whatsappUrl } from '../data/site'
@@ -105,37 +105,36 @@ function InstagramIcon({ className = '' }: { className?: string }) {
 function DeveloperCredit() {
   const { t } = useLang()
   const href = `https://www.instagram.com/${DEVELOPER.instagram}/`
+  const by = t('Developed by', 'Desarrollado por')
   return (
     <div className="border-t border-bone/10">
-      <div className="mx-auto flex max-w-[1600px] flex-col items-center gap-3 px-5 pt-7 pb-28 text-center sm:flex-row sm:justify-center sm:gap-5 md:px-10 md:pr-32 md:pb-9 md:pl-32">
-        <span className="eyebrow text-[0.6rem] text-bone/55">{t('Designed & developed by', 'Diseño y desarrollo web por')}</span>
+      {/* right-aligned signature, kept clear of the floating WhatsApp button */}
+      <div className="mx-auto flex max-w-[1600px] justify-center px-5 pt-7 pb-28 sm:justify-end md:px-10 md:pr-32 md:pb-9">
         <motion.a
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`${t('Designed & developed by', 'Diseño y desarrollo web por')} ${DEVELOPER.name} — Instagram @${DEVELOPER.instagram}`}
-          className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-gold/35 bg-bone/[0.03] py-2 pr-4 pl-2 transition-colors duration-500 hover:border-gold hover:bg-gold/10"
+          aria-label={`${by} ${DEVELOPER.name} — Instagram @${DEVELOPER.instagram}`}
+          className="group flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-6"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: easeLuxe }}
         >
-          {/* a band of light crosses the pill once as it comes into view, and again on hover */}
-          <motion.span
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-bone/25 to-transparent"
-            initial={{ x: '0%' }}
-            whileInView={{ x: '450%' }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.6, ease: easeLuxe, delay: 0.5 }}
-          />
-          <span className="grid size-8 place-items-center rounded-full border border-gold/50 text-gold transition-all duration-500 group-hover:rotate-[-8deg] group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
-            <InstagramIcon className="size-4" />
+          <span className="eyebrow text-[0.6rem] text-bone/50 transition-colors duration-500 group-hover:text-bone/75">{by}</span>
+          <span className="flex items-center gap-4">
+            <span
+              className="relative text-lg tracking-[0.1em] whitespace-nowrap text-gold uppercase transition-colors duration-500 group-hover:text-[#d8bd8e] min-[400px]:text-xl sm:text-[1.7rem] sm:tracking-[0.14em]"
+              style={{ fontFamily: BRAND_SERIF }}
+            >
+              {DEVELOPER.name}
+              {/* a hairline draws under the name on hover */}
+              <span className="absolute inset-x-0 -bottom-1 h-px origin-left scale-x-0 bg-gold/70 transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:scale-x-100" />
+            </span>
+            <span className="grid size-9 shrink-0 place-items-center rounded-full border border-gold/40 text-gold transition-all duration-500 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
+              <InstagramIcon className="size-4" />
+            </span>
           </span>
-          <span className="bg-gradient-to-r from-[#f6e7c8] via-gold to-[#f6e7c8] bg-[length:200%_100%] bg-clip-text bg-left text-base font-semibold tracking-[0.06em] text-transparent transition-[background-position] duration-1000 ease-[var(--ease-luxe)] group-hover:bg-right sm:text-lg">
-            {DEVELOPER.name}
-          </span>
-          <ArrowUpRight className="size-4 text-gold transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={1.5} />
         </motion.a>
       </div>
     </div>
