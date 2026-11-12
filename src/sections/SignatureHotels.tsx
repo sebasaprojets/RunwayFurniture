@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
+import { AnimatePresence, motion, useInView, useScroll, useTransform } from 'motion/react'
 import { Pic } from '../components/Pic'
 import { useEffect, useRef, useState } from 'react'
 import { FadeIn } from '../components/FadeIn'
@@ -21,9 +21,21 @@ export function SignatureHotels() {
   const rows = useRef<(HTMLLIElement | null)[]>([])
   const band = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: band, offset: ['start end', 'end start'] })
-  const xa = useTransform(scrollYProgress, [0, 1], ['0%', '-30%'])
-  const xb = useTransform(scrollYProgress, [0, 1], ['-30%', '0%'])
+  // a light drift with the scroll on top of each row's own endless run (opposite ways)
+  const xa = useTransform(scrollYProgress, [0, 1], ['4%', '-8%'])
+  const xb = useTransform(scrollYProgress, [0, 1], ['-8%', '4%'])
+  // the rows only run while the band is on screen
+  const bandOn = useInView(band, { margin: '10% 0px 10% 0px' })
   const hotel = hotels[active]
+  // the photograph that has finished wiping in (see Wipe)
+  const [shown, setShown] = useState(0)
+  // the wiped-in copy stays on top until the layer underneath has painted the same photograph
+  const [baseReady, setBaseReady] = useState(true)
+  useEffect(() => {
+    if (baseReady) return
+    const id = setTimeout(() => setBaseReady(true), 1500)
+    return () => clearTimeout(id)
+  }, [baseReady])
 
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -107,20 +119,23 @@ export function SignatureHotels() {
           <div className="lg:col-span-7">
             <div className="sticky top-[12vh]">
               <div className="relative aspect-[4/3] overflow-hidden bg-graphite">
-                <AnimatePresence initial={false}>
-                  <Pic key={hotel.slug} src={hotel.image} sizes="(min-width: 1024px) 58vw, 100vw">
-                  <motion.img
+                {/* the last photograph fully on screen stays underneath, so the frame is never empty
+                    however fast the list is scrolled; the new one wipes in over it once it has loaded */}
+                <Pic src={hotels[shown].image} sizes="(min-width: 1024px) 58vw, 100vw">
+                  <img src={hotels[shown].image} alt="" aria-hidden onLoad={() => setBaseReady(true)} className="grade absolute inset-0 h-full w-full object-cover" />
+                </Pic>
+                {(active !== shown || !baseReady) && (
+                  <Wipe
+                    key={hotel.slug}
                     src={hotel.image}
                     alt={`${hotel.name}, ${tx(hotel.city)}`}
-                    initial={{ clipPath: 'inset(100% 0% 0% 0%)', scale: 1.12 }}
-                    animate={{ clipPath: 'inset(0% 0% 0% 0%)', scale: 1 }}
-                    exit={{ opacity: 0, transition: { duration: 0.6, delay: 0.5 } }}
-                    transition={{ duration: 1.1, ease: easeCine }}
-                    className="grade absolute inset-0 h-full w-full object-cover"
-                    decoding="async"
+                    onDone={() => {
+                      if (active === shown) return
+                      setBaseReady(false)
+                      setShown(active)
+                    }}
                   />
-                  </Pic>
-                </AnimatePresence>
+                )}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -164,19 +179,54 @@ export function SignatureHotels() {
         ))}
       </ul>
 
-      {/* Every property in the book, drifting with the scroll */}
+      {/* Every property in the book, running across the screen while this part is in view */}
       <div ref={band} className="mt-24 overflow-hidden border-y border-bone/10 py-8 md:mt-32 md:py-10" aria-hidden>
         {[hotelNames.slice(0, half), hotelNames.slice(half)].map((names, r) => (
-          <motion.div key={r} style={{ x: r ? xb : xa }} className={`flex whitespace-nowrap ${r ? 'mt-4' : ''}`}>
-            {[...names, ...names].map((n, i) => (
-              <span key={i} className={`flex items-center font-display text-3xl md:text-5xl ${r ? 'text-bone/25 italic' : 'text-bone/70'}`}>
-                {n}
-                <span className="mx-6 inline-block size-1.5 rotate-45 bg-gold/60 md:mx-10" />
-              </span>
-            ))}
+          <motion.div key={r} style={{ x: r ? xb : xa }} className={`will-change-transform ${r ? 'mt-4' : ''}`}>
+            {/* the names twice in a row, run halfway and start over: an endless row with no seam */}
+            <div
+              className="flex w-max whitespace-nowrap will-change-transform"
+              style={{
+                animation: `marquee ${names.length * 5}s linear infinite`,
+                animationDirection: r ? 'reverse' : 'normal',
+                animationPlayState: bandOn ? 'running' : 'paused',
+              }}
+            >
+              {[...names, ...names].map((n, i) => (
+                <span key={i} className={`flex items-center font-display text-3xl md:text-5xl ${r ? 'text-bone/25 italic' : 'text-bone/70'}`}>
+                  {n}
+                  <span className="mx-6 inline-block size-1.5 rotate-45 bg-gold/60 md:mx-10" />
+                </span>
+              ))}
+            </div>
           </motion.div>
         ))}
       </div>
     </section>
+  )
+}
+
+/** The next hotel's photograph: it waits until it has loaded, then wipes up over the previous one. */
+function Wipe({ src, alt, onDone }: { src: string; alt: string; onDone: () => void }) {
+  const [ready, setReady] = useState(false)
+  const img = useRef<HTMLImageElement>(null)
+  useEffect(() => {
+    if (img.current?.complete && img.current.naturalWidth) setReady(true)
+  }, [])
+  return (
+    <Pic src={src} sizes="(min-width: 1024px) 58vw, 100vw" blur={false}>
+      <motion.img
+        ref={img}
+        src={src}
+        alt={alt}
+        onLoad={() => setReady(true)}
+        initial={{ clipPath: 'inset(100% 0% 0% 0%)', scale: 1.12 }}
+        animate={ready ? { clipPath: 'inset(0% 0% 0% 0%)', scale: 1 } : undefined}
+        transition={{ duration: 1.1, ease: easeCine }}
+        onAnimationComplete={() => ready && onDone()}
+        className="grade absolute inset-0 h-full w-full object-cover"
+        decoding="async"
+      />
+    </Pic>
   )
 }

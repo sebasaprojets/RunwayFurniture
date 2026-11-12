@@ -1,12 +1,12 @@
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { Pic } from '../components/Pic'
 import { ArrowUpRight } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { RevealText } from '../components/RevealText'
 import { categories, categoryLabel, projects, thumb, type Category, type Project } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
-import { ScrollTrigger } from '../lib/scroll'
+import { jumpBy, ScrollTrigger } from '../lib/scroll'
 
 export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
   const { t, tx } = useLang()
@@ -22,10 +22,45 @@ export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
     return () => window.removeEventListener('projects:filter', on)
   }, [])
 
-  // The grid height changes below the fold: re-measure the pinned scenes after it settles.
-  useEffect(() => {
+  // "Show fewer" removes most of the grid at once: the button stays exactly where it was on screen
+  // (the page moves up with it instead of dropping the visitor far below), then every pinned scene
+  // further down is re-measured straight away and once more when the cards have settled.
+  const more = useRef<HTMLButtonElement>(null)
+  const anchor = useRef<number | null>(null)
+  const [collapsing, setCollapsing] = useState(false)
+  const toggle = () => {
+    if (showAll) {
+      anchor.current = more.current?.getBoundingClientRect().top ?? null
+      setCollapsing(true)
+    } else setCollapsing(false)
+    setShowAll((v) => !v)
+  }
+  useLayoutEffect(() => {
+    let raf = 0
+    const target = anchor.current
+    anchor.current = null
+    // the removed cards leave the page a frame or two later: follow the button until it has moved,
+    // then hold it in place for a few frames, then re-measure the scenes below
+    let frames = 0
+    let settled = -1
+    const follow = () => {
+      if (target !== null && more.current) {
+        const d = more.current.getBoundingClientRect().top - target
+        if (Math.abs(d) > 1) {
+          jumpBy(d)
+          settled = frames
+        }
+      }
+      frames++
+      if (target !== null && frames < 60 && (settled < 0 || frames - settled < 6)) raf = requestAnimationFrame(follow)
+      else ScrollTrigger.refresh()
+    }
+    raf = requestAnimationFrame(follow)
     const id = setTimeout(() => ScrollTrigger.refresh(), 1000)
-    return () => clearTimeout(id)
+    return () => {
+      cancelAnimationFrame(raf)
+      clearTimeout(id)
+    }
   }, [showAll, filter])
   const used = categories.filter((c) => projects.some((p) => p.category === c))
 
@@ -56,7 +91,10 @@ export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
               key={c}
               role="tab"
               aria-selected={filter === c}
-              onClick={() => setFilter(c)}
+              onClick={() => {
+                setCollapsing(false)
+                setFilter(c)
+              }}
               className={`shrink-0 rounded-full border px-5 py-2.5 text-[0.6875rem] font-medium tracking-[0.18em] uppercase transition-all duration-500 ${
                 filter === c ? 'border-gold bg-gold text-ink' : 'border-bone/15 text-bone/60 hover:border-bone/40 hover:text-bone'
               }`}
@@ -68,7 +106,8 @@ export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
 
         <LayoutGroup>
           <motion.ul layout className="mt-12 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 md:mt-16 lg:grid-cols-3">
-            <AnimatePresence mode="popLayout">
+            {/* collapsing, the extra cards leave at once: nothing floats over the sections below */}
+            <AnimatePresence mode="popLayout" custom={collapsing}>
               {list.map((p, i) => (
                 <ProjectCard key={p.slug} project={p} index={i} onOpen={onOpen} />
               ))}
@@ -79,7 +118,8 @@ export function Projects({ onOpen }: { onOpen: (p: Project) => void }) {
         {filtered.length > INITIAL && (
           <div className="mt-16 flex justify-center md:mt-20">
             <button
-              onClick={() => setShowAll((v) => !v)}
+              ref={more}
+              onClick={toggle}
               aria-expanded={showAll}
               className="rounded-full border border-bone/25 px-8 py-4 text-[0.6875rem] font-semibold tracking-[0.24em] text-bone uppercase transition-colors duration-500 hover:border-gold hover:text-gold"
             >
@@ -107,7 +147,8 @@ function ProjectCard({
       layout
       initial={{ opacity: 0, y: 60 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.96 }}
+      variants={{ exit: (instant?: boolean) => (instant ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, scale: 0.96 }) }}
+      exit="exit"
       transition={{ duration: 0.9, ease: easeLuxe, delay: (index % 3) * 0.06 }}
     >
       <button onClick={() => onOpen(p)} className="group block w-full text-left" aria-label={`${t('Open project', 'Abrir proyecto')}: ${p.title}`}>

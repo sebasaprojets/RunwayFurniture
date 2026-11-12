@@ -31,6 +31,14 @@ export function scrollToTarget(target: string | HTMLElement) {
   el.focus({ preventScroll: true })
 }
 
+/** Move the page by a few pixels at once, without any smoothing (used to keep something in place
+ * when the content above it changes height). */
+export function jumpBy(dy: number) {
+  if (!dy) return
+  if (lenis) lenis.scrollTo(window.scrollY + dy, { immediate: true, force: true })
+  else window.scrollTo(0, window.scrollY + dy)
+}
+
 export function lockScroll(locked: boolean) {
   if (lenis) {
     if (locked) lenis.stop()
