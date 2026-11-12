@@ -1,5 +1,5 @@
 import { AnimatePresence, LayoutGroup } from 'motion/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Navigation } from './components/Navigation'
 import { Preloader } from './components/Preloader'
 import { picReady } from './components/Pic'
@@ -39,7 +39,7 @@ const fromHash = () => {
 }
 
 export default function App() {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const reduced = usePrefersReducedMotion()
   const calm = useCalmScroll()
   // The opening film plays every time someone opens the site; it is skipped only when the page is
@@ -69,6 +69,19 @@ export default function App() {
 
   // Native scrolling on touch devices; smooth scroll only with a mouse/trackpad.
   useEffect(() => initSmoothScroll(calm), [calm])
+
+  // A language switch changes the length of every text and rebuilds the founder's film: re-measure the
+  // pinned scenes so each one starts only after the previous has finished, never on top of it.
+  const firstLang = useRef(true)
+  useEffect(() => {
+    if (firstLang.current) return void (firstLang.current = false)
+    // the rebuilt film is newest in GSAP's list: put the scenes back in page order before measuring
+    const id = requestAnimationFrame(() => {
+      ScrollTrigger.sort()
+      ScrollTrigger.refresh()
+    })
+    return () => cancelAnimationFrame(id)
+  }, [lang])
 
   // Recalculate pinned sections once fonts and images settle.
   useEffect(() => {
