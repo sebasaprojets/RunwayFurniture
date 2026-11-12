@@ -96,7 +96,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
           className="eyebrow absolute top-32 left-5 hidden flex-col gap-2 text-mineral/70 md:left-10 md:flex"
         >
           <span>{t('Luxury Hospitality  ·  Residential  ·  Bespoke Furniture', 'Hotelería de lujo  ·  Residencial  ·  Mobiliario a medida')}</span>
-          <Timecode show={ready} />
+          <SceneLabel show={ready} />
         </motion.div>
         <motion.div
           initial={{ opacity: 0 }}
@@ -194,39 +194,9 @@ function WorldClocks() {
   )
 }
 
-/** Film-slate timecode running at 24 fps. */
-function Timecode({ show }: { show: boolean }) {
+/** The scene label under the eyebrow, in the language of the site's film moments. */
+function SceneLabel({ show }: { show: boolean }) {
   const { t } = useLang()
-  const ref = useRef<HTMLSpanElement>(null)
-  useEffect(() => {
-    const start = performance.now()
-    let raf = 0
-    let last = -1
-    let visible = true
-    const pad = (n: number) => String(n).padStart(2, '0')
-    const tick = (now: number) => {
-      const f = Math.floor(((now - start) / 1000) * 24)
-      // only touch the page when the frame number actually changes (24 times a second)
-      if (f !== last && ref.current) {
-        last = f
-        const s = Math.floor(f / 24)
-        ref.current.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${pad(f % 24)}`
-      }
-      if (visible) raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    // stop counting while the hero is scrolled away
-    const io = new IntersectionObserver(([e]) => {
-      visible = e.isIntersecting
-      cancelAnimationFrame(raf)
-      if (visible) raf = requestAnimationFrame(tick)
-    })
-    if (ref.current) io.observe(ref.current)
-    return () => {
-      cancelAnimationFrame(raf)
-      io.disconnect()
-    }
-  }, [])
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -237,7 +207,6 @@ function Timecode({ show }: { show: boolean }) {
     >
       <span className="size-1.5 animate-pulse rounded-full bg-terracotta" />
       <span>{t('Scene 01 — The sea beneath the glass', 'Escena 01 — El mar bajo el cristal')}</span>
-      <span ref={ref} className="tabular-nums text-bone/70">00:00:00:00</span>
     </motion.div>
   )
 }

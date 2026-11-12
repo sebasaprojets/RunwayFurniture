@@ -15,7 +15,15 @@ export function Statement() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 45%'] })
   const marquee = useRef<HTMLElement>(null)
   const { scrollYProgress: mq } = useScroll({ target: marquee, offset: ['start end', 'end start'] })
-  const x = useTransform(mq, [0, 1], ['0%', '-25%'])
+  // the band drifts a little with the scroll on top of its own endless run
+  const x = useTransform(mq, [0, 1], ['4%', '-8%'])
+  const band = useRef<HTMLDivElement>(null)
+  // the endless run only plays while the band is on screen
+  const bandOn = useInView(band, { margin: '10% 0px 10% 0px' })
+  const bandWords = t(
+    'Luxury Hospitality|Residential|Contract|Bespoke Furniture|Outdoor Kitchens|Montreal|Singapore|Worldwide',
+    'Hotelería de lujo|Residencial|Contract|Mobiliario a medida|Cocinas al aire libre|Montreal|Singapur|Todo el mundo',
+  ).split('|')
   const words = tx(manifesto).split(' ')
 
   const facts = [
@@ -39,13 +47,19 @@ export function Statement() {
       </div>
 
 
-      <motion.div style={{ x }} className="mt-24 flex whitespace-nowrap will-change-transform md:mt-32" aria-hidden>
-        {(t('Luxury Hospitality|Residential|Bespoke Furniture|Montreal|Singapore|Worldwide|Luxury Hospitality|Residential', 'Hotelería de lujo|Residencial|Mobiliario a medida|Montreal|Singapur|Todo el mundo|Hotelería de lujo|Residencial')).split('|').map((w, i) => (
-          <span key={i} className="display flex items-center text-[15vw] text-transparent md:text-[8vw]" style={{ WebkitTextStroke: '1px rgba(210,196,174,.22)' }}>
-            {w}
-            <span className="mx-[3vw] inline-block size-[1.2vw] rotate-45 bg-gold/40" />
-          </span>
-        ))}
+      <motion.div ref={band} style={{ x }} className="mt-24 will-change-transform md:mt-32" aria-hidden>
+        {/* the words twice in a row, run halfway and start over: an endless band with no seam */}
+        <div
+          className="flex w-max whitespace-nowrap will-change-transform"
+          style={{ animation: 'marquee 70s linear infinite', animationPlayState: bandOn ? 'running' : 'paused' }}
+        >
+          {[...bandWords, ...bandWords].map((w, i) => (
+            <span key={i} className="display flex items-center text-[15vw] text-transparent md:text-[8vw]" style={{ WebkitTextStroke: '1px rgba(210,196,174,.22)' }}>
+              {w}
+              <span className="mx-[3vw] inline-block size-[1.2vw] rotate-45 bg-gold/40" />
+            </span>
+          ))}
+        </div>
       </motion.div>
 
       <dl className="mx-auto mt-20 grid max-w-[1600px] grid-cols-2 gap-px px-5 md:mt-28 md:grid-cols-4 md:px-10">
