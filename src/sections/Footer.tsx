@@ -1,7 +1,6 @@
 import { ArrowUp, ArrowUpRight } from 'lucide-react'
 import { motion } from 'motion/react'
 import { BRAND_SERIF } from '../components/BrandMark'
-import { WhatsAppIcon } from '../components/WhatsAppButton'
 import { brand, navItems, whatsappUrl } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe } from '../lib/motion'
@@ -89,16 +88,23 @@ export function Footer() {
   )
 }
 
-/** The web designer's signature: one tap opens a WhatsApp chat with a message already written. */
-const DEVELOPER = { name: 'Sebastian Andrade', whatsapp: '5541996173375' }
+/** The web designer's signature: one tap opens his studio's Instagram. */
+const DEVELOPER = { name: 'Sebastian Andrade', instagram: 'safdigitalsolutions' }
+
+/** Instagram's mark, drawn inline so the credit needs no external asset. */
+function InstagramIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+    </svg>
+  )
+}
 
 function DeveloperCredit() {
   const { t } = useLang()
-  const message = t(
-    'Hi Sebastian! I saw the Runway Furniture website you built and I’m interested in a website like it for my business.',
-    '¡Hola Sebastian! Vi el sitio web de Runway Furniture que desarrollaste y me interesa un sitio así para mi negocio.',
-  )
-  const href = `https://wa.me/${DEVELOPER.whatsapp}?text=${encodeURIComponent(message)}`
+  const href = `https://www.instagram.com/${DEVELOPER.instagram}/`
   return (
     <div className="border-t border-bone/10">
       <div className="mx-auto flex max-w-[1600px] flex-col items-center gap-3 px-5 pt-7 pb-28 text-center sm:flex-row sm:justify-center sm:gap-5 md:px-10 md:pr-32 md:pb-9 md:pl-32">
@@ -107,7 +113,7 @@ function DeveloperCredit() {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`${t('Designed & developed by', 'Diseño y desarrollo web por')} ${DEVELOPER.name} — ${t('chat on WhatsApp', 'escribir por WhatsApp')}`}
+          aria-label={`${t('Designed & developed by', 'Diseño y desarrollo web por')} ${DEVELOPER.name} — Instagram @${DEVELOPER.instagram}`}
           className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-gold/35 bg-bone/[0.03] py-2 pr-4 pl-2 transition-colors duration-500 hover:border-gold hover:bg-gold/10"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -124,7 +130,7 @@ function DeveloperCredit() {
             transition={{ duration: 1.6, ease: easeLuxe, delay: 0.5 }}
           />
           <span className="grid size-8 place-items-center rounded-full border border-gold/50 text-gold transition-all duration-500 group-hover:rotate-[-8deg] group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
-            <WhatsAppIcon className="size-4" />
+            <InstagramIcon className="size-4" />
           </span>
           <span className="bg-gradient-to-r from-[#f6e7c8] via-gold to-[#f6e7c8] bg-[length:200%_100%] bg-clip-text bg-left text-base font-semibold tracking-[0.06em] text-transparent transition-[background-position] duration-1000 ease-[var(--ease-luxe)] group-hover:bg-right sm:text-lg">
             {DEVELOPER.name}
