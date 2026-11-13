@@ -19,15 +19,15 @@ export function Button({ children, href, onClick, variant = 'solid', className =
   }[variant]
   const inner = (
     <>
-      <span className="absolute inset-0 origin-bottom scale-y-0 rounded-full bg-[var(--fill)] transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:scale-y-100 group-focus-visible:scale-y-100" />
+      <span className="absolute inset-0 origin-bottom scale-y-0 rounded-full bg-[var(--fill)] transition-transform duration-[450ms] ease-[var(--ease-luxe)] group-hover:scale-y-100 group-focus-visible:scale-y-100" />
       <span className="relative z-10">{children}</span>
       <span className="relative z-10 grid size-5 place-items-center overflow-hidden">
-        <ArrowUpRight className="size-4 transition-transform duration-500 ease-[var(--ease-luxe)] group-hover:translate-x-5 group-hover:-translate-y-5" strokeWidth={1.5} />
-        <ArrowUpRight className="absolute size-4 -translate-x-5 translate-y-5 transition-transform duration-500 ease-[var(--ease-luxe)] group-hover:translate-x-0 group-hover:translate-y-0" strokeWidth={1.5} />
+        <ArrowUpRight className="size-4 transition-transform duration-[350ms] ease-[var(--ease-luxe)] group-hover:translate-x-5 group-hover:-translate-y-5" strokeWidth={1.5} />
+        <ArrowUpRight className="absolute size-4 -translate-x-5 translate-y-5 transition-transform duration-[350ms] ease-[var(--ease-luxe)] group-hover:translate-x-0 group-hover:translate-y-0" strokeWidth={1.5} />
       </span>
     </>
   )
-  const cls = `group relative inline-flex items-center gap-3 overflow-hidden rounded-full px-7 py-4 text-[0.6875rem] font-semibold tracking-[0.28em] uppercase transition-colors duration-500 ${styles} ${className}`
+  const cls = `group relative inline-flex items-center gap-3 overflow-hidden rounded-full px-7 py-4 text-[0.6875rem] font-semibold tracking-[0.28em] uppercase transition-[color,transform] duration-300 ease-[var(--ease-luxe)] active:scale-[0.97] ${styles} ${className}`
   if (href)
     return (
       <a

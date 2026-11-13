@@ -152,7 +152,7 @@ export function BrandMark({ animate = false, delay = 0, className = '', pillars 
       </div>
 
       <motion.span
-        className="mt-[0.35em] text-[max(0.13em,9px)] font-semibold tracking-[0.42em] whitespace-nowrap text-gold uppercase"
+        className="mt-[0.35em] text-[max(0.13em,9px)] font-semibold tracking-[0.36em] whitespace-nowrap text-gold uppercase"
         initial={animate ? { opacity: 0, letterSpacing: '0.8em' } : false}
         animate={{ opacity: 1, letterSpacing: '0.42em' }}
         transition={t(2.4)}
@@ -162,7 +162,7 @@ export function BrandMark({ animate = false, delay = 0, className = '', pillars 
 
       {pillars && (
         <motion.span
-          className="mt-[0.9em] text-[max(0.085em,8px)] max-sm:hidden font-medium tracking-[0.36em] whitespace-nowrap text-bone/55 uppercase"
+          className="mt-[0.9em] text-[max(0.085em,8px)] max-sm:hidden font-medium tracking-[0.36em] whitespace-nowrap text-bone/60 uppercase"
           initial={animate ? { opacity: 0 } : false}
           animate={{ opacity: 1 }}
           transition={t(2.9)}

@@ -59,7 +59,7 @@ export function Founder() {
             <RevealText text={t('The Founder', 'El fundador')} as="h2" className="display mt-4 text-[16vw] text-bone uppercase sm:text-[10vw] lg:text-[6vw]" />
             <span className="mt-8 block h-px w-16 bg-terracotta" />
             <FadeIn>
-              <div className="mt-10 max-w-[62ch] space-y-6 text-[1.05rem] leading-relaxed text-bone/75">
+              <div className="mt-10 max-w-[62ch] space-y-6 text-[1.05rem] leading-relaxed text-bone/80">
                 <p className="font-display text-3xl leading-snug text-bone">
                   {t('“Great furniture is more than design — it creates experiences that people remember.', '“Un gran mueble es más que diseño: crea experiencias que la gente recuerda.')}
                 </p>

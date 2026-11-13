@@ -78,7 +78,7 @@ function Stat({ value, label }: { value: number; label: string }) {
   return (
     <div className="mt-10 flex items-end gap-4 border-t border-ink/10 pt-6">
       <Count to={value} className="font-display text-7xl leading-[0.8] text-terracotta md:text-8xl" />
-      <p className="max-w-[14rem] pb-1 text-xs leading-relaxed tracking-[0.14em] text-ink/55 uppercase">{label}</p>
+      <p className="max-w-[14rem] pb-1 text-xs leading-relaxed tracking-[0.14em] text-ink/60 uppercase">{label}</p>
     </div>
   )
 }
@@ -89,7 +89,7 @@ function PdfLink({ href, label }: { href: string; label: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group mt-8 inline-flex items-center gap-3 rounded-full border border-ink/20 py-3 pr-5 pl-4 text-[0.7rem] font-semibold tracking-[0.2em] text-ink uppercase transition-colors duration-500 hover:border-terracotta hover:bg-terracotta hover:text-bone"
+      className="group mt-8 inline-flex items-center gap-3 rounded-full border border-ink/20 py-3 pr-5 pl-4 text-xs font-semibold tracking-[0.2em] text-ink uppercase transition-colors duration-500 hover:border-terracotta hover:bg-terracotta hover:text-bone"
     >
       <FileText className="size-4" strokeWidth={1.5} />
       {label}
@@ -125,8 +125,8 @@ function BeforeAfter() {
         </Pic>
       </motion.div>
       <motion.span style={{ left: line }} className="pointer-events-none absolute inset-y-0 w-px bg-bone/80 shadow-[0_0_20px_rgba(255,255,255,.6)]" aria-hidden />
-      <span className="eyebrow absolute bottom-4 left-4 rounded-full bg-ink/70 px-3 py-1.5 text-[0.6rem] text-bone backdrop-blur-sm">{t('Before', 'Antes')}</span>
-      <span className="eyebrow absolute right-4 bottom-4 rounded-full bg-terracotta px-3 py-1.5 text-[0.6rem] text-bone">{t('After', 'Después')}</span>
+      <span className="eyebrow absolute bottom-4 left-4 rounded-full bg-ink/70 px-3 py-1.5 text-[0.6875rem] text-bone backdrop-blur-sm">{t('Before', 'Antes')}</span>
+      <span className="eyebrow absolute right-4 bottom-4 rounded-full bg-terracotta px-3 py-1.5 text-[0.6875rem] text-bone">{t('After', 'Después')}</span>
     </div>
   )
 }
@@ -196,7 +196,7 @@ function CauseScene() {
           {t('Then, ', 'Entonces, ')}
           <span className="italic text-gold">{t('a home.', 'un hogar.')}</span>
         </p>
-        <p className="mx-auto mt-6 max-w-lg text-bone/75">
+        <p className="mx-auto mt-6 max-w-lg text-bone/80">
           {t('We help rebuild it — and fill it with furniture, household essentials and even food.', 'Ayudamos a reconstruirlo — y lo llenamos de muebles, utensilios y hasta comida.')}
         </p>
       </div>
@@ -238,7 +238,7 @@ export function LiveDifferent() {
           </div>
           <FadeIn className="lg:col-span-5">
             <HouseMark className="mb-8 w-24 text-ink md:w-28" />
-            <p className="text-[1.08rem] leading-relaxed text-ink/75">
+            <p className="text-[1.08rem] leading-relaxed text-ink/80">
               {t(
                 'Together with Live Different, a charity that helps families with very few resources, and Vista Verde Village, Runway helps give families in the Dominican Republic a new home — and fills it with furniture, household essentials and even food, so they can start again with dignity.',
                 'Junto a Live Different, una organización de ayuda a familias de pocos recursos, y Vista Verde Village, Runway ayuda a darles un nuevo hogar a familias en República Dominicana — y lo llena de muebles, utensilios y hasta comida, para que puedan empezar de nuevo con dignidad.',
@@ -383,12 +383,12 @@ export function LiveDifferent() {
               {t('Every home we furnish ', 'Cada hogar que amueblamos ')}
               <span className="italic text-gold">{t('carries this purpose.', 'lleva este propósito.')}</span>
             </p>
-            <p className="mt-6 max-w-lg leading-relaxed text-bone/65">
+            <p className="mt-6 max-w-lg leading-relaxed text-bone/70">
               {t('Would you like to be part of it? Write to us and we will tell you how to help.', '¿Quieres ser parte? Escríbenos y te contamos cómo ayudar.')}
             </p>
             <button
               onClick={() => openWhatsApp(t('Hello Runway, I would like to help with the Live Different cause.', 'Hola Runway, me gustaría ayudar con la causa de Live Different.'))}
-              className="group mt-10 inline-flex items-center gap-3 rounded-full bg-gold px-6 py-3.5 text-[0.7rem] font-semibold tracking-[0.2em] text-ink uppercase transition-colors duration-500 hover:bg-bone"
+              className="group mt-10 inline-flex items-center gap-3 rounded-full bg-gold px-6 py-3.5 text-xs font-semibold tracking-[0.2em] text-ink uppercase transition-colors duration-500 hover:bg-bone"
             >
               <HeartHandshake className="size-4" strokeWidth={1.5} />
               {t('I want to help', 'Quiero ayudar')}

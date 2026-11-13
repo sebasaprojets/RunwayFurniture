@@ -56,7 +56,7 @@ export function Elite() {
                 </span>
                 <Sketch drawing={k.drawing} label={tx(k.title)} />
                 <h3 className="display block text-4xl text-bone md:text-5xl xl:text-[2.6vw]">{tx(k.title)}</h3>
-                <span className="mt-4 block text-sm leading-relaxed text-bone/55">{tx(k.text)}</span>
+                <span className="mt-4 block text-sm leading-relaxed text-bone/60">{tx(k.text)}</span>
                 <span className="mt-auto pt-8">
                   <button
                     onClick={() => setOpen(k)}
@@ -352,7 +352,7 @@ function ListingCard({
           />
         )}
         <span className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/0 to-ink/20" />
-        {total > 1 && <span className="absolute top-4 left-4 rounded-full bg-ink/50 px-2.5 py-1 font-sans text-[0.65rem] tracking-[0.15em] text-bone/90 backdrop-blur">{no}</span>}
+        {total > 1 && <span className="absolute top-4 left-4 rounded-full bg-ink/50 px-2.5 py-1 font-sans text-[0.6875rem] tracking-[0.15em] text-bone/90 backdrop-blur">{no}</span>}
         <span className="absolute right-4 bottom-4 left-4 flex items-center justify-between gap-3 text-[0.6875rem] font-semibold tracking-[0.24em] text-bone uppercase">
           <span>{count}</span>
           <span className="grid size-11 place-items-center rounded-full border border-bone/40 bg-ink/40 backdrop-blur transition-colors duration-500 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">

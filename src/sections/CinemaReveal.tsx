@@ -49,7 +49,7 @@ export function CinemaReveal() {
         <p className="display mt-6 text-[11vw] text-bone uppercase md:text-[6.5vw]">
           {t('…with a', '…de un')} <span className="italic">{t('place.', 'lugar.')}</span>
         </p>
-        <p className="mx-auto mt-6 max-w-lg text-bone/75">
+        <p className="mx-auto mt-6 max-w-lg text-bone/80">
           {t(
             'We study the architecture, the light and the landscape first — then design the furniture that belongs there.',
             'Primero estudiamos la arquitectura, la luz y el paisaje; después diseñamos el mobiliario que pertenece a ese lugar.',

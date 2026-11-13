@@ -27,7 +27,7 @@ export function Factory() {
           </h2>
           <RevealText text={t('Made by\nhand, built\nto last.', 'Hecho a\nmano, para\ndurar.')} accent={['hand,', 'mano,']} className="display mt-6 text-[14vw] text-bone uppercase sm:text-[9vw] lg:text-[5.4vw]" />
           <FadeIn>
-            <p className="mt-8 max-w-md leading-relaxed text-bone/65">
+            <p className="mt-8 max-w-md leading-relaxed text-bone/70">
               {t(
                 'From concept to reality: every piece is drawn, engineered, prototyped, manufactured and inspected in our own production — then delivered and installed worldwide.',
                 'Del concepto a la realidad: cada pieza se dibuja, se diseña técnicamente, se prototipa, se fabrica y se inspecciona en nuestra propia producción, y luego se entrega e instala en todo el mundo.',

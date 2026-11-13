@@ -127,7 +127,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
             transition={{ duration: 1.2, ease: easeLuxe, delay: 0.75 }}
             className="lg:col-span-4 lg:pb-4"
           >
-            <p className="max-w-sm text-base leading-relaxed text-bone/75 md:text-lg">
+            <p className="max-w-sm text-base leading-relaxed text-bone/80 md:text-lg">
               {t(
                 'Bespoke furniture and considered interiors for exceptional hospitality and residential destinations.',
                 'Mobiliario a medida e interiores cuidados para destinos residenciales y hoteleros excepcionales.',
@@ -202,7 +202,7 @@ function SceneLabel({ show }: { show: boolean }) {
       initial={{ opacity: 0 }}
       animate={show ? { opacity: 1 } : {}}
       transition={{ delay: 1.2, duration: 1 }}
-      className="mt-2 flex items-center gap-3 text-[0.6rem] text-mineral/60"
+      className="mt-2 flex items-center gap-3 text-[0.6875rem] text-mineral/60"
       aria-hidden
     >
       <span className="size-1.5 animate-pulse rounded-full bg-terracotta" />

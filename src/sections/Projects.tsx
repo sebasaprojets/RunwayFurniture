@@ -164,7 +164,7 @@ function ProjectCard({
           </Pic>
           <div className="absolute inset-0 hidden bg-gradient-to-t from-ink/80 via-ink/0 to-ink/0 opacity-0 transition-opacity duration-700 group-hover:opacity-100 md:block" />
           {p.isConcept && (
-            <span className="eyebrow absolute top-4 left-4 rounded-full border border-bone/25 bg-ink/40 px-3 py-1.5 text-[0.6rem] text-bone/80 backdrop-blur-sm">
+            <span className="eyebrow absolute top-4 left-4 rounded-full border border-bone/25 bg-ink/40 px-3 py-1.5 text-[0.6875rem] text-bone/80 backdrop-blur-sm">
               {t('Concept study', 'Estudio conceptual')}
             </span>
           )}
@@ -172,7 +172,7 @@ function ProjectCard({
             <ArrowUpRight className="size-5" strokeWidth={1.25} />
           </span>
           <div className="absolute inset-x-5 bottom-5 hidden overflow-hidden md:block">
-            <p className="translate-y-full text-sm text-bone/85 transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:translate-y-0">
+            <p className="translate-y-full text-sm text-bone/90 transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:translate-y-0">
               {tx(p.summary)}
             </p>
           </div>

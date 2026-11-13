@@ -76,11 +76,11 @@ function PieceSheet({ index, onClose, onStep }: { index: number; onClose: () => 
               <p className="mt-2 text-lg text-bone/60">{tx(piece.type)}</p>
               <dl className="mt-8 grid grid-cols-2 gap-px border-t border-bone/10 text-sm">
                 <div className="pt-4">
-                  <dt className="eyebrow text-bone/45">{t('Family', 'Familia')}</dt>
+                  <dt className="eyebrow text-bone/50">{t('Family', 'Familia')}</dt>
                   <dd className="mt-2 text-bone/80">{piece.family}</dd>
                 </div>
                 <div className="pt-4">
-                  <dt className="eyebrow text-bone/45">{t('Collection', 'Colección')}</dt>
+                  <dt className="eyebrow text-bone/50">{t('Collection', 'Colección')}</dt>
                   <dd className="mt-2 text-bone/80">{t('New 2026', 'Novedades 2026')}</dd>
                 </div>
               </dl>
@@ -127,7 +127,7 @@ function Card({ piece, i, onOpen }: { piece: Piece; i: number; onOpen: () => voi
             className="h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.06]"
           />
           </Pic>
-          <span className="absolute top-3 left-3 rounded-full bg-ink/80 px-2.5 py-1 text-[0.6rem] font-semibold tracking-[0.2em] text-gold uppercase backdrop-blur">
+          <span className="absolute top-3 left-3 rounded-full bg-ink/80 px-2.5 py-1 text-[0.6875rem] font-semibold tracking-[0.2em] text-gold uppercase backdrop-blur">
             2026
           </span>
           <span className="absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-bone text-ink opacity-0 transition-all duration-500 group-hover:opacity-100 group-focus-visible:opacity-100">
@@ -167,7 +167,7 @@ export function NewCollection() {
                 <FadeIn key={m.year} delay={i * 0.08}>
                   <li className="grid grid-cols-[6.5rem_1fr] items-baseline gap-6 py-6 md:grid-cols-[9rem_1fr]">
                     <span className="display text-4xl text-gold md:text-5xl">{m.year}</span>
-                    <span className="text-sm leading-relaxed text-bone/65">{tx(m.text)}</span>
+                    <span className="text-sm leading-relaxed text-bone/70">{tx(m.text)}</span>
                   </li>
                 </FadeIn>
               ))}
@@ -176,7 +176,7 @@ export function NewCollection() {
               {heritage.designers.map((d) => (
                 <FadeIn key={d.name}>
                   <p className="font-display text-2xl text-bone italic">{d.name}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-bone/55">{tx(d.text)}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-bone/60">{tx(d.text)}</p>
                 </FadeIn>
               ))}
             </div>

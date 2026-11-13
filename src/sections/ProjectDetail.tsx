@@ -76,21 +76,21 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
             [t('Collection', 'Colección'), p.collection ?? 'Runway Furniture'],
           ].map(([k, v]) => (
             <div key={k}>
-              <dt className="eyebrow text-mineral/75">{k}</dt>
-              <dd className="mt-3 text-sm leading-relaxed text-bone/85">{v}</dd>
+              <dt className="eyebrow text-mineral/80">{k}</dt>
+              <dd className="mt-3 text-sm leading-relaxed text-bone/90">{v}</dd>
             </div>
           ))}
         </dl>
 
         <div className="mt-20 grid gap-14 lg:grid-cols-12">
           <FadeIn className="lg:col-span-6">
-            <p className="eyebrow text-mineral/75">{t('Concept', 'Concepto')}</p>
+            <p className="eyebrow text-mineral/80">{t('Concept', 'Concepto')}</p>
             <p className="mt-6 font-display text-3xl leading-snug text-bone md:text-4xl">{tx(p.concept)}</p>
           </FadeIn>
           <FadeIn className="lg:col-span-5 lg:col-start-8" delay={0.1}>
-            <p className="eyebrow text-mineral/75">{t('Narrative', 'Narrativa')}</p>
+            <p className="eyebrow text-mineral/80">{t('Narrative', 'Narrativa')}</p>
             <p className="mt-6 leading-relaxed text-bone/70">{tx(p.narrative)}</p>
-            <p className="eyebrow mt-12 text-mineral/75">{t('Furniture', 'Mobiliario')}</p>
+            <p className="eyebrow mt-12 text-mineral/80">{t('Furniture', 'Mobiliario')}</p>
             <ul className="mt-4 divide-y divide-bone/10 border-y border-bone/10">
               {p.furniture.map((f, i) => (
                 <li key={f.en} className="flex items-baseline gap-5 py-3.5 text-sm text-bone/80">
@@ -127,7 +127,7 @@ export function ProjectDetail({ project: p, onClose, onNavigate }: { project: Pr
             {t('Discuss a similar project', 'Hablemos de un proyecto similar')}
           </Button>
           <button onClick={() => onNavigate(next)} className="group text-right">
-            <span className="eyebrow text-mineral/75">{t('Next project', 'Siguiente proyecto')}</span>
+            <span className="eyebrow text-mineral/80">{t('Next project', 'Siguiente proyecto')}</span>
             <span className="display mt-2 flex items-center gap-4 text-5xl text-bone transition-colors group-hover:text-gold md:text-7xl">
               {next.title}
               <ArrowRight className="size-8 transition-transform duration-500 group-hover:translate-x-2" strokeWidth={1} />

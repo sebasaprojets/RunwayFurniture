@@ -46,7 +46,7 @@ export function Clients() {
             />
           </div>
           <FadeIn className="lg:col-span-4 lg:col-start-9">
-            <p className="max-w-xl text-sm leading-relaxed text-ink/65">
+            <p className="max-w-xl text-sm leading-relaxed text-ink/70">
               {t(
                 'Our furniture can be found in some of the world’s most beautiful hotels, resorts and residences — including, but not limited to, the following.',
                 'Nuestro mobiliario está presente en algunos de los hoteles, resorts y residencias más bellos del mundo, entre ellos los siguientes.',
@@ -65,15 +65,15 @@ export function Clients() {
                 <FadeIn key={r.region.en} delay={(h * 2 + i) * 0.08}>
                   <p className="flex items-baseline justify-between border-b border-ink/15 pb-4">
                     <span className="font-display text-3xl italic">{tx(r.region)}</span>
-                    <span className="text-xs text-ink/55 tabular-nums">{String(r.names.length).padStart(2, '0')}</span>
+                    <span className="text-xs text-ink/60 tabular-nums">{String(r.names.length).padStart(2, '0')}</span>
                   </p>
                   <ul className="gap-x-10 xl:columns-2">
                     {r.names.map((n) => {
                       const [name, place] = n.split(' — ')
                       return (
                         <li key={n} className="break-inside-avoid border-b border-ink/10 py-3 text-sm leading-snug">
-                          <span className="text-ink/85">{name}</span>
-                          {place && <span className="block text-xs text-ink/65">{lang === 'es' ? (placesEs[place] ?? place) : place}</span>}
+                          <span className="text-ink/90">{name}</span>
+                          {place && <span className="block text-xs text-ink/70">{lang === 'es' ? (placesEs[place] ?? place) : place}</span>}
                         </li>
                       )
                     })}
@@ -95,7 +95,7 @@ export function Clients() {
             </p>
           </div>
           <FadeIn className="lg:col-span-8">
-            <p className="font-display text-xl leading-relaxed text-ink/85 sm:text-2xl md:text-3xl md:leading-snug lg:text-4xl">
+            <p className="font-display text-xl leading-relaxed text-ink/90 sm:text-2xl md:text-3xl md:leading-snug lg:text-4xl">
               {clients.celebrities.map((c, i) => (
                 <span key={c}>
                   {c}
@@ -105,12 +105,12 @@ export function Clients() {
             </p>
             <dl className="mt-12 grid gap-8 sm:grid-cols-2">
               <div>
-                <dt className="eyebrow text-ink/65">{t('Dignitaries', 'Dignatarios')}</dt>
-                <dd className="mt-3 text-sm leading-relaxed text-ink/75">{clients.dignitaries.map(tx).join(' · ')}</dd>
+                <dt className="eyebrow text-ink/70">{t('Dignitaries', 'Dignatarios')}</dt>
+                <dd className="mt-3 text-sm leading-relaxed text-ink/80">{clients.dignitaries.map(tx).join(' · ')}</dd>
               </div>
               <div>
-                <dt className="eyebrow text-ink/65">{t('Film & television', 'Cine y televisión')}</dt>
-                <dd className="mt-3 text-sm leading-relaxed text-ink/75">{clients.media.join(' · ')}</dd>
+                <dt className="eyebrow text-ink/70">{t('Film & television', 'Cine y televisión')}</dt>
+                <dd className="mt-3 text-sm leading-relaxed text-ink/80">{clients.media.join(' · ')}</dd>
               </div>
             </dl>
           </FadeIn>

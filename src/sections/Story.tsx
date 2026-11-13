@@ -96,7 +96,7 @@ export function Story() {
                     <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-terracotta transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:scale-x-100" />
                   </div>
                   <figcaption className="mt-4 sm:mt-5">
-                    <p className="text-[0.6rem] tracking-[0.3em] text-terracotta tabular-nums">{String(i + 1).padStart(2, '0')}</p>
+                    <p className="text-[0.6875rem] tracking-[0.32em] text-terracotta tabular-nums">{String(i + 1).padStart(2, '0')}</p>
                     <p className="mt-2 font-display text-xl leading-tight sm:text-2xl">{tx(v.title)}</p>
                     <p className="mt-2 text-[0.8rem] leading-relaxed text-ink/60 sm:text-sm">{tx(v.text)}</p>
                   </figcaption>

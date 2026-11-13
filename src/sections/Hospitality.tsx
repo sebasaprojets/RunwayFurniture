@@ -91,7 +91,7 @@ export function Hospitality() {
             accent={['destinations', 'destinos']}
             className="display text-[13vw] text-bone uppercase min-[900px]:text-[5.6vw]"
           />
-          <p className="mt-8 max-w-md leading-relaxed text-bone/65">
+          <p className="mt-8 max-w-md leading-relaxed text-bone/70">
             {t(
               'Thoughtfully designed environments where architecture, furniture and hospitality come together to create something extraordinary.',
               'Ambientes diseñados con cuidado, donde arquitectura, mobiliario y hospitalidad se unen para crear algo extraordinario.',
@@ -132,7 +132,7 @@ export function Hospitality() {
               <span className="pt-2 font-display text-lg text-gold italic tabular-nums">0{i + 1}</span>
               <span>
                 <span className="block font-display text-3xl text-bone">{tx(s.title)}</span>
-                <span className="mt-2 block max-w-sm text-sm leading-relaxed text-bone/55">{tx(s.caption)}</span>
+                <span className="mt-2 block max-w-sm text-sm leading-relaxed text-bone/60">{tx(s.caption)}</span>
               </span>
             </figcaption>
           </figure>

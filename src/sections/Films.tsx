@@ -63,14 +63,14 @@ function Film({ film }: { film: (typeof films)[number] }) {
       </div>
       <figcaption className="mt-5 flex max-w-xl flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-5">
         <span className="font-display text-3xl whitespace-nowrap text-bone">{tx(film.title)}</span>
-        <span className="text-sm leading-relaxed text-bone/55">
+        <span className="text-sm leading-relaxed text-bone/60">
           {tx(film.caption)}
           {film.youtube && (
             <a
               href={`https://www.youtube.com/watch?v=${film.youtube}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="eyebrow mt-3 inline-flex items-center gap-1.5 text-gold/80 transition-colors hover:text-gold"
+              className="eyebrow mt-3 flex min-h-11 w-fit items-center gap-1.5 text-gold/80 transition-colors hover:text-gold"
             >
               {t('Watch on YouTube', 'Ver en YouTube')} <ArrowUpRight className="size-3.5" strokeWidth={1.5} />
             </a>

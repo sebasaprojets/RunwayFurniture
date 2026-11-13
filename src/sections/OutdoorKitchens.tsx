@@ -111,7 +111,7 @@ function TavoloScene() {
             {steps.map((s, i) => (
               <motion.div key={s.k} initial={false} animate={{ opacity: step === i ? 1 : 0, y: step === i ? 0 : step > i ? -14 : 14 }} transition={{ duration: 0.5 }} className="absolute inset-0" aria-hidden={step !== i}>
                 <p className="font-display text-3xl italic">{tx(s.title)}</p>
-                <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink/65">{tx(s.text)}</p>
+                <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink/70">{tx(s.text)}</p>
               </motion.div>
             ))}
           </div>
@@ -191,10 +191,10 @@ export function OutdoorKitchens() {
                 </Pic>
               </div>
               <p className="mt-5 flex items-baseline gap-4">
-                <span className="text-[0.65rem] text-bone/40 tabular-nums">0{i + 1}</span>
+                <span className="text-[0.6875rem] text-bone/40 tabular-nums">0{i + 1}</span>
                 <span className="font-display text-3xl text-bone">{l.name}</span>
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-bone/55">{tx(l.text)}</p>
+              <p className="mt-2 text-sm leading-relaxed text-bone/60">{tx(l.text)}</p>
             </FadeIn>
           ))}
         </div>

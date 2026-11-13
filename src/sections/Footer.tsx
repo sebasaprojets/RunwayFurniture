@@ -17,8 +17,8 @@ export function Footer() {
             <span className="text-gold italic">{t('We help create destinations.', 'Ayudamos a crear destinos.')}</span>
           </p>
           <nav aria-label={t('Footer', 'Pie de página')} className="md:col-span-3 md:col-start-6">
-            <p className="eyebrow text-mineral/75">{t('Explore', 'Explorar')}</p>
-            <ul className="mt-5 space-y-2">
+            <p className="eyebrow text-mineral/80">{t('Explore', 'Explorar')}</p>
+            <ul className="mt-5 space-y-2 max-md:space-y-0">
               {navItems.map((n) => (
                 <li key={n.label.en}>
                   <a
@@ -27,7 +27,7 @@ export function Footer() {
                       e.preventDefault()
                       scrollToTarget(n.href)
                     }}
-                    className="text-bone/70 transition-colors hover:text-gold"
+                    className="text-bone/70 transition-colors hover:text-gold max-md:flex max-md:min-h-11 max-md:items-center"
                   >
                     {tx(n.label)}
                   </a>
@@ -36,7 +36,7 @@ export function Footer() {
             </ul>
           </nav>
           <div className="md:col-span-4">
-            <p className="eyebrow text-mineral/75">{t('Studios', 'Estudios')}</p>
+            <p className="eyebrow text-mineral/80">{t('Studios', 'Estudios')}</p>
             <ul className="mt-5 space-y-2 text-bone/70">
               {brand.offices.map((o) => (
                 <li key={o.city}>
@@ -46,12 +46,12 @@ export function Footer() {
               ))}
               <li>{brand.regions.map(tx).join(' · ')}</li>
               <li className="pt-3">
-                <a href={`mailto:${brand.contactEmail}`} className="break-all transition-colors hover:text-gold">
+                <a href={`mailto:${brand.contactEmail}`} className="break-all transition-colors hover:text-gold max-md:flex max-md:min-h-11 max-md:items-center">
                   {brand.contactEmail}
                 </a>
               </li>
               <li>
-                <a href={whatsappUrl(t('Hello, I would like more information about Runway Furniture.', 'Hola, me gustaría recibir información sobre Runway Furniture.'))} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-gold">
+                <a href={whatsappUrl(t('Hello, I would like more information about Runway Furniture.', 'Hola, me gustaría recibir información sobre Runway Furniture.'))} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-gold max-md:flex max-md:min-h-11 max-md:items-center">
                   WhatsApp {brand.whatsappLabel}
                 </a>
               </li>
@@ -78,7 +78,7 @@ export function Footer() {
           © {new Date().getFullYear()} {brand.full}. {t('Since', 'Desde')} {brand.since}.
         </span>
         <span>{t('Luxury Hospitality · Residential · Bespoke Furniture', 'Hotelería de lujo · Residencial · Mobiliario a medida')}</span>
-        <button onClick={() => scrollToTarget('#top')} className="eyebrow flex items-center gap-2 text-bone/70 hover:text-gold">
+        <button onClick={() => scrollToTarget('#top')} className="eyebrow flex min-h-11 items-center gap-2 text-bone/70 hover:text-gold">
           {t('Back to top', 'Volver arriba')} <ArrowUp className="size-3.5" strokeWidth={1.5} />
         </button>
       </div>
@@ -121,7 +121,7 @@ function DeveloperCredit() {
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: easeLuxe }}
         >
-          <span className="eyebrow text-[0.6rem] text-bone/50 transition-colors duration-500 group-hover:text-bone/75">{by}</span>
+          <span className="eyebrow text-[0.6875rem] text-bone/50 transition-colors duration-500 group-hover:text-bone/80">{by}</span>
           <span className="flex items-center gap-4">
             <span
               className="relative text-lg tracking-[0.1em] whitespace-nowrap text-gold uppercase transition-colors duration-500 group-hover:text-[#d8bd8e] min-[400px]:text-xl sm:text-[1.7rem] sm:tracking-[0.14em]"

@@ -9,6 +9,8 @@
   --color-bronze: #8d6748;
   --color-gold: #b89a6a;
   --color-terracotta: #b9543d;
+  /* error text on dark grounds: terracotta lifted to pass 4.5:1 */
+  --color-ember: #e58e76;
 
   --font-display: 'Instrument Serif', 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Manrope Variable', 'Manrope', 'Inter', system-ui, sans-serif;

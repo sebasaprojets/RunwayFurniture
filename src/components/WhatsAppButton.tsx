@@ -40,7 +40,7 @@ export function WhatsAppButton({ ready }: { ready: boolean }) {
           exit={{ opacity: 0, scale: 0.6, y: 20 }}
           transition={{ duration: 0.7, ease: easeLuxe }}
         >
-          <span className="pointer-events-none hidden translate-x-2 rounded-full bg-ink/85 px-4 py-2 text-[0.65rem] font-semibold tracking-[0.2em] text-bone uppercase opacity-0 backdrop-blur transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100 md:block">
+          <span className="pointer-events-none hidden translate-x-2 rounded-full bg-ink/85 px-4 py-2 text-[0.6875rem] font-semibold tracking-[0.2em] text-bone uppercase opacity-0 backdrop-blur transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100 md:block">
             {label}
           </span>
           {/* only the round button takes clicks: the label beside it never covers what is underneath */}

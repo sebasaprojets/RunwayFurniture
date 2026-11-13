@@ -98,11 +98,11 @@ export function SignatureHotels() {
                   aria-current={i === active}
                   className="group flex w-full items-baseline gap-6 py-6 text-left"
                 >
-                  <span className={`w-7 text-[0.65rem] tabular-nums transition-colors duration-500 ${i === active ? 'text-gold' : 'text-bone/40'}`}>{pad(i + 1)}</span>
+                  <span className={`w-7 text-[0.6875rem] tabular-nums transition-colors duration-500 ${i === active ? 'text-gold' : 'text-bone/40'}`}>{pad(i + 1)}</span>
                   <span className="flex-1">
                     <span
                       className={`block font-display text-3xl leading-tight transition-all duration-700 ease-[var(--ease-luxe)] xl:text-4xl ${
-                        i === active ? 'translate-x-3 text-bone italic' : 'text-bone/45 group-hover:text-bone/75'
+                        i === active ? 'translate-x-3 text-bone italic' : 'text-bone/50 group-hover:text-bone/80'
                       }`}
                     >
                       {h.name}
@@ -171,7 +171,7 @@ export function SignatureHotels() {
               <Pic src={h.image} sizes="(min-width: 768px) 40vw, 85vw">
                 <img src={thumb(h.image)} alt={`${h.name}, ${tx(h.city)}`} loading="lazy" decoding="async" className="grade h-full w-full object-cover" />
               </Pic>
-              <span className="absolute top-4 left-4 font-display text-base text-bone/85 italic">{pad(i + 1)}</span>
+              <span className="absolute top-4 left-4 font-display text-base text-bone/90 italic">{pad(i + 1)}</span>
             </div>
             <p className="mt-4 font-display text-2xl text-bone">{h.name}</p>
             <p className="eyebrow mt-1 text-gold/80">{tx(h.city)}</p>

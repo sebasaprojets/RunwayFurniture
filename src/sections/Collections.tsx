@@ -75,7 +75,7 @@ export function Collections() {
                   aria-pressed={i === active}
                   className="group flex w-full items-baseline gap-5 py-5 text-left"
                 >
-                  <span className="text-[0.65rem] text-bone/60 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="text-[0.6875rem] text-bone/60 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
                   <span
                     className={`font-display text-2xl transition-all duration-500 md:text-3xl ${
                       i === active ? 'translate-x-2 text-bone italic' : 'text-bone/60 group-hover:text-bone/70'

@@ -58,16 +58,16 @@ export function Contact() {
 
   const err = (k: Field) =>
     errors[k] ? (
-      <p id={`${k}-error`} className="mt-2 text-sm text-terracotta">
+      <p id={`${k}-error`} className="mt-2 text-sm text-ember">
         {errors[k]}
       </p>
     ) : null
   const aria = (k: Field) => ({ 'aria-invalid': !!errors[k] || undefined, 'aria-describedby': errors[k] ? `${k}-error` : undefined })
 
   const field =
-    'peer w-full border-b border-bone/20 bg-transparent pt-6 pb-3 text-bone placeholder-transparent outline-none transition-colors focus:border-gold'
+    'peer w-full border-b border-bone/20 bg-transparent pt-6 pb-3 text-bone placeholder-transparent outline-none transition-colors focus:border-gold aria-[invalid=true]:border-ember'
   const lbl =
-    'pointer-events-none absolute top-6 left-0 text-sm text-bone/70 transition-all duration-300 peer-focus:top-0 peer-focus:text-[0.65rem] peer-focus:tracking-[0.2em] peer-focus:text-gold peer-focus:uppercase peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:text-[0.65rem] peer-[:not(:placeholder-shown)]:tracking-[0.2em] peer-[:not(:placeholder-shown)]:uppercase'
+    'pointer-events-none absolute top-6 left-0 text-sm text-bone/70 transition-[top,font-size,letter-spacing,color] duration-300 peer-focus:top-0 peer-focus:text-[0.65rem] peer-focus:tracking-[0.2em] peer-focus:text-gold peer-focus:uppercase peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:text-[0.65rem] peer-[:not(:placeholder-shown)]:tracking-[0.2em] peer-[:not(:placeholder-shown)]:uppercase'
 
   return (
     <section id="contact" className="relative overflow-hidden bg-graphite" aria-labelledby="contact-title">
@@ -79,7 +79,7 @@ export function Contact() {
         <div className="lg:col-span-5">
           <RevealText text={t('Let’s create\nsomething\nextraordinary.', 'Creemos\nalgo\nextraordinario.')} accent={['extraordinary.', 'extraordinario.']} className="display text-[13vw] text-bone uppercase sm:text-[9vw] lg:text-[5.4vw]" />
           <FadeIn>
-            <p className="mt-10 max-w-md leading-relaxed text-bone/65">
+            <p className="mt-10 max-w-md leading-relaxed text-bone/70">
               {t(
                 'For hospitality, residential and bespoke furniture commissions, tell us about your project — our studios in Montreal and Singapore work with clients worldwide.',
                 'Para proyectos hoteleros, residenciales y de mobiliario a medida, cuéntanos tu proyecto: nuestros estudios en Montreal y Singapur trabajan con clientes de todo el mundo.',
@@ -148,7 +148,7 @@ export function Contact() {
                   {categories.map((c) => (
                     <label key={c} className="cursor-pointer">
                       <input type="radio" name="type" value={c} className="peer sr-only" />
-                      <span className="block rounded-full border border-bone/15 px-4 py-2 text-xs text-bone/75 transition-colors peer-checked:border-gold peer-checked:bg-gold peer-checked:text-ink peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-gold hover:border-bone/40">
+                      <span className="block rounded-full border border-bone/15 px-4 py-2 text-xs text-bone/80 transition-colors peer-checked:border-gold peer-checked:bg-gold peer-checked:text-ink peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-gold hover:border-bone/40">
                         {tx(categoryLabel[c])}
                       </span>
                     </label>
