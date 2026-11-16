@@ -1,7 +1,8 @@
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion, useMotionTemplate, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
+import { FilmPause, HeroBackdrop } from '../components/HeroFilm'
 import { WaterCanvas } from '../components/WaterCanvas'
 import { brand, heroVideo } from '../data/site'
 import { useLang } from '../i18n'
@@ -17,6 +18,19 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   const gridY = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
   const calm = useCalmScroll()
   const { lang, t, tx } = useLang()
+  // wide screens see a slice of the vertical film: it glides from the horizon down to the pool as
+  // the visitor scrolls, and leans towards the cursor (phones see the whole frame, nothing to glide)
+  const lean = useMotionValue(0)
+  const leanY = useSpring(lean, { stiffness: 40, damping: 18 })
+  const slice = useTransform(scrollYProgress, [0, 1], [56, 84])
+  const sliceY = useTransform(() => Math.min(100, Math.max(0, slice.get() + leanY.get())))
+  const filmPosition = useMotionTemplate`50% ${sliceY}%`
+  useEffect(() => {
+    if (!heroVideo || !matchMedia('(hover: hover) and (pointer: fine)').matches) return
+    const move = (e: PointerEvent) => lean.set(((e.clientY / innerHeight) * 2 - 1) * 5)
+    window.addEventListener('pointermove', move, { passive: true })
+    return () => window.removeEventListener('pointermove', move)
+  }, [lean])
 
   return (
     <section ref={ref} id="top" className="relative min-h-[100svh] overflow-hidden bg-ink" aria-label={t('Introduction', 'Introducción')}>
@@ -29,13 +43,13 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
       >
         <motion.div className="absolute inset-0" style={calm ? undefined : { scale }}>
           {heroVideo ? (
-            <video className="h-full w-full object-cover" src={heroVideo.src} poster={heroVideo.poster} autoPlay muted loop playsInline />
+            <HeroBackdrop active={revealed || ready} position={calm ? undefined : filmPosition} />
           ) : (
             <WaterCanvas still={reduced} paused={!revealed} className="absolute inset-0" />
           )}
 
           {/* Structural glass floor — steel mullions in perspective, like standing above the sea */}
-          <div className="pointer-events-none absolute inset-0 [perspective:900px]" aria-hidden>
+          {!heroVideo && <div className="pointer-events-none absolute inset-0 [perspective:900px]" aria-hidden>
             <motion.div style={calm ? undefined : { y: gridY }} className="absolute inset-0 [transform-style:preserve-3d]">
             <div className="absolute -inset-x-full top-[-260%] bottom-[-50%] origin-bottom [transform:rotateX(58deg)]">
               <div
@@ -50,12 +64,26 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
               <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent_30%,rgba(255,236,205,.07)_45%,transparent_60%)]" />
             </div>
             </motion.div>
-          </div>
+          </div>}
         </motion.div>
 
         {/* grading + legibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-transparent to-ink/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/50 via-transparent to-transparent" />
+        {!heroVideo && <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-transparent to-ink/80" />}
+        {/* full-screen film on phones: a deeper ground under the title, text and buttons */}
+        {heroVideo && (
+          <>
+            {/* the film stays bright in the middle; shade sits only where text does */}
+            <div className="absolute bottom-0 left-0 h-[78%] w-[min(70rem,100vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_100%,rgb(10_10_10/0.86)_42%,transparent_100%)] max-md:hidden" />
+            <div className="absolute right-0 bottom-0 h-[66%] w-[min(44rem,54vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_100%,rgb(10_10_10/0.92)_56%,transparent_100%)] max-lg:hidden" />
+            <div className="absolute inset-x-0 bottom-0 h-[10rem] bg-[linear-gradient(to_top,rgb(10_10_10/0.95)_0%,rgb(10_10_10/0.88)_45%,transparent_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-[72%] bg-[linear-gradient(to_top,rgb(10_10_10/0.95)_0%,rgb(10_10_10/0.86)_50%,transparent_100%)] md:hidden" />
+            {/* soft pools of shade behind the small top labels: the meta line (left), clocks and seal (right) */}
+            <div className="absolute top-0 left-0 h-[17rem] w-[min(62rem,98vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_0,rgb(10_10_10/0.94)_66%,transparent_100%)] max-md:hidden" />
+            <div className="absolute top-0 right-0 h-[min(32rem,62vh)] w-[min(30rem,46vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_0,rgb(10_10_10/0.94)_64%,transparent_100%)] max-md:hidden" />
+            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink/80 to-transparent md:hidden" />
+          </>
+        )}
+        {!heroVideo && <div className="absolute inset-0 bg-gradient-to-r from-ink/50 via-transparent to-transparent" />}
         {/* plain blending: an overlay blend over the moving water was recomposited every frame */}
         <div className="absolute inset-0 overflow-hidden opacity-60">
           <div className="grain" />
@@ -63,7 +91,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
       </motion.div>
 
       {/* Technical drawing overlay that draws itself in */}
-      <svg className="pointer-events-none absolute inset-0 h-full w-full text-bone/20" aria-hidden preserveAspectRatio="none" viewBox="0 0 100 100">
+      <svg className={`pointer-events-none absolute inset-0 h-full w-full text-bone/20 ${heroVideo ? 'hidden' : ''}`} aria-hidden preserveAspectRatio="none" viewBox="0 0 100 100">
         {[
           'M 8 0 L 8 100',
           'M 92 0 L 92 100',
@@ -153,13 +181,15 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
           initial={{ opacity: 0 }}
           animate={ready ? { opacity: 1 } : {}}
           transition={{ delay: 1.3, duration: 1 }}
-          className="mt-10 flex items-center justify-start border-t border-bone/15 pt-5 md:justify-between"
+          className={`mt-10 flex items-center justify-start border-t border-bone/15 pt-5 md:justify-between`}
         >
           <span className="eyebrow text-mineral/60">{t('Scroll to explore', 'Desplázate para explorar')}</span>
           <span className="relative block h-10 w-px overflow-hidden bg-bone/15 max-md:order-first max-md:mr-4" aria-hidden>
             <span className="absolute inset-0 bg-gold [animation:scroll-cue_2.4s_var(--ease-luxe)_infinite]" />
           </span>
-          <span className="eyebrow hidden text-mineral/60 md:inline">{brand.regions.map(tx).join(' · ')}</span>
+          <span className={`eyebrow hidden text-mineral/60 ${heroVideo ? 'xl:inline' : 'md:inline'}`}>{brand.regions.map(tx).join(' · ')}</span>
+          {/* the film's pause control */}
+          {heroVideo && <FilmPause className="ml-auto md:ml-6" />}
         </motion.div>
       </motion.div>
     </section>

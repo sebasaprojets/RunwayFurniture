@@ -75,8 +75,30 @@ export const whatsappUrl = (text: string) => `https://wa.me/${brand.whatsapp}?te
 /** Opens the chat in a new tab (the app on phones), leaving the site where it was. */
 export const openWhatsApp = (text: string) => window.open(whatsappUrl(text), '_blank', 'noopener,noreferrer')
 
-/** Optional cinematic film for the hero. Drop an mp4 in /public/media and set the path. */
-export const heroVideo: { src: string; poster?: string } | null = null
+/**
+ * The hero film: a drone flight over a beach resort and its round infinity pool at golden hour.
+ * Vertical (9:16), upscaled ×2 with AI (Real-ESRGAN) to 1440×2560, looped seamlessly (the last
+ * half second dissolves into the first). Full screen everywhere; wide screens glide through its height.
+ */
+export const heroVideo: {
+  sources: { src: string; type: string; media?: string }[]
+  poster: string
+  alt: { en: string; es: string }
+} | null = {
+  // the browser takes the first it can play: AV1 (a quarter lighter at the same quality), then
+  // H.264 for everyone else; phones get a 1080×1920 cut of the same film
+  sources: [
+    { media: '(max-width: 767px)', src: `${import.meta.env.BASE_URL}video/resort-m-av1.mp4`, type: 'video/mp4; codecs="av01.0.08M.08"' },
+    { media: '(max-width: 767px)', src: `${import.meta.env.BASE_URL}video/resort-m.mp4`, type: 'video/mp4' },
+    { src: `${import.meta.env.BASE_URL}video/resort-av1.mp4`, type: 'video/mp4; codecs="av01.0.12M.08"' },
+    { src: `${import.meta.env.BASE_URL}video/resort.mp4`, type: 'video/mp4' },
+  ],
+  poster: `${import.meta.env.BASE_URL}video/resort-poster.jpg`,
+  alt: {
+    en: 'Aerial film of a beach resort at golden hour: a round infinity pool ringed with loungers, thatched villas among the palms, white sand and the sea.',
+    es: 'Película aérea de un resort de playa al atardecer: una piscina infinita redonda rodeada de tumbonas, villas con techo de palma entre las palmeras, arena blanca y el mar.',
+  },
+}
 
 /** Films supplied by Runway, served from /public/media. */
 export const films = [
