@@ -80,7 +80,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
             {/* soft pools of shade behind the small top labels: the meta line (left), clocks and seal (right) */}
             <div className="absolute top-0 left-0 h-[17rem] w-[min(62rem,98vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_0,rgb(10_10_10/0.94)_66%,transparent_100%)] max-md:hidden" />
             <div className="absolute top-0 right-0 h-[min(32rem,62vh)] w-[min(30rem,46vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_0,rgb(10_10_10/0.94)_64%,transparent_100%)] max-md:hidden" />
-            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink/80 to-transparent md:hidden" />
+            <div className="absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(to_bottom,rgb(10_10_10/0.9)_0%,rgb(10_10_10/0.84)_62%,transparent_100%)] md:hidden" />
           </>
         )}
         {!heroVideo && <div className="absolute inset-0 bg-gradient-to-r from-ink/50 via-transparent to-transparent" />}
