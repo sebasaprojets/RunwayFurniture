@@ -77,26 +77,14 @@ export const openWhatsApp = (text: string) => window.open(whatsappUrl(text), '_b
 
 /**
  * The hero film: a drone flight over a beach resort and its round infinity pool at golden hour.
- * Vertical (9:16), upscaled ×2 with AI (Real-ESRGAN) to 1440×2560, looped seamlessly (the last
- * half second dissolves into the first). Full screen everywhere; wide screens glide through its height.
+ * Vertical (9:16), the original film as shot. Phones see it full screen; wide screens see the whole
+ * film in the middle over a soft copy of itself.
  */
-export const heroVideo: {
-  sources: { src: string; type: string; media?: string; size?: [number, number]; band?: [number, number] }[]
-  poster: string
-  alt: { en: string; es: string }
-} | null = {
-  // the browser takes the first it can play: AV1 (a quarter lighter at the same quality), then
-  // H.264 for everyone else; phones get a 1080×1920 cut of the same film
-  sources: [
-    // wide screens: only the band of the frame they can ever see (rows 356–1200 of the 1280-row
-    // film), AI-upscaled to 1920 px wide, so a 1920 screen shows it at its real size
-    { media: '(min-width: 1024px) and (min-aspect-ratio: 4/3)', src: `${import.meta.env.BASE_URL}video/resort-w-av1.mp4`, type: 'video/mp4; codecs="av01.0.12M.08"', size: [1920, 2250], band: [356 / 1280, 844 / 1280] },
-    { media: '(min-width: 1024px) and (min-aspect-ratio: 4/3)', src: `${import.meta.env.BASE_URL}video/resort-w.mp4`, type: 'video/mp4', size: [1920, 2250], band: [356 / 1280, 844 / 1280] },
-    { media: '(max-width: 767px)', src: `${import.meta.env.BASE_URL}video/resort-m-av1.mp4`, type: 'video/mp4; codecs="av01.0.09M.08"' },
-    { media: '(max-width: 767px)', src: `${import.meta.env.BASE_URL}video/resort-m.mp4`, type: 'video/mp4' },
-    { src: `${import.meta.env.BASE_URL}video/resort-av1.mp4`, type: 'video/mp4; codecs="av01.0.12M.08"' },
-    { src: `${import.meta.env.BASE_URL}video/resort.mp4`, type: 'video/mp4' },
-  ],
+export const heroVideo: { src: string; ambient: string; poster: string; alt: { en: string; es: string } } | null = {
+  // the original film (720×1280, 24 fps), looped seamlessly: the last half second dissolves into the first
+  src: `${import.meta.env.BASE_URL}video/resort.mp4`,
+  // a tiny copy for the soft surround on wide screens
+  ambient: `${import.meta.env.BASE_URL}video/resort-ambient.mp4`,
   poster: `${import.meta.env.BASE_URL}video/resort-poster.jpg`,
   alt: {
     en: 'Aerial film of a beach resort at golden hour: a round infinity pool ringed with loungers, thatched villas among the palms, white sand and the sea.',
