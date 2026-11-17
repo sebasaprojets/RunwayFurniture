@@ -5,9 +5,8 @@ import { useLang } from '../i18n'
 
 /**
  * The hero film: the original vertical film (720×1280, 24 fps, its own speed and look), looped
- * seamlessly. Phones and portrait tablets see it full screen. Wider screens see the whole film, sharp,
- * at full height in the middle, over a soft, blurred copy of itself that fills the rest of the screen
- * (a vertical film is never stretched or cropped to a slice).
+ * seamlessly. Phones and portrait tablets see it full screen; wide screens see it in a full-height
+ * panel beside the text, close to its real size (so it stays sharp).
  */
 
 /** Plays on its own while the visitor can see it; rests when scrolled away or in the background. */
@@ -55,9 +54,9 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
   }, [ref, active, visible, pageShown])
 }
 
-/** Screens wider than tall-ish show the whole film in the middle; narrower ones fill with it. */
-function useWide() {
-  const q = '(min-aspect-ratio: 9/10)'
+/** Wide screens (computers, tablets lying down) give the film its own panel beside the text. */
+export function useWide() {
+  const q = '(min-width: 1024px) and (min-aspect-ratio: 9/10)'
   const [wide, setWide] = useState(() => typeof window !== 'undefined' && matchMedia(q).matches)
   useEffect(() => {
     const m = matchMedia(q)
@@ -68,107 +67,64 @@ function useWide() {
   return wide
 }
 
-const muteProps = {
-  muted: true,
-  loop: true,
-  playsInline: true,
-  disablePictureInPicture: true,
-  disableRemotePlayback: true,
-  controls: false,
-  'aria-hidden': true,
-} as const
-
 /**
- * The film. On wide screens `slice` (0–100, from the hero: scroll and pointer) lets the film drift
- * a little against its blurred surround.
+ * The film fills its box (the whole screen on phones, the panel on wide screens) without being
+ * stretched: where the box is wider than the film's shape, `slice` (0–100, from the hero: scroll and
+ * pointer) glides the visible part from the horizon down to the pool, with a transform (cheap on the
+ * graphics card).
  */
 export function HeroBackdrop({ active, slice }: { active: boolean; slice?: MotionValue<number> }) {
   const { tx } = useLang()
+  const box = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLVideoElement>(null)
-  const amb = useRef<HTMLVideoElement>(null)
-  const wide = useWide()
   useFilmPlayback(ref, active)
   const [playing, setPlaying] = useState(false)
-  const zero = useMotionValue(70)
-  const y = useTransform(slice ?? zero, (s) => `${((s - 70) / 28) * -2.5}%`)
-
-  // the blurred surround follows the film: plays, rests and keeps time with it
+  const [frameH, setFrameH] = useState<number>()
+  const over = useMotionValue(0)
+  const mid = useMotionValue(50)
+  const s = slice ?? mid
+  const y = useTransform(() => -over.get() * (s.get() / 100))
   useEffect(() => {
-    const v = ref.current
-    const a = amb.current
-    if (!v || !a || !wide) return
-    a.muted = true
-    const sync = () => {
-      if (Math.abs(a.currentTime - v.currentTime) > 0.2) a.currentTime = v.currentTime
-    }
-    const play = () => {
-      sync()
-      a.play().catch(() => undefined)
-    }
-    const pause = () => a.pause()
-    v.addEventListener('playing', play)
-    v.addEventListener('pause', pause)
-    v.addEventListener('seeked', sync)
-    const id = window.setInterval(sync, 2000)
-    if (!v.paused) play()
-    return () => {
-      v.removeEventListener('playing', play)
-      v.removeEventListener('pause', pause)
-      v.removeEventListener('seeked', sync)
-      window.clearInterval(id)
-    }
-  }, [wide])
-
+    const el = box.current
+    if (!el) return
+    const ro = new ResizeObserver(([e]) => {
+      const { width, height } = e.contentRect
+      const h = Math.max(height, (width * 16) / 9)
+      setFrameH(h)
+      over.set(h - height)
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [over])
   if (!heroVideo) return null
-  const still = (
-    <img
-      src={heroVideo.poster}
-      alt=""
-      aria-hidden
-      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${playing ? 'opacity-0' : 'opacity-100'}`}
-      {...{ fetchpriority: 'high' }}
-      decoding="async"
-    />
-  )
-  const film = (
-    <video
-      ref={ref}
-      src={heroVideo.src}
-      className="hero-film absolute inset-0 h-full w-full object-cover"
-      preload="auto"
-      onPlaying={() => setPlaying(true)}
-      {...muteProps}
-    />
-  )
   return (
     <>
-      <div className="absolute inset-0 overflow-hidden">
-        {wide ? (
-          <>
-            {/* the surround: a tiny copy of the film, scaled up (soft by nature, no live blur filter) */}
-            <video
-              ref={amb}
-              src={heroVideo.ambient}
-              className="absolute inset-[-6%] h-[112%] w-[112%] object-cover opacity-60 saturate-[1.1]"
-              preload="auto"
-              {...muteProps}
-            />
-            <div className="absolute inset-0 bg-ink/35" />
-            {/* the whole film, sharp, full height; its sides melt into the surround */}
-            <motion.div
-              className="absolute top-1/2 left-1/2 aspect-[9/16] h-[108%] -translate-x-1/2 -translate-y-1/2 [mask-image:linear-gradient(to_right,transparent,black_20%,black_80%,transparent),linear-gradient(to_bottom,transparent,black_6%,black_94%,transparent)] [mask-composite:intersect]"
-              style={{ y }}
-            >
-              {film}
-              {still}
-            </motion.div>
-          </>
-        ) : (
-          <>
-            {film}
-            {still}
-          </>
-        )}
+      <div ref={box} className="absolute inset-0 overflow-hidden">
+        <motion.div className="absolute inset-x-0 top-0 h-full will-change-transform" style={{ y, height: frameH }}>
+          <video
+            ref={ref}
+            src={heroVideo.src}
+            className="hero-film absolute inset-0 h-full w-full object-cover"
+            muted
+            loop
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            disableRemotePlayback
+            controls={false}
+            aria-hidden
+            onPlaying={() => setPlaying(true)}
+          />
+          {/* the still frame lies over the film (iOS will not start a hidden video) and fades away once it runs */}
+          <img
+            src={heroVideo.poster}
+            alt=""
+            aria-hidden
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${playing ? 'opacity-0' : 'opacity-100'}`}
+            {...{ fetchpriority: 'high' }}
+            decoding="async"
+          />
+        </motion.div>
       </div>
       <p className="sr-only">{tx(heroVideo.alt)}</p>
     </>

@@ -2,7 +2,7 @@ import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'moti
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
-import { HeroBackdrop } from '../components/HeroFilm'
+import { HeroBackdrop, useWide } from '../components/HeroFilm'
 import { WaterCanvas } from '../components/WaterCanvas'
 import { brand, heroVideo } from '../data/site'
 import { useLang } from '../i18n'
@@ -17,6 +17,8 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0])
   const gridY = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
   const calm = useCalmScroll()
+  // computers and tablets lying down: the film has its own full-height panel on the right, the words the left
+  const wide = useWide() && !!heroVideo
   const { lang, t, tx } = useLang()
   // wide screens see a slice of the vertical film: it glides from the horizon down to the pool as
   // the visitor scrolls, and leans towards the cursor (phones see the whole frame, nothing to glide)
@@ -33,6 +35,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
 
   return (
     <section ref={ref} id="top" className="relative min-h-[100svh] overflow-hidden bg-ink" aria-label={t('Introduction', 'Introducción')}>
+      <div className={wide ? 'absolute inset-y-0 right-0 w-[min(42vw,52rem)] overflow-hidden border-l border-bone/10' : 'absolute inset-0'}>
       {/* Film — revealed through an expanding architectural aperture */}
       <motion.div
         className="absolute inset-0"
@@ -69,7 +72,16 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         {/* grading + legibility */}
         {!heroVideo && <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-transparent to-ink/80" />}
         {/* full-screen film on phones: a deeper ground under the title, text and buttons */}
-        {heroVideo && (
+        {wide && (
+          <>
+            {/* the panel: shade only at the top (menu, clocks) and a breath at the foot */}
+            <div className="absolute inset-x-0 top-0 h-[15rem] bg-[linear-gradient(to_bottom,rgb(10_10_10/0.88)_0%,rgb(10_10_10/0.6)_45%,transparent_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-[9rem] bg-[linear-gradient(to_top,rgb(10_10_10/0.7)_0%,transparent_100%)]" />
+            {/* the clocks sit over bright sand: a deeper pool of shade behind them */}
+            <div className="absolute top-0 right-0 h-[16rem] w-[min(30rem,100%)] bg-[radial-gradient(ellipse_100%_100%_at_100%_0,rgb(10_10_10/0.92)_55%,transparent_100%)]" />
+          </>
+        )}
+        {heroVideo && !wide && (
           <>
             {/* the film stays bright in the middle; shade sits only where text does */}
             <div className="absolute bottom-0 left-0 h-[78%] w-[min(70rem,100vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_100%,rgb(10_10_10/0.9)_50%,transparent_100%)] max-md:hidden" />
@@ -100,6 +112,8 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         />
       </motion.div>
 
+      </div>
+
       {/* Technical drawing overlay that draws itself in */}
       <svg className={`pointer-events-none absolute inset-0 h-full w-full text-bone/20 ${heroVideo ? 'hidden' : ''}`} aria-hidden preserveAspectRatio="none" viewBox="0 0 100 100">
         {[
@@ -123,9 +137,9 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         ))}
       </svg>
 
-      <Seal show={ready} reduced={reduced} />
+      <Seal show={ready} reduced={reduced} wide={wide} />
 
-      <motion.div style={calm ? undefined : { y: contentY, opacity: fade }} className="relative z-10 flex min-h-[100svh] flex-col justify-end px-5 pt-28 pb-10 md:px-10 md:pt-56 md:pb-14">
+      <motion.div style={calm ? undefined : { y: contentY, opacity: fade }} className={`relative z-10 flex min-h-[100svh] flex-col justify-end px-5 pt-28 pb-10 md:px-10 md:pt-56 md:pb-14 ${wide ? 'pr-[calc(min(42vw,52rem)+4rem)]!' : ''}`}>
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -144,8 +158,8 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         >
           <WorldClocks />
         </motion.div>
-        <div className="grid items-end gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-8">
+        <div className={`grid items-end gap-10 ${wide ? '' : 'lg:grid-cols-12'}`}>
+          <div className={wide ? '' : 'lg:col-span-8'}>
             {ready && (
               <RevealText
                 as="h1"
@@ -157,7 +171,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
                 // phones: a lighter gold, so the accent still reads over the bright sand of the film
                 accentClass="italic text-gold max-md:text-[color-mix(in_srgb,var(--color-gold)_45%,var(--color-bone))]"
                 // sized by both width and height, so short screens (in-app browsers, landscape) never push it under the menu
-                className={`display text-bone uppercase max-md:[text-shadow:0_1px_6px_rgb(0_0_0/0.4)] sm:text-[min(11vw,9svh)] lg:text-[min(7.4vw,12.5svh)] ${lang === 'es' ? 'text-[min(12.4vw,8.4svh)]' : 'text-[min(15vw,9.2svh)]'}`}
+                className={`display text-bone uppercase max-md:[text-shadow:0_1px_6px_rgb(0_0_0/0.4)] sm:text-[min(11vw,9svh)] ${wide ? 'lg:text-[min(6.2vw,12svh)]' : 'lg:text-[min(7.4vw,12.5svh)]'} ${lang === 'es' ? 'text-[min(12.4vw,8.4svh)]' : 'text-[min(15vw,9.2svh)]'}`}
               />
             )}
           </div>
@@ -165,7 +179,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
             initial={{ opacity: 0, y: 30 }}
             animate={ready ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1.2, ease: easeLuxe, delay: 0.75 }}
-            className="lg:col-span-4 lg:pb-4"
+            className={wide ? 'flex flex-wrap items-end justify-between gap-x-10 gap-y-8' : 'lg:col-span-4 lg:pb-4'}
           >
             <p className="max-w-sm text-base leading-relaxed text-bone/80 md:text-lg">
               {t(
@@ -252,7 +266,7 @@ function SceneLabel({ show }: { show: boolean }) {
 }
 
 /** Rotating gilded seal — a quiet signature mark in the composition. */
-function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
+function Seal({ show, reduced, wide }: { show: boolean; reduced: boolean; wide: boolean }) {
   const { t } = useLang()
   const text = t('Since 2009 · Hospitality · Residential · Bespoke · ', 'Desde 2009 · Hotelería · Residencial · A medida · ')
   return (
@@ -261,7 +275,8 @@ function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
       initial={{ opacity: 0, scale: 0.8, rotate: -40 }}
       animate={show ? { opacity: 1, scale: 1, rotate: 0 } : {}}
       transition={{ duration: 1.6, ease: easeLuxe, delay: 1 }}
-      className="group absolute top-[26%] right-5 z-20 hidden size-32 md:right-10 md:block lg:top-[24%] lg:size-36 [@media(max-height:780px)]:!hidden"
+      // wide screens: the seal sits on the seam between the words and the film, on its own dark disc
+      className={`group absolute top-[26%] right-5 z-20 hidden size-32 md:right-10 md:block lg:top-[24%] lg:size-36 [@media(max-height:780px)]:!hidden ${wide ? 'rounded-full bg-ink lg:right-[calc(min(42vw,52rem)-4.5rem)]!' : ''}`}
       aria-label={t('Explore our work', 'Ver proyectos')}
     >
       <svg viewBox="0 0 200 200" className={`absolute inset-0 h-full w-full text-bone/70 ${reduced ? '' : 'animate-[spin_24s_linear_infinite]'}`}>

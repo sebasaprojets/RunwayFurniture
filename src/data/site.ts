@@ -77,14 +77,12 @@ export const openWhatsApp = (text: string) => window.open(whatsappUrl(text), '_b
 
 /**
  * The hero film: a drone flight over a beach resort and its round infinity pool at golden hour.
- * Vertical (9:16), the original film as shot. Phones see it full screen; wide screens see the whole
- * film in the middle over a soft copy of itself.
+ * Vertical (9:16), the original film as shot. Phones see it full screen; wide screens see it in a
+ * full-height panel beside the text.
  */
-export const heroVideo: { src: string; ambient: string; poster: string; alt: { en: string; es: string } } | null = {
+export const heroVideo: { src: string; poster: string; alt: { en: string; es: string } } | null = {
   // the original film (720×1280, 24 fps), looped seamlessly: the last half second dissolves into the first
   src: `${import.meta.env.BASE_URL}video/resort.mp4`,
-  // a tiny copy for the soft surround on wide screens
-  ambient: `${import.meta.env.BASE_URL}video/resort-ambient.mp4`,
   poster: `${import.meta.env.BASE_URL}video/resort-poster.jpg`,
   alt: {
     en: 'Aerial film of a beach resort at golden hour: a round infinity pool ringed with loungers, thatched villas among the palms, white sand and the sea.',
