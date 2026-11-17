@@ -96,6 +96,31 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
     v.play().catch(wait)
     return off
   }, [ref, src, active, visible, pageShown])
+  // A computer that cannot keep up with the full-size film (dropped frames) moves, once, to the
+  // lighter 1080×1920 cut at the same moment of the film; strong machines keep the full size.
+  useEffect(() => {
+    const v = ref.current
+    if (!v || !src || !heroVideo) return
+    const light = (heroVideo.sources as Source[]).find((x) => x.media && !/av01/i.test(x.type))?.src
+    if (!light || src === light) return
+    let base: VideoPlaybackQuality | undefined
+    const id = window.setInterval(() => {
+      if (v.paused) return void (base = undefined)
+      const q = v.getVideoPlaybackQuality?.()
+      if (!q) return window.clearInterval(id)
+      if (!base) return void (base = q)
+      const total = q.totalVideoFrames - base.totalVideoFrames
+      const dropped = q.droppedVideoFrames - base.droppedVideoFrames
+      if (total < 90) return
+      window.clearInterval(id)
+      if (dropped / total > 0.06) {
+        const t = v.currentTime
+        v.addEventListener('loadedmetadata', () => (v.currentTime = t), { once: true })
+        setSrc(light)
+      }
+    }, 1000)
+    return () => window.clearInterval(id)
+  }, [ref, src])
   return src
 }
 
