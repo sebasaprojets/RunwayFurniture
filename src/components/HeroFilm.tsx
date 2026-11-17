@@ -85,21 +85,16 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
       return
     }
     // some phones refuse autoplay (iOS Low Power Mode, data saver): the still image stays, with no
-    // play icon, and the film starts by itself on the visitor's first touch, scroll, click or key
-    const gestures = ['touchstart', 'touchend', 'pointerdown', 'click', 'keydown', 'scroll'] as const
+    // play icon, and the film starts by itself on the visitor's first touch, click or key. iOS loads
+    // nothing before play() is called, so play() is asked for right away, never after `loadeddata`.
+    const gestures = ['touchstart', 'touchend', 'pointerdown', 'click', 'keydown'] as const
+    const off = () => gestures.forEach((g) => window.removeEventListener(g, retry, true))
+    const wait = () => gestures.forEach((g) => window.addEventListener(g, retry, { capture: true, passive: true }))
     const retry = () => {
       v.play().then(off, () => undefined)
     }
-    const off = () => gestures.forEach((g) => window.removeEventListener(g, retry, true))
-    const start = () => v.play().catch(() => gestures.forEach((g) => window.addEventListener(g, retry, { capture: true, passive: true })))
-    if (v.readyState >= 2) start()
-    else v.addEventListener('loadeddata', start, { once: true })
-    // some browsers start before `loadeddata`; try once right away too
-    v.play().catch(() => undefined)
-    return () => {
-      off()
-      v.removeEventListener('loadeddata', start)
-    }
+    v.play().catch(wait)
+    return off
   }, [ref, src, active, visible, pageShown])
   return src
 }
@@ -138,11 +133,10 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
     <>
       <div ref={box} className="absolute inset-0 overflow-hidden">
         <motion.div className="absolute inset-x-0 top-0 h-full will-change-transform" style={{ y, height: frameH }}>
-          <img src={heroVideo.poster} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" {...{ fetchpriority: 'high' }} decoding="async" />
           <video
             ref={ref}
             src={src}
-            className={`hero-film absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${playing ? 'opacity-100' : 'opacity-0'}`}
+            className="hero-film absolute inset-0 h-full w-full object-cover"
             muted
             loop
             playsInline
@@ -153,6 +147,8 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
             aria-hidden
             onPlaying={() => setPlaying(true)}
           />
+          {/* the still frame lies over the film (iOS will not start a hidden video) and fades away once it runs */}
+          <img src={heroVideo.poster} alt="" aria-hidden className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${playing ? 'opacity-0' : 'opacity-100'}`} {...{ fetchpriority: 'high' }} decoding="async" />
         </motion.div>
       </div>
       <p className="sr-only">{tx(heroVideo.alt)}</p>
