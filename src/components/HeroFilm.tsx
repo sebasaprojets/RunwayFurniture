@@ -108,21 +108,28 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
     const all = heroVideo.sources as Source[]
     const light = film?.band ? all.find((x) => !x.media && !/av01/i.test(x.type)) : all.find((x) => /max-width/.test(x.media ?? '') && !/av01/i.test(x.type))
     if (!light || src === light.src) return
+    // judged only once the page has settled (the first seconds of loading drop frames on any
+    // machine), over two 3-second windows in a row; the phone cut is only for real struggles
+    const limit = film?.band ? 0.15 : 0.25
     let base: VideoPlaybackQuality | undefined
+    let warm = 0
+    let strikes = 0
     const id = window.setInterval(() => {
-      if (v.paused) return void (base = undefined)
+      if (v.paused || document.hidden) return void ((base = undefined), (warm = 0))
+      if (++warm <= 5) return
       const q = v.getVideoPlaybackQuality?.()
       if (!q) return window.clearInterval(id)
       if (!base) return void (base = q)
       const total = q.totalVideoFrames - base.totalVideoFrames
+      if (total < 150) return
       const dropped = q.droppedVideoFrames - base.droppedVideoFrames
-      if (total < 90) return
+      base = q
+      strikes = dropped / total > limit ? strikes + 1 : 0
+      if (strikes < 2) return
       window.clearInterval(id)
-      if (dropped / total > 0.06) {
-        const t = v.currentTime
-        v.addEventListener('loadedmetadata', () => (v.currentTime = t), { once: true })
-        setFilm(light)
-      }
+      const t = v.currentTime
+      v.addEventListener('loadedmetadata', () => (v.currentTime = t), { once: true })
+      setFilm(light)
     }, 1000)
     return () => window.clearInterval(id)
   }, [ref, src, film])
