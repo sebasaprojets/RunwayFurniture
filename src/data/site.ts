@@ -81,13 +81,17 @@ export const openWhatsApp = (text: string) => window.open(whatsappUrl(text), '_b
  * half second dissolves into the first). Full screen everywhere; wide screens glide through its height.
  */
 export const heroVideo: {
-  sources: { src: string; type: string; media?: string }[]
+  sources: { src: string; type: string; media?: string; size?: [number, number]; band?: [number, number] }[]
   poster: string
   alt: { en: string; es: string }
 } | null = {
   // the browser takes the first it can play: AV1 (a quarter lighter at the same quality), then
   // H.264 for everyone else; phones get a 1080×1920 cut of the same film
   sources: [
+    // wide screens: only the band of the frame they can ever see (rows 356–1200 of the 1280-row
+    // film), AI-upscaled to 1920 px wide, so a 1920 screen shows it at its real size
+    { media: '(min-width: 1024px) and (min-aspect-ratio: 4/3)', src: `${import.meta.env.BASE_URL}video/resort-w-av1.mp4`, type: 'video/mp4; codecs="av01.0.12M.08"', size: [1920, 2250], band: [356 / 1280, 844 / 1280] },
+    { media: '(min-width: 1024px) and (min-aspect-ratio: 4/3)', src: `${import.meta.env.BASE_URL}video/resort-w.mp4`, type: 'video/mp4', size: [1920, 2250], band: [356 / 1280, 844 / 1280] },
     { media: '(max-width: 767px)', src: `${import.meta.env.BASE_URL}video/resort-m-av1.mp4`, type: 'video/mp4; codecs="av01.0.09M.08"' },
     { media: '(max-width: 767px)', src: `${import.meta.env.BASE_URL}video/resort-m.mp4`, type: 'video/mp4' },
     { src: `${import.meta.env.BASE_URL}video/resort-av1.mp4`, type: 'video/mp4; codecs="av01.0.12M.08"' },

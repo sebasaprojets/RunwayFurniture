@@ -9,35 +9,37 @@ import { useLang } from '../i18n'
  * frame is an ordinary image, and the film fades in over it only once it is really running.
  */
 
-type Source = { src: string; type: string; media?: string }
+type Source = { src: string; type: string; media?: string; size?: [number, number]; band?: [number, number] }
 
 /**
  * Picks the file this device decodes smoothly: AV1 only where the device decodes it in hardware
  * (software AV1 made computers and phones stutter), H.264 everywhere else.
  */
-async function pickSource(v: HTMLVideoElement): Promise<string | undefined> {
+async function pickSource(v: HTMLVideoElement): Promise<Source | undefined> {
   if (!heroVideo) return undefined
-  const fits = (heroVideo.sources as Source[]).filter((x) => !x.media || matchMedia(x.media).matches)
-  const small = matchMedia('(max-width: 767px)').matches
+  const all = heroVideo.sources as Source[]
+  // the first group of files whose `media` matches (wide screens, phones, or everyone else)
+  const firstMedia = all.find((x) => !x.media || matchMedia(x.media).matches)?.media
+  const fits = all.filter((x) => x.media === firstMedia)
   const playable = fits.filter((x) => v.canPlayType(x.type))
   // H.264 is decoded in hardware almost everywhere; AV1 that would be decoded in software is kept
   // only as a last resort (a browser without H.264)
-  const fallback = (playable.find((x) => !/av01/i.test(x.type)) ?? playable[0] ?? fits[fits.length - 1])?.src
+  const fallback = playable.find((x) => !/av01/i.test(x.type)) ?? playable[0] ?? fits[fits.length - 1]
   for (const x of playable) {
-    if (!/av01/i.test(x.type)) return x.src
+    if (!/av01/i.test(x.type)) return x
     try {
       const contentType = x.type.replace(/^video\/mp4;\s*/i, 'video/mp4; ')
       const info = await navigator.mediaCapabilities?.decodingInfo({
         type: 'file',
         video: {
           contentType,
-          width: small ? 1080 : 1440,
-          height: small ? 1920 : 2560,
-          bitrate: small ? 10_900_000 : 16_900_000,
+          width: x.size?.[0] ?? 1440,
+          height: x.size?.[1] ?? 2560,
+          bitrate: 17_000_000,
           framerate: 60,
         },
       })
-      if (info?.supported && info.powerEfficient) return x.src
+      if (info?.supported && info.powerEfficient) return x
     } catch {
       /* unknown: fall through to H.264 */
     }
@@ -50,7 +52,8 @@ async function pickSource(v: HTMLVideoElement): Promise<string | undefined> {
  * app is in the background (saves battery and data on phones).
  */
 function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: boolean) {
-  const [src, setSrc] = useState<string>()
+  const [film, setFilm] = useState<Source>()
+  const src = film?.src
   const [visible, setVisible] = useState(true)
   const [pageShown, setPageShown] = useState(() => typeof document === 'undefined' || !document.hidden)
   useEffect(() => {
@@ -63,7 +66,7 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
     v.setAttribute('playsinline', '')
     v.setAttribute('webkit-playsinline', '')
     let alive = true
-    pickSource(v).then((s) => alive && setSrc(s))
+    pickSource(v).then((s) => alive && setFilm(s))
     // rests once less than a sliver of the film is on screen
     const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting && e.intersectionRatio >= 0.08), {
       threshold: [0, 0.08, 0.2],
@@ -101,8 +104,10 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
   useEffect(() => {
     const v = ref.current
     if (!v || !src || !heroVideo) return
-    const light = (heroVideo.sources as Source[]).find((x) => x.media && !/av01/i.test(x.type))?.src
-    if (!light || src === light) return
+    // one step lighter: the full-frame film for wide screens, the phone cut for everyone else
+    const all = heroVideo.sources as Source[]
+    const light = film?.band ? all.find((x) => !x.media && !/av01/i.test(x.type)) : all.find((x) => /max-width/.test(x.media ?? '') && !/av01/i.test(x.type))
+    if (!light || src === light.src) return
     let base: VideoPlaybackQuality | undefined
     const id = window.setInterval(() => {
       if (v.paused) return void (base = undefined)
@@ -116,12 +121,12 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
       if (dropped / total > 0.06) {
         const t = v.currentTime
         v.addEventListener('loadedmetadata', () => (v.currentTime = t), { once: true })
-        setSrc(light)
+        setFilm(light)
       }
     }, 1000)
     return () => window.clearInterval(id)
-  }, [ref, src])
-  return src
+  }, [ref, src, film])
+  return film
 }
 
 /**
@@ -134,13 +139,30 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
   const { tx } = useLang()
   const box = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLVideoElement>(null)
-  const src = useFilmPlayback(ref, active)
+  const film = useFilmPlayback(ref, active)
+  const band = film?.band
   const [playing, setPlaying] = useState(false)
   const [frameH, setFrameH] = useState<number>()
   const over = useMotionValue(0)
   const zero = useMotionValue(50)
   const s = slice ?? zero
-  const y = useTransform(() => (slice ? -over.get() * (s.get() / 100) : -over.get() / 2))
+  const frame = useMotionValue(0)
+  const bandMV = useMotionValue<[number, number] | undefined>(undefined)
+  useEffect(() => bandMV.set(band), [band, bandMV])
+  // the wide-screen file holds only the band of the frame a wide screen can ever see: the glide
+  // stays inside it
+  const y = useTransform(() => {
+    const o = over.get()
+    let top = slice ? o * (s.get() / 100) : o / 2
+    const b = bandMV.get()
+    const h = frame.get()
+    if (b && h) {
+      const lo = b[0] * h
+      const hi = (b[0] + b[1]) * h - (h - o)
+      if (lo <= hi) top = Math.min(hi, Math.max(lo, top))
+    }
+    return -top
+  })
   useEffect(() => {
     const el = box.current
     if (!el) return
@@ -148,11 +170,12 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
       const { width, height } = e.contentRect
       const h = Math.max(height, (width * 16) / 9)
       setFrameH(h)
+      frame.set(h)
       over.set(h - height)
     })
     ro.observe(el)
     return () => ro.disconnect()
-  }, [over])
+  }, [over, frame])
   if (!heroVideo) return null
   return (
     <>
@@ -160,8 +183,9 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
         <motion.div className="absolute inset-x-0 top-0 h-full will-change-transform" style={{ y, height: frameH }}>
           <video
             ref={ref}
-            src={src}
-            className="hero-film absolute inset-0 h-full w-full object-cover"
+            src={film?.src}
+            className="hero-film absolute inset-x-0 w-full object-cover"
+            style={band ? { top: `${band[0] * 100}%`, height: `${band[1] * 100}%` } : { top: 0, height: '100%' }}
             muted
             loop
             playsInline
