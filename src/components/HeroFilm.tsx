@@ -1,34 +1,56 @@
-import { motion, type MotionValue } from 'motion/react'
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { motion, useMotionValue, useTransform, type MotionValue } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
 import { heroVideo } from '../data/site'
 import { useLang } from '../i18n'
 
 /**
  * The hero film, full screen on every device (AI-upscaled to 1440×2560, so a 1440px-wide screen
- * shows it at its real size). One pause control stops it (anything moving longer than 5 s must be
- * stoppable).
+ * shows it at its real size). It plays by itself, with no play icon and no controls: the still
+ * frame is an ordinary image, and the film fades in over it only once it is really running.
  */
 
-// ── shared pause state ────────────────────────────────────────────────────────────────────────
-let paused = false
-const subs = new Set<() => void>()
-const setPaused = (v: boolean) => {
-  paused = v
-  subs.forEach((f) => f())
-}
-const usePaused = () =>
-  useSyncExternalStore(
-    (f) => (subs.add(f), () => void subs.delete(f)),
-    () => paused,
-    () => paused,
-  )
+type Source = { src: string; type: string; media?: string }
 
 /**
- * Plays on its own while the visitor can see it; rests when the hero is scrolled away, the tab or
- * app is in the background, or the visitor paused it (saves battery and data on phones).
+ * Picks the file this device decodes smoothly: AV1 only where the device decodes it in hardware
+ * (software AV1 made computers and phones stutter), H.264 everywhere else.
+ */
+async function pickSource(v: HTMLVideoElement): Promise<string | undefined> {
+  if (!heroVideo) return undefined
+  const fits = (heroVideo.sources as Source[]).filter((x) => !x.media || matchMedia(x.media).matches)
+  const small = matchMedia('(max-width: 767px)').matches
+  const playable = fits.filter((x) => v.canPlayType(x.type))
+  // H.264 is decoded in hardware almost everywhere; AV1 that would be decoded in software is kept
+  // only as a last resort (a browser without H.264)
+  const fallback = (playable.find((x) => !/av01/i.test(x.type)) ?? playable[0] ?? fits[fits.length - 1])?.src
+  for (const x of playable) {
+    if (!/av01/i.test(x.type)) return x.src
+    try {
+      const contentType = x.type.replace(/^video\/mp4;\s*/i, 'video/mp4; ')
+      const info = await navigator.mediaCapabilities?.decodingInfo({
+        type: 'file',
+        video: {
+          contentType,
+          width: small ? 1080 : 1440,
+          height: small ? 1920 : 2560,
+          bitrate: small ? 7_300_000 : 10_900_000,
+          framerate: 24,
+        },
+      })
+      if (info?.supported && info.powerEfficient) return x.src
+    } catch {
+      /* unknown: fall through to H.264 */
+    }
+  }
+  return fallback
+}
+
+/**
+ * Plays on its own while the visitor can see it; rests when the hero is scrolled away or the tab or
+ * app is in the background (saves battery and data on phones).
  */
 function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: boolean) {
-  const isPaused = usePaused()
+  const [src, setSrc] = useState<string>()
   const [visible, setVisible] = useState(true)
   const [pageShown, setPageShown] = useState(() => typeof document === 'undefined' || !document.hidden)
   useEffect(() => {
@@ -38,6 +60,10 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
     v.muted = true
     v.defaultMuted = true
     v.setAttribute('muted', '')
+    v.setAttribute('playsinline', '')
+    v.setAttribute('webkit-playsinline', '')
+    let alive = true
+    pickSource(v).then((s) => alive && setSrc(s))
     // rests once less than a sliver of the film is on screen
     const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting && e.intersectionRatio >= 0.08), {
       threshold: [0, 0.08, 0.2],
@@ -46,84 +72,90 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
     const onVis = () => setPageShown(!document.hidden)
     document.addEventListener('visibilitychange', onVis)
     return () => {
+      alive = false
       io.disconnect()
       document.removeEventListener('visibilitychange', onVis)
     }
   }, [ref])
   useEffect(() => {
     const v = ref.current
-    if (!v) return
-    if (!(active && visible && pageShown && !isPaused)) {
+    if (!v || !src) return
+    if (!(active && visible && pageShown)) {
       v.pause()
       return
     }
-    // some phones refuse autoplay (iOS Low Power Mode, data saver): the still frame stays, with no
-    // play icon, and the film starts by itself on the visitor's first touch, click or key
-    const gestures = ['touchend', 'pointerup', 'click', 'keydown'] as const
+    // some phones refuse autoplay (iOS Low Power Mode, data saver): the still image stays, with no
+    // play icon, and the film starts by itself on the visitor's first touch, scroll, click or key
+    const gestures = ['touchstart', 'touchend', 'pointerdown', 'click', 'keydown', 'scroll'] as const
     const retry = () => {
-      off()
-      v.play().catch(() => undefined)
+      v.play().then(off, () => undefined)
     }
     const off = () => gestures.forEach((g) => window.removeEventListener(g, retry, true))
-    v.play().catch(() => gestures.forEach((g) => window.addEventListener(g, retry, { capture: true, passive: true })))
-    return off
-  }, [ref, active, visible, pageShown, isPaused])
+    const start = () => v.play().catch(() => gestures.forEach((g) => window.addEventListener(g, retry, { capture: true, passive: true })))
+    if (v.readyState >= 2) start()
+    else v.addEventListener('loadeddata', start, { once: true })
+    // some browsers start before `loadeddata`; try once right away too
+    v.play().catch(() => undefined)
+    return () => {
+      off()
+      v.removeEventListener('loadeddata', start)
+    }
+  }, [ref, src, active, visible, pageShown])
+  return src
 }
 
 /**
  * The film, full screen on every device. Wide screens see a horizontal slice of the vertical film:
- * `position` (from the hero) glides that slice from the horizon down to the pool as the visitor
- * scrolls, and leans a little towards the cursor.
+ * `slice` (0–100, from the hero) glides that slice from the horizon down to the pool as the visitor
+ * scrolls. It moves the film with a transform (cheap on the graphics card) instead of re-cropping
+ * the video every frame.
  */
-export function HeroBackdrop({ active, position }: { active: boolean; position?: MotionValue<string> }) {
+export function HeroBackdrop({ active, slice }: { active: boolean; slice?: MotionValue<number> }) {
   const { tx } = useLang()
+  const box = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLVideoElement>(null)
-  useFilmPlayback(ref, active)
+  const src = useFilmPlayback(ref, active)
+  const [playing, setPlaying] = useState(false)
+  const [frameH, setFrameH] = useState<number>()
+  const over = useMotionValue(0)
+  const zero = useMotionValue(50)
+  const s = slice ?? zero
+  const y = useTransform(() => (slice ? -over.get() * (s.get() / 100) : -over.get() / 2))
+  useEffect(() => {
+    const el = box.current
+    if (!el) return
+    const ro = new ResizeObserver(([e]) => {
+      const { width, height } = e.contentRect
+      const h = Math.max(height, (width * 16) / 9)
+      setFrameH(h)
+      over.set(h - height)
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [over])
   if (!heroVideo) return null
   return (
     <>
-      <motion.video
-        ref={ref}
-        className="hero-film absolute inset-0 h-full w-full object-cover"
-        style={position ? { objectPosition: position } : undefined}
-        poster={heroVideo.poster}
-        muted
-        loop
-        playsInline
-        preload="auto"
-        disablePictureInPicture
-        aria-hidden
-      >
-        {heroVideo.sources.map((x) => (
-          <source key={x.src} src={x.src} type={x.type} media={x.media} />
-        ))}
-      </motion.video>
+      <div ref={box} className="absolute inset-0 overflow-hidden">
+        <motion.div className="absolute inset-x-0 top-0 h-full will-change-transform" style={{ y, height: frameH }}>
+          <img src={heroVideo.poster} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" {...{ fetchpriority: 'high' }} decoding="async" />
+          <video
+            ref={ref}
+            src={src}
+            className={`hero-film absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${playing ? 'opacity-100' : 'opacity-0'}`}
+            muted
+            loop
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            disableRemotePlayback
+            controls={false}
+            aria-hidden
+            onPlaying={() => setPlaying(true)}
+          />
+        </motion.div>
+      </div>
       <p className="sr-only">{tx(heroVideo.alt)}</p>
     </>
-  )
-}
-
-/** Pause / play every copy of the film. */
-export function FilmPause({ className = '' }: { className?: string }) {
-  const { t } = useLang()
-  const isPaused = usePaused()
-  return (
-    <button
-      type="button"
-      onClick={() => setPaused(!isPaused)}
-      aria-pressed={isPaused}
-      aria-label={isPaused ? t('Play the film', 'Reproducir la película') : t('Pause the film', 'Pausar la película')}
-      className={`grid size-11 place-items-center rounded-full border border-bone/30 bg-ink/40 text-bone backdrop-blur-sm transition-[background-color,transform] duration-300 hover:bg-ink/70 active:scale-95 ${className}`}
-    >
-      {isPaused ? (
-        <svg viewBox="0 0 10 10" className="ml-0.5 size-2.5 fill-current" aria-hidden>
-          <path d="M2 1l7 4-7 4z" />
-        </svg>
-      ) : (
-        <svg viewBox="0 0 10 10" className="size-2.5 fill-current" aria-hidden>
-          <path d="M2 1h2v8H2zM6 1h2v8H6z" />
-        </svg>
-      )}
-    </button>
   )
 }

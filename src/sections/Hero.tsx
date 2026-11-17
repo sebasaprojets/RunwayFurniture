@@ -1,8 +1,8 @@
-import { motion, useMotionTemplate, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
-import { FilmPause, HeroBackdrop } from '../components/HeroFilm'
+import { HeroBackdrop } from '../components/HeroFilm'
 import { WaterCanvas } from '../components/WaterCanvas'
 import { brand, heroVideo } from '../data/site'
 import { useLang } from '../i18n'
@@ -24,7 +24,6 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   const leanY = useSpring(lean, { stiffness: 40, damping: 18 })
   const slice = useTransform(scrollYProgress, [0, 1], [56, 84])
   const sliceY = useTransform(() => Math.min(100, Math.max(0, slice.get() + leanY.get())))
-  const filmPosition = useMotionTemplate`50% ${sliceY}%`
   useEffect(() => {
     if (!heroVideo || !matchMedia('(hover: hover) and (pointer: fine)').matches) return
     const move = (e: PointerEvent) => lean.set(((e.clientY / innerHeight) * 2 - 1) * 5)
@@ -37,13 +36,13 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
       {/* Film — revealed through an expanding architectural aperture */}
       <motion.div
         className="absolute inset-0"
-        initial={{ scale: 1.35, filter: 'brightness(0.4)' }}
-        animate={revealed || ready ? { scale: 1, filter: 'brightness(1)' } : {}}
+        initial={{ scale: 1.35 }}
+        animate={revealed || ready ? { scale: 1 } : {}}
         transition={{ duration: 3.2, ease: easeCine }}
       >
         <motion.div className="absolute inset-0" style={calm ? undefined : { scale }}>
           {heroVideo ? (
-            <HeroBackdrop active={revealed || ready} position={calm ? undefined : filmPosition} />
+            <HeroBackdrop active={revealed || ready} slice={calm ? undefined : sliceY} />
           ) : (
             <WaterCanvas still={reduced} paused={!revealed} className="absolute inset-0" />
           )}
@@ -73,12 +72,16 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         {heroVideo && (
           <>
             {/* the film stays bright in the middle; shade sits only where text does */}
-            <div className="absolute bottom-0 left-0 h-[78%] w-[min(70rem,100vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_100%,rgb(10_10_10/0.86)_42%,transparent_100%)] max-md:hidden" />
-            <div className="absolute right-0 bottom-0 h-[66%] w-[min(44rem,54vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_100%,rgb(10_10_10/0.92)_56%,transparent_100%)] max-lg:hidden" />
+            <div className="absolute bottom-0 left-0 h-[78%] w-[min(70rem,100vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_100%,rgb(10_10_10/0.9)_50%,transparent_100%)] max-md:hidden" />
+            <div className="absolute right-0 bottom-0 h-[80%] w-[min(46rem,56vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_100%,rgb(10_10_10/0.93)_62%,transparent_100%)] max-lg:hidden" />
             <div className="absolute inset-x-0 bottom-0 h-[10rem] bg-[linear-gradient(to_top,rgb(10_10_10/0.95)_0%,rgb(10_10_10/0.88)_45%,transparent_100%)]" />
+            {/* computers: a band of shade under the menu links, which cross the bright sand of the film */}
+            <div className="absolute inset-x-0 top-0 h-[11rem] bg-[linear-gradient(to_bottom,rgb(10_10_10/0.9)_0%,rgb(10_10_10/0.84)_48%,transparent_100%)] max-md:hidden" />
             {/* soft pools of shade behind the small top labels: the meta line (left), clocks and seal (right) */}
             <div className="absolute top-0 left-0 h-[17rem] w-[min(62rem,98vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_0,rgb(10_10_10/0.94)_66%,transparent_100%)] max-md:hidden" />
-            <div className="absolute top-0 right-0 h-[min(32rem,62vh)] w-[min(30rem,46vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_0,rgb(10_10_10/0.94)_64%,transparent_100%)] max-md:hidden" />
+            <div className="absolute top-0 right-0 h-[min(38rem,68vh)] w-[min(34rem,46vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_0,rgb(10_10_10/0.94)_68%,transparent_100%)] max-md:hidden" />
+            {/* tablets (portrait): the title sits over the bright middle of the film; an even veil keeps it legible */}
+            <div className="absolute inset-0 hidden bg-[linear-gradient(to_bottom,rgb(10_10_10/0.9)_0%,rgb(10_10_10/0.78)_22%,rgb(10_10_10/0.7)_45%,rgb(10_10_10/0.88)_68%,rgb(10_10_10/0.95)_100%)] md:block lg:hidden" />
             {/* phones: the film stays bright behind the big title; shade deepens only under the menu and under the small text and buttons */}
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(10_10_10/0.9)_0%,rgb(10_10_10/0.86)_11%,rgb(10_10_10/0.52)_19%,rgb(10_10_10/0.5)_40%,rgb(10_10_10/0.86)_53%,rgb(10_10_10/0.93)_66%,rgb(10_10_10/0.95)_100%)] md:hidden" />
           </>
@@ -88,6 +91,13 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         <div className="absolute inset-0 overflow-hidden opacity-60">
           <div className="grain" />
         </div>
+        {/* the film rises out of the dark (a fading veil: a live brightness filter repainted every frame) */}
+        <motion.div
+          className="pointer-events-none absolute inset-0 bg-ink"
+          initial={{ opacity: 0.6 }}
+          animate={revealed || ready ? { opacity: 0 } : {}}
+          transition={{ duration: 3.2, ease: easeCine }}
+        />
       </motion.div>
 
       {/* Technical drawing overlay that draws itself in */}
@@ -190,8 +200,6 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
             <span className="absolute inset-0 bg-gold [animation:scroll-cue_2.4s_var(--ease-luxe)_infinite]" />
           </span>
           <span className={`eyebrow hidden text-mineral/60 ${heroVideo ? 'xl:inline' : 'md:inline'}`}>{brand.regions.map(tx).join(' · ')}</span>
-          {/* the film's pause control */}
-          {heroVideo && <FilmPause className="ml-auto md:ml-6" />}
         </motion.div>
       </motion.div>
     </section>
@@ -264,7 +272,7 @@ function Seal({ show, reduced }: { show: boolean; reduced: boolean }) {
           <textPath href="#seal-circle" textLength="486" lengthAdjust="spacing">{text}</textPath>
         </text>
       </svg>
-      <span className="absolute inset-[26%] grid place-items-center rounded-full border border-gold/40 bg-ink/30 backdrop-blur-sm transition-colors duration-500 group-hover:bg-gold/90">
+      <span className="absolute inset-[26%] grid place-items-center rounded-full border border-gold/40 bg-ink/55 transition-colors duration-500 group-hover:bg-gold/90">
         <span className="font-display text-4xl text-gold transition-colors duration-500 group-hover:text-ink">R</span>
       </span>
     </motion.button>
