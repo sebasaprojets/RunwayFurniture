@@ -34,7 +34,7 @@ async function pickSource(v: HTMLVideoElement): Promise<string | undefined> {
           width: small ? 1080 : 1440,
           height: small ? 1920 : 2560,
           bitrate: small ? 7_300_000 : 10_900_000,
-          framerate: 24,
+          framerate: 60,
         },
       })
       if (info?.supported && info.powerEfficient) return x.src
