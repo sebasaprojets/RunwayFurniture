@@ -76,11 +76,11 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
             <div className="absolute bottom-0 left-0 h-[78%] w-[min(70rem,100vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_100%,rgb(10_10_10/0.86)_42%,transparent_100%)] max-md:hidden" />
             <div className="absolute right-0 bottom-0 h-[66%] w-[min(44rem,54vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_100%,rgb(10_10_10/0.92)_56%,transparent_100%)] max-lg:hidden" />
             <div className="absolute inset-x-0 bottom-0 h-[10rem] bg-[linear-gradient(to_top,rgb(10_10_10/0.95)_0%,rgb(10_10_10/0.88)_45%,transparent_100%)]" />
-            <div className="absolute inset-x-0 bottom-0 h-[72%] bg-[linear-gradient(to_top,rgb(10_10_10/0.95)_0%,rgb(10_10_10/0.86)_50%,transparent_100%)] md:hidden" />
             {/* soft pools of shade behind the small top labels: the meta line (left), clocks and seal (right) */}
             <div className="absolute top-0 left-0 h-[17rem] w-[min(62rem,98vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_0,rgb(10_10_10/0.94)_66%,transparent_100%)] max-md:hidden" />
             <div className="absolute top-0 right-0 h-[min(32rem,62vh)] w-[min(30rem,46vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_0,rgb(10_10_10/0.94)_64%,transparent_100%)] max-md:hidden" />
-            <div className="absolute inset-x-0 top-0 h-[58%] bg-[linear-gradient(to_bottom,rgb(10_10_10/0.9)_0%,rgb(10_10_10/0.84)_62%,transparent_100%)] md:hidden" />
+            {/* phones: the film stays bright behind the big title; shade deepens only under the menu and under the small text and buttons */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(10_10_10/0.9)_0%,rgb(10_10_10/0.86)_11%,rgb(10_10_10/0.52)_19%,rgb(10_10_10/0.5)_40%,rgb(10_10_10/0.86)_53%,rgb(10_10_10/0.93)_66%,rgb(10_10_10/0.95)_100%)] md:hidden" />
           </>
         )}
         {!heroVideo && <div className="absolute inset-0 bg-gradient-to-r from-ink/50 via-transparent to-transparent" />}
@@ -144,8 +144,10 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
                 stagger={0.08}
                 text={t('Creating\nExtraordinary\nSpaces Worldwide', 'Creamos\nespacios\nextraordinarios')}
                 accent={['Extraordinary', 'extraordinarios']}
+                // phones: a lighter gold, so the accent still reads over the bright sand of the film
+                accentClass="italic text-gold max-md:text-[color-mix(in_srgb,var(--color-gold)_45%,var(--color-bone))]"
                 // sized by both width and height, so short screens (in-app browsers, landscape) never push it under the menu
-                className={`display text-bone uppercase sm:text-[min(11vw,9svh)] lg:text-[min(7.4vw,12.5svh)] ${lang === 'es' ? 'text-[min(12.4vw,8.4svh)]' : 'text-[min(15vw,9.2svh)]'}`}
+                className={`display text-bone uppercase max-md:[text-shadow:0_1px_6px_rgb(0_0_0/0.4)] sm:text-[min(11vw,9svh)] lg:text-[min(7.4vw,12.5svh)] ${lang === 'es' ? 'text-[min(12.4vw,8.4svh)]' : 'text-[min(15vw,9.2svh)]'}`}
               />
             )}
           </div>

@@ -23,23 +23,51 @@ const usePaused = () =>
     () => paused,
   )
 
-/** Plays when on screen and not paused; rests off screen (saves battery on phones). */
+/**
+ * Plays on its own while the visitor can see it; rests when the hero is scrolled away, the tab or
+ * app is in the background, or the visitor paused it (saves battery and data on phones).
+ */
 function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: boolean) {
   const isPaused = usePaused()
   const [visible, setVisible] = useState(true)
+  const [pageShown, setPageShown] = useState(() => typeof document === 'undefined' || !document.hidden)
   useEffect(() => {
     const v = ref.current
     if (!v) return
-    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.01 })
+    // React sets `muted` only as a property; iOS Safari needs the attribute to allow autoplay
+    v.muted = true
+    v.defaultMuted = true
+    v.setAttribute('muted', '')
+    // rests once less than a sliver of the film is on screen
+    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting && e.intersectionRatio >= 0.08), {
+      threshold: [0, 0.08, 0.2],
+    })
     io.observe(v)
-    return () => io.disconnect()
+    const onVis = () => setPageShown(!document.hidden)
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      io.disconnect()
+      document.removeEventListener('visibilitychange', onVis)
+    }
   }, [ref])
   useEffect(() => {
     const v = ref.current
     if (!v) return
-    if (active && visible && !isPaused) v.play().catch(() => undefined)
-    else v.pause()
-  }, [ref, active, visible, isPaused])
+    if (!(active && visible && pageShown && !isPaused)) {
+      v.pause()
+      return
+    }
+    // some phones refuse autoplay (iOS Low Power Mode, data saver): the still frame stays, with no
+    // play icon, and the film starts by itself on the visitor's first touch, click or key
+    const gestures = ['touchend', 'pointerup', 'click', 'keydown'] as const
+    const retry = () => {
+      off()
+      v.play().catch(() => undefined)
+    }
+    const off = () => gestures.forEach((g) => window.removeEventListener(g, retry, true))
+    v.play().catch(() => gestures.forEach((g) => window.addEventListener(g, retry, { capture: true, passive: true })))
+    return off
+  }, [ref, active, visible, pageShown, isPaused])
 }
 
 /**
@@ -56,7 +84,7 @@ export function HeroBackdrop({ active, position }: { active: boolean; position?:
     <>
       <motion.video
         ref={ref}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="hero-film absolute inset-0 h-full w-full object-cover"
         style={position ? { objectPosition: position } : undefined}
         poster={heroVideo.poster}
         muted
