@@ -88,7 +88,7 @@ export const heroVideo: {
   // the browser takes the first it can play: AV1 (a quarter lighter at the same quality), then
   // H.264 for everyone else; phones get a 1080×1920 cut of the same film
   sources: [
-    { media: '(max-width: 767px)', src: `${import.meta.env.BASE_URL}video/resort-m-av1.mp4`, type: 'video/mp4; codecs="av01.0.08M.08"' },
+    { media: '(max-width: 767px)', src: `${import.meta.env.BASE_URL}video/resort-m-av1.mp4`, type: 'video/mp4; codecs="av01.0.09M.08"' },
     { media: '(max-width: 767px)', src: `${import.meta.env.BASE_URL}video/resort-m.mp4`, type: 'video/mp4' },
     { src: `${import.meta.env.BASE_URL}video/resort-av1.mp4`, type: 'video/mp4; codecs="av01.0.12M.08"' },
     { src: `${import.meta.env.BASE_URL}video/resort.mp4`, type: 'video/mp4' },

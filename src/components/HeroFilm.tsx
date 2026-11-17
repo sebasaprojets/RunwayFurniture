@@ -33,7 +33,7 @@ async function pickSource(v: HTMLVideoElement): Promise<string | undefined> {
           contentType,
           width: small ? 1080 : 1440,
           height: small ? 1920 : 2560,
-          bitrate: small ? 7_300_000 : 10_900_000,
+          bitrate: small ? 10_900_000 : 16_900_000,
           framerate: 60,
         },
       })
