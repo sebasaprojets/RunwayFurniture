@@ -81,7 +81,8 @@ export const openWhatsApp = (text: string) => window.open(whatsappUrl(text), '_b
  * full-height panel beside the text.
  */
 export const heroVideo: { src: string; poster: string; alt: { en: string; es: string } } | null = {
-  // the original film (720×1280, 24 fps), looped seamlessly: the last half second dissolves into the first
+  // the original film (720×1280), looped seamlessly (the last half second dissolves into the first);
+  // in-between frames computed from it (24 to 60 fps), so slow drone pans glide on 60 Hz screens
   src: `${import.meta.env.BASE_URL}video/resort.mp4`,
   poster: `${import.meta.env.BASE_URL}video/resort-poster.jpg`,
   alt: {

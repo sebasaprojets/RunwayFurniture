@@ -4,7 +4,7 @@ import { heroVideo } from '../data/site'
 import { useLang } from '../i18n'
 
 /**
- * The hero film: the original vertical film (720×1280, 24 fps, its own speed and look), looped
+ * The hero film: the original vertical film (720×1280, its own speed and look, 60 fps), looped
  * seamlessly. Phones and portrait tablets see it full screen; wide screens see it in a full-height
  * panel beside the text, close to its real size (so it stays sharp).
  */
