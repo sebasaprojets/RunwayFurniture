@@ -129,9 +129,9 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
   const [playing, setPlaying] = useState(false)
   const [frameH, setFrameH] = useState<number>()
   const over = useMotionValue(0)
-  const mid = useMotionValue(50)
+  const mid = useMotionValue(56)
   const s = slice ?? mid
-  const y = useTransform(() => -over.get() * (s.get() / 100))
+  const y = useTransform(() => Math.round(-over.get() * (s.get() / 100)))
   useEffect(() => {
     const el = box.current
     if (!el) return

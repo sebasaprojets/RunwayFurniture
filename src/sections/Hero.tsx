@@ -1,4 +1,4 @@
-import { animate, motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
+import { animate, motion, useScroll, useTransform } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
@@ -20,18 +20,8 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   // computers and tablets lying down: the film has its own full-height panel on the right, the words the left
   const wide = useWide() && !!heroVideo
   const { lang, t, tx } = useLang()
-  // wide screens see a slice of the vertical film: it glides from the horizon down to the pool as
-  // the visitor scrolls, and leans towards the cursor (phones see the whole frame, nothing to glide)
-  const lean = useMotionValue(0)
-  const leanY = useSpring(lean, { stiffness: 40, damping: 18 })
-  const slice = useTransform(scrollYProgress, [0, 1], [56, 84])
-  const sliceY = useTransform(() => Math.min(100, Math.max(0, slice.get() + leanY.get())))
-  useEffect(() => {
-    if (!heroVideo || !matchMedia('(hover: hover) and (pointer: fine)').matches) return
-    const move = (e: PointerEvent) => lean.set(((e.clientY / innerHeight) * 2 - 1) * 5)
-    window.addEventListener('pointermove', move, { passive: true })
-    return () => window.removeEventListener('pointermove', move)
-  }, [lean])
+  // wide screens see a fixed slice of the vertical film (the camera already moves inside the film;
+  // moving the frame as well, with the cursor or the scroll, made the picture look shaky)
 
   return (
     <section ref={ref} id="top" className="relative min-h-[100svh] overflow-hidden bg-ink" aria-label={t('Introduction', 'Introducción')}>
@@ -45,7 +35,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
       >
         <motion.div className="absolute inset-0" style={calm ? undefined : { scale }}>
           {heroVideo ? (
-            <HeroBackdrop active={revealed || ready} slice={calm ? undefined : sliceY} />
+            <HeroBackdrop active={revealed || ready} />
           ) : (
             <WaterCanvas still={reduced} paused={!revealed} className="absolute inset-0" />
           )}
