@@ -36,21 +36,34 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
   useEffect(() => {
     const v = ref.current
     if (!v) return
+    // before the hero is revealed the film may already run (the `autoplay` attribute starts it as
+    // soon as it can, the way Safari prefers), so it is ready the moment the opening ends; it rests
+    // only once it has played and the visitor has moved away or left the tab
     if (!(active && visible && pageShown)) {
-      v.pause()
+      if (!v.paused && (!visible || !pageShown)) v.pause()
       return
     }
-    // some phones refuse autoplay (iOS Low Power Mode, data saver): the still image stays, with no
-    // play icon, and the film starts by itself on the visitor's first touch, click or key. iOS loads
-    // nothing before play() is called, so play() is asked for right away, never after `loadeddata`.
-    const gestures = ['touchstart', 'touchend', 'pointerdown', 'click', 'keydown'] as const
-    const off = () => gestures.forEach((g) => window.removeEventListener(g, retry, true))
-    const wait = () => gestures.forEach((g) => window.addEventListener(g, retry, { capture: true, passive: true }))
-    const retry = () => {
-      v.play().then(off, () => undefined)
+    // Safari (Mac and iPhone) can refuse the first play() while the film is still loading: it is
+    // asked again on every sign of life (data arriving, a touch, a click, a key, the wheel) and every
+    // 600 ms until it runs. Some phones refuse autoplay outright (iOS Low Power Mode, data saver):
+    // the still image stays, with no play icon, and the film starts on the visitor's first touch.
+    const gestures = ['touchstart', 'touchend', 'pointerdown', 'click', 'keydown', 'wheel'] as const
+    const media = ['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'] as const
+    let tries = 0
+    const tryPlay = () => {
+      if (!v.paused) return done()
+      v.play().then(done, () => undefined)
     }
-    v.play().catch(wait)
-    return off
+    const id = window.setInterval(() => (++tries > 25 ? window.clearInterval(id) : tryPlay()), 600)
+    const done = () => {
+      window.clearInterval(id)
+      gestures.forEach((g) => window.removeEventListener(g, tryPlay, true))
+      media.forEach((m) => v.removeEventListener(m, tryPlay))
+    }
+    gestures.forEach((g) => window.addEventListener(g, tryPlay, { capture: true, passive: true }))
+    media.forEach((m) => v.addEventListener(m, tryPlay))
+    tryPlay()
+    return done
   }, [ref, active, visible, pageShown])
 }
 
@@ -106,6 +119,7 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
             src={heroVideo.src}
             className="hero-film absolute inset-0 h-full w-full object-cover"
             muted
+            autoPlay
             loop
             playsInline
             preload="auto"
