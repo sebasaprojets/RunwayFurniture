@@ -17,6 +17,7 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
   // the browser's own autoplay could start the film while the visitor is elsewhere: stopped at once
   const allowed = useRef(false)
   allowed.current = visible && pageShown
+  const [blocked, setBlocked] = useState(false)
   useEffect(() => {
     const v = ref.current
     if (!v) return
@@ -70,11 +71,21 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
     const gestures = ['touchstart', 'touchend', 'pointerdown', 'click', 'keydown', 'wheel'] as const
     const media = ['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'] as const
     let tries = 0
+    let refused = 0
     const tryPlay = () => {
       if (!v.paused) return done()
-      v.play().then(done, () => undefined)
+      v.play().then(done, (e: unknown) => {
+        // Safari refusing outright (Low Power Mode, Low Data Mode): it does play a film shown as an
+        // image, so the hero switches to that (see HeroBackdrop)
+        if (apple && e instanceof DOMException && e.name === 'NotAllowedError' && ++refused >= 2) setBlocked(true)
+      })
     }
-    const id = window.setInterval(() => (++tries > 25 ? window.clearInterval(id) : tryPlay()), 600)
+    const id = window.setInterval(() => {
+      if (++tries > 25) return window.clearInterval(id)
+      // still not running after 2 seconds of asking on Safari: the same image fallback
+      if (apple && tries >= 4 && v.paused) setBlocked(true)
+      tryPlay()
+    }, 600)
     const done = () => {
       window.clearInterval(id)
       gestures.forEach((g) => window.removeEventListener(g, tryPlay, true))
@@ -85,7 +96,11 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
     tryPlay()
     return done
   }, [ref, active, visible, pageShown])
+  return { blocked, shown: visible && pageShown }
 }
+
+/** Safari and every iPhone browser (all WebKit): they play an MP4 placed in an <img>, like a GIF. */
+const apple = typeof navigator !== 'undefined' && /Apple/.test(navigator.vendor)
 
 /** Wide screens (computers, tablets lying down) give the film its own panel beside the text. */
 export function useWide() {
@@ -110,7 +125,7 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
   const { tx } = useLang()
   const box = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLVideoElement>(null)
-  useFilmPlayback(ref, active)
+  const { blocked, shown } = useFilmPlayback(ref, active)
   const [playing, setPlaying] = useState(false)
   const [frameH, setFrameH] = useState<number>()
   const over = useMotionValue(0)
@@ -148,6 +163,7 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
             controls={false}
             aria-hidden
             onPlaying={() => setPlaying(true)}
+            onPause={() => setPlaying(false)}
           />
           {/* the still frame lies over the film (iOS will not start a hidden video) and fades away once it runs */}
           <img
@@ -158,6 +174,9 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
             {...{ fetchpriority: 'high' }}
             decoding="async"
           />
+          {/* Safari refused to start the film (Low Power Mode, Low Data Mode): the same film as an
+              image, which Safari always plays, muted and looping; removed when the visitor moves on */}
+          {blocked && shown && !playing && <img src={heroVideo.src} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />}
         </motion.div>
       </div>
       <p className="sr-only">{tx(heroVideo.alt)}</p>
