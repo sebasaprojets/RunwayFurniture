@@ -21,9 +21,15 @@ export function initSmoothScroll(reduced: boolean) {
   }
 }
 
-export function scrollToTarget(target: string | HTMLElement) {
+export function scrollToTarget(target: string | HTMLElement, tries = 0) {
   const el = typeof target === 'string' ? document.querySelector<HTMLElement>(target) : target
-  if (!el) return
+  if (!el) {
+    // the page is still being built section by section: build the rest now, then go
+    if (typeof target !== 'string' || tries > 40) return
+    window.dispatchEvent(new Event('site:build-all'))
+    requestAnimationFrame(() => scrollToTarget(target, tries + 1))
+    return
+  }
   if (lenis) lenis.scrollTo(el, { offset: 0, duration: 1.6 })
   else el.scrollIntoView({ behavior: 'smooth' })
   // Move focus for keyboard and screen-reader users.

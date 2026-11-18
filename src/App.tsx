@@ -57,11 +57,37 @@ export default function App() {
   useEffect(() => {
     if (!intro) void picReady.then(() => setRest(true))
   }, [intro])
+  // The rest of the site is built one section at a time, in the browser's idle moments: building it
+  // all at once froze the page for up to a second just as the opening film began (longer on modest
+  // phones and computers). A link to a section, or a visitor racing ahead, builds the rest at once.
+  const [built, setBuilt] = useState(0)
+  const total = 20
   useEffect(() => {
-    if (!rest) return
+    if (!rest || built >= total) return
+    if (built === 0 && /^#(?!\/)./.test(location.hash)) return void setBuilt(total)
+    const all = () => setBuilt(total)
+    const ahead = () => {
+      if (window.scrollY + innerHeight * 2.5 > document.documentElement.scrollHeight) all()
+    }
+    window.addEventListener('site:build-all', all)
+    window.addEventListener('scroll', ahead, { passive: true })
+    const next = () => setBuilt((n) => Math.min(total, n + 1))
+    // Safari has no idle callback: a short pause between sections instead
+    const ric = 'requestIdleCallback' in window
+    const id = ric ? window.requestIdleCallback(next, { timeout: 350 }) : window.setTimeout(next, 60)
+    return () => {
+      if (ric) window.cancelIdleCallback(id)
+      else window.clearTimeout(id)
+      window.removeEventListener('site:build-all', all)
+      window.removeEventListener('scroll', ahead)
+    }
+  }, [rest, built])
+  // pinned scenes are measured once the whole page stands
+  useEffect(() => {
+    if (built < total) return
     const id = requestAnimationFrame(() => ScrollTrigger.refresh())
     return () => cancelAnimationFrame(id)
-  }, [rest])
+  }, [built])
   const [revealed, setRevealed] = useState(!intro)
   const onReveal = useCallback(() => setRevealed(true), [])
   const [project, setProject] = useState<Project | null>(fromHash)
@@ -113,6 +139,29 @@ export default function App() {
     setProject(null)
   }, [])
 
+  const parts = [
+    <Statement key="statement" />,
+    <Story key="story" />,
+    <CinemaReveal key="cinema" />,
+    <Elite key="elite" />,
+    <Projects key="projects" onOpen={open} />,
+    <Hospitality key="hospitality" />,
+    <ConceptReality key="concept" />,
+    <SignatureHotels key="hotels" />,
+    <Collections key="collections" />,
+    <NewCollection key="new" />,
+    <OutdoorKitchens key="kitchens" />,
+    <Factory key="factory" />,
+    <Founder key="founder" />,
+    <FounderFilm key="founder-film" />,
+    <LiveDifferent key="live" />,
+    <Films key="films" />,
+    <Awards key="awards" />,
+    <Clients key="clients" />,
+    <Global key="global" />,
+    <Contact key="contact" />,
+  ]
+
   return (
     <LayoutGroup>
       <a href="#main" className="sr-only z-[200] rounded bg-bone px-4 py-2 text-ink focus:not-sr-only focus:fixed focus:top-4 focus:left-4">
@@ -123,32 +172,9 @@ export default function App() {
       <Navigation ready={ready} />
       <main id="main">
         <Hero ready={ready} revealed={revealed} reduced={reduced} />
-        {rest && (
-          <>
-        <Statement />
-        <Story />
-        <CinemaReveal />
-        <Elite />
-        <Projects onOpen={open} />
-        <Hospitality />
-        <ConceptReality />
-        <SignatureHotels />
-        <Collections />
-        <NewCollection />
-        <OutdoorKitchens />
-        <Factory />
-        <Founder />
-        <FounderFilm />
-        <LiveDifferent />
-        <Films />
-        <Awards />
-        <Clients />
-        <Global />
-        <Contact />
-          </>
-        )}
+        {parts.slice(0, built)}
       </main>
-      {rest && <Footer />}
+      {built >= parts.length && <Footer />}
       <WhatsAppButton ready={ready} />
       <AnimatePresence>{project && <ProjectDetail key="detail" project={project} onClose={close} onNavigate={open} />}</AnimatePresence>
     </LayoutGroup>
