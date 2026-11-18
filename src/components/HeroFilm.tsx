@@ -11,8 +11,25 @@ import { useLang } from '../i18n'
 
 /** Plays on its own while the visitor can see it; rests when scrolled away or in the background. */
 function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: boolean) {
-  const [visible, setVisible] = useState(true)
+  // unknown until the first observation: assume off screen, so nothing runs where it should not
+  const [visible, setVisible] = useState(false)
   const [pageShown, setPageShown] = useState(() => typeof document === 'undefined' || !document.hidden)
+  // the browser's own autoplay could start the film while the visitor is elsewhere: stopped at once
+  const allowed = useRef(false)
+  allowed.current = visible && pageShown
+  useEffect(() => {
+    const v = ref.current
+    if (!v) return
+    const guard = () => {
+      if (!allowed.current) v.pause()
+    }
+    v.addEventListener('play', guard)
+    v.addEventListener('playing', guard)
+    return () => {
+      v.removeEventListener('play', guard)
+      v.removeEventListener('playing', guard)
+    }
+  }, [ref])
   useEffect(() => {
     const v = ref.current
     if (!v) return
@@ -22,10 +39,13 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
     v.setAttribute('muted', '')
     v.setAttribute('playsinline', '')
     v.setAttribute('webkit-playsinline', '')
-    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting && e.intersectionRatio >= 0.08), {
-      threshold: [0, 0.08, 0.2],
+    // the film runs only while the visitor is in the opening section: once less than 40% of it is on
+    // screen (on any device) it rests, and it never starts while the visitor is elsewhere
+    const section = v.closest('section') ?? v
+    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting && e.intersectionRatio >= 0.4), {
+      threshold: [0, 0.4, 0.6],
     })
-    io.observe(v)
+    io.observe(section)
     const onVis = () => setPageShown(!document.hidden)
     document.addEventListener('visibilitychange', onVis)
     return () => {
