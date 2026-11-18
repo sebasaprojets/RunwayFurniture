@@ -1,10 +1,10 @@
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
+import { animate, motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
 import { HeroBackdrop, useWide } from '../components/HeroFilm'
 import { WaterCanvas } from '../components/WaterCanvas'
-import { brand, heroVideo } from '../data/site'
+import { brand, heroVideo, projects } from '../data/site'
 import { useLang } from '../i18n'
 import { easeCine, easeLuxe, useCalmScroll } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
@@ -115,21 +115,25 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
       </div>
 
       {/* Technical drawing overlay that draws itself in */}
-      <svg className={`pointer-events-none absolute inset-0 h-full w-full text-bone/20 ${heroVideo ? 'hidden' : ''}`} aria-hidden preserveAspectRatio="none" viewBox="0 0 100 100">
-        {[
-          'M 8 0 L 8 100',
-          'M 92 0 L 92 100',
-          'M 0 18 L 100 18',
-          'M 62 18 L 62 100',
-          'M 62 70 C 72 70 80 62 80 52',
-        ].map((d, i) => (
+      {/* (wide screens with the film: only over the words' side, fainter, so the dark side has texture) */}
+      <svg
+        className={`pointer-events-none absolute inset-y-0 left-0 h-full ${wide ? 'w-[calc(100%-min(42vw,52rem))] text-bone/[0.14]' : 'w-full text-bone/20'} ${heroVideo && !wide ? 'hidden' : ''}`}
+        aria-hidden
+        preserveAspectRatio="none"
+        viewBox="0 0 100 100"
+      >
+        {/* wide screens: only the two lines that frame the words without crossing them */}
+        {(wide
+          ? ['M 0 18 L 100 18', 'M 96 0 L 96 100']
+          : ['M 8 0 L 8 100', 'M 92 0 L 92 100', 'M 0 18 L 100 18', 'M 62 18 L 62 100', 'M 62 70 C 72 70 80 62 80 52']
+        ).map((d, i) => (
           <motion.path
             key={d}
             d={d}
             fill="none"
             stroke="currentColor"
-            strokeWidth="0.08"
-            vectorEffect="non-scaling-stroke"
+            strokeWidth={wide ? 0.1 : 0.08}
+            vectorEffect={wide ? undefined : 'non-scaling-stroke'}
             initial={{ pathLength: 0 }}
             animate={ready ? { pathLength: 1 } : {}}
             transition={{ duration: 2.2, ease: easeLuxe, delay: 0.3 + i * 0.15 }}
@@ -158,6 +162,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         >
           <WorldClocks />
         </motion.div>
+        {wide && <Figures show={ready} reduced={reduced} />}
         <div className={`grid items-end gap-10 ${wide ? '' : 'lg:grid-cols-12'}`}>
           <div className={wide ? '' : 'lg:col-span-8'}>
             {ready && (
@@ -292,4 +297,43 @@ function Seal({ show, reduced, wide }: { show: boolean; reduced: boolean; wide: 
       </span>
     </motion.button>
   )
+}
+
+/** The company in four real figures (all read from the site's own data), counting up as the site opens. */
+function Figures({ show, reduced }: { show: boolean; reduced: boolean }) {
+  const { t } = useLang()
+  const items = [
+    { n: brand.years, label: t('Years', 'Años') },
+    { n: brand.offices.length, label: t('Studios', 'Estudios') },
+    { n: brand.regions.length, label: t('Regions', 'Regiones') },
+    { n: projects.length, label: t('Projects', 'Proyectos') },
+  ]
+  return (
+    <motion.dl
+      initial={{ opacity: 0, y: 16 }}
+      animate={show ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 1.2, ease: easeLuxe, delay: 1.1 }}
+      // only where the screen is tall enough to hold them above the title
+      className="mb-[clamp(2rem,6svh,4.5rem)] hidden w-[min(40rem,calc(100%-3.5rem))] grid-cols-4 gap-6 border-t border-bone/12 pt-5 [@media(min-height:820px)]:grid"
+    >
+      {items.map((x, i) => (
+        <div key={x.label} className="flex flex-col-reverse justify-end gap-3">
+          <dt className="eyebrow text-[0.6875rem] whitespace-nowrap text-mineral/70">{x.label}</dt>
+          <dd className="font-display text-[clamp(2rem,3.2vw,3.25rem)] leading-none text-bone tabular-nums">
+            <Count to={x.n} run={show} reduced={reduced} delay={1.2 + i * 0.12} />
+          </dd>
+        </div>
+      ))}
+    </motion.dl>
+  )
+}
+
+function Count({ to, run, reduced, delay }: { to: number; run: boolean; reduced: boolean; delay: number }) {
+  const [n, setN] = useState(reduced ? to : 0)
+  useEffect(() => {
+    if (!run || reduced) return void (reduced && setN(to))
+    const c = animate(0, to, { duration: 1.8, delay, ease: [0.22, 1, 0.36, 1], onUpdate: (v) => setN(Math.round(v)) })
+    return () => c.stop()
+  }, [run, reduced, to, delay])
+  return <>{String(n).padStart(2, '0')}</>
 }
