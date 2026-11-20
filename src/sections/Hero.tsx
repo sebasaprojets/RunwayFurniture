@@ -1,4 +1,4 @@
-import { animate, motion, useScroll, useTransform } from 'motion/react'
+import { animate, motion, useMotionValue, useScroll, useTransform } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
 import { RevealText } from '../components/RevealText'
@@ -9,8 +9,14 @@ import { useLang } from '../i18n'
 import { easeCine, easeLuxe, useCalmScroll } from '../lib/motion'
 import { scrollToTarget } from '../lib/scroll'
 
-export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: boolean; reduced: boolean }) {
+export function Hero({ ready: readyIn, revealed, reduced }: { ready: boolean; revealed: boolean; reduced: boolean }) {
   const ref = useRef<HTMLElement>(null)
+  // the opening: the film first shows only through the letters of RUNWAY, then the camera flies
+  // through them into the full picture; the words of the hero arrive once it has opened
+  const { opened, maskScale, maskOpacity } = useLettersOpening(revealed || readyIn, reduced || !heroVideo)
+  const vw = useViewportWidth()
+  // computers: the words wait until the film has glided into its panel, so it never passes over them
+  const [settled, setSettled] = useState(false)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.12])
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '-22%'])
@@ -19,13 +25,26 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
   const calm = useCalmScroll()
   // computers and tablets lying down: the film has its own full-height panel on the right, the words the left
   const wide = useWide() && !!heroVideo
+  const ready = readyIn && opened && (!wide || settled)
+  // skipped opening (reload, reduced motion): the panel is already in place
+  const [glided] = useState(() => !opened)
+  useEffect(() => {
+    if (!opened || !wide || settled) return
+    const id = window.setTimeout(() => setSettled(true), glided ? 1150 : 0)
+    return () => window.clearTimeout(id)
+  }, [opened, wide, settled, glided])
   const { lang, t, tx } = useLang()
   // wide screens see a fixed slice of the vertical film (the camera already moves inside the film;
   // moving the frame as well, with the cursor or the scroll, made the picture look shaky)
 
   return (
     <section ref={ref} id="top" className="relative min-h-[100svh] overflow-hidden bg-ink" aria-label={t('Introduction', 'Introducción')}>
-      <div className={wide ? 'absolute inset-y-0 right-0 w-[min(42vw,52rem)] overflow-hidden border-l border-bone/10' : 'absolute inset-0'}>
+      <motion.div
+        className={`absolute inset-y-0 right-0 overflow-hidden ${wide && opened ? 'border-l border-bone/10' : ''}`}
+        initial={false}
+        animate={{ width: wide && opened ? Math.min(vw * 0.42, 832) : vw }}
+        transition={{ duration: 1.2, ease: easeCine }}
+      >
       {/* Film — revealed through an expanding architectural aperture */}
       <motion.div
         className="absolute inset-0"
@@ -73,19 +92,13 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         )}
         {heroVideo && !wide && (
           <>
-            {/* the film stays bright in the middle; shade sits only where text does */}
-            <div className="absolute bottom-0 left-0 h-[78%] w-[min(70rem,100vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_100%,rgb(10_10_10/0.9)_50%,transparent_100%)] max-md:hidden" />
-            <div className="absolute right-0 bottom-0 h-[80%] w-[min(46rem,56vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_100%,rgb(10_10_10/0.93)_62%,transparent_100%)] max-lg:hidden" />
-            <div className="absolute inset-x-0 bottom-0 h-[10rem] bg-[linear-gradient(to_top,rgb(10_10_10/0.95)_0%,rgb(10_10_10/0.88)_45%,transparent_100%)]" />
-            {/* computers: a band of shade under the menu links, which cross the bright sand of the film */}
-            <div className="absolute inset-x-0 top-0 h-[11rem] bg-[linear-gradient(to_bottom,rgb(10_10_10/0.9)_0%,rgb(10_10_10/0.84)_48%,transparent_100%)] max-md:hidden" />
-            {/* soft pools of shade behind the small top labels: the meta line (left), clocks and seal (right) */}
-            <div className="absolute top-0 left-0 h-[17rem] w-[min(62rem,98vw)] bg-[radial-gradient(ellipse_100%_100%_at_0_0,rgb(10_10_10/0.94)_66%,transparent_100%)] max-md:hidden" />
-            <div className="absolute top-0 right-0 h-[min(38rem,68vh)] w-[min(34rem,46vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_0,rgb(10_10_10/0.94)_68%,transparent_100%)] max-md:hidden" />
-            {/* tablets (portrait): the title sits over the bright middle of the film; an even veil keeps it legible */}
-            <div className="absolute inset-0 hidden bg-[linear-gradient(to_bottom,rgb(10_10_10/0.9)_0%,rgb(10_10_10/0.78)_22%,rgb(10_10_10/0.7)_45%,rgb(10_10_10/0.88)_68%,rgb(10_10_10/0.95)_100%)] md:block lg:hidden" />
-            {/* phones: the film stays bright behind the big title; shade deepens only under the menu and under the small text and buttons */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(10_10_10/0.9)_0%,rgb(10_10_10/0.86)_11%,rgb(10_10_10/0.52)_19%,rgb(10_10_10/0.5)_40%,rgb(10_10_10/0.86)_53%,rgb(10_10_10/0.93)_66%,rgb(10_10_10/0.95)_100%)] md:hidden" />
+            {/* the film stays bright and alive: shade only under the menu and the clocks, and behind the words */}
+            <div className="absolute inset-x-0 top-0 h-[10rem] bg-[linear-gradient(to_bottom,rgb(10_10_10/0.82)_0%,rgb(10_10_10/0.5)_50%,transparent_100%)]" />
+            <div className="absolute top-0 right-0 h-[16rem] w-[min(30rem,70vw)] bg-[radial-gradient(ellipse_100%_100%_at_100%_0,rgb(10_10_10/0.75)_40%,transparent_100%)] max-md:hidden" />
+            {/* phones: the title stands over the bright sand, so the shade climbs higher there */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(10_10_10/0.92)_0%,rgb(10_10_10/0.8)_32%,rgb(10_10_10/0.62)_55%,rgb(10_10_10/0.3)_72%,transparent_86%)] md:hidden" />
+            <div className="absolute inset-0 hidden bg-[linear-gradient(to_top,rgb(10_10_10/0.92)_0%,rgb(10_10_10/0.8)_28%,rgb(10_10_10/0.58)_52%,transparent_76%)] md:block" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(10_10_10/0.7)_0%,rgb(10_10_10/0.3)_45%,transparent_70%)] max-md:hidden" />
           </>
         )}
         {!heroVideo && <div className="absolute inset-0 bg-gradient-to-r from-ink/50 via-transparent to-transparent" />}
@@ -93,16 +106,40 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
         <div className="absolute inset-0 overflow-hidden opacity-60">
           <div className="grain" />
         </div>
+        {/* the letters window: black everywhere but the letters, which show the film (a multiply blend:
+            white letters keep the picture, black hides it); it zooms through the W and fades away */}
+        {!opened && (
+          <motion.div aria-hidden className="pointer-events-none absolute inset-0 z-[5] grid place-items-center overflow-hidden bg-ink mix-blend-multiply" style={{ opacity: maskOpacity }}>
+            <motion.span
+              className="font-display leading-none tracking-[-0.01em] text-white select-none"
+              style={{ scale: maskScale, transformOrigin: '55.5% 52%', fontSize: 'min(21vw, 40svh)' }}
+            >
+              RUNWAY
+            </motion.span>
+          </motion.div>
+        )}
+        {!opened && (
+          <motion.div aria-hidden className="pointer-events-none absolute inset-0 z-[6] grid place-items-center overflow-hidden" style={{ opacity: maskOpacity }}>
+            {/* a hairline of light around the letters, so they read even where the film is dark */}
+            <motion.span
+              className="font-display leading-none tracking-[-0.01em] text-transparent select-none [-webkit-text-stroke:1px_rgb(242_240_234/0.45)]"
+              style={{ scale: maskScale, transformOrigin: '55.5% 52%', fontSize: 'min(21vw, 40svh)' }}
+            >
+              RUNWAY
+            </motion.span>
+          </motion.div>
+        )}
         {/* the film rises out of the dark (a fading veil: a live brightness filter repainted every frame) */}
         <motion.div
           className="pointer-events-none absolute inset-0 bg-ink"
-          initial={{ opacity: 0.6 }}
+          // with the film, the letters already open it out of the dark: a lighter veil keeps them bright
+          initial={{ opacity: heroVideo ? 0.25 : 0.6 }}
           animate={revealed || ready ? { opacity: 0 } : {}}
           transition={{ duration: 3.2, ease: easeCine }}
         />
       </motion.div>
 
-      </div>
+      </motion.div>
 
       {/* Technical drawing overlay that draws itself in */}
       {/* (wide screens with the film: only over the words' side, fainter, so the dark side has texture) */}
@@ -164,7 +201,7 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
                 text={t('Creating\nExtraordinary\nSpaces Worldwide', 'Creamos\nespacios\nextraordinarios')}
                 accent={['Extraordinary', 'extraordinarios']}
                 // phones: a lighter gold, so the accent still reads over the bright sand of the film
-                accentClass="italic text-gold max-md:text-[color-mix(in_srgb,var(--color-gold)_45%,var(--color-bone))]"
+                accentClass="hero-shine italic text-gold max-md:text-[color-mix(in_srgb,var(--color-gold)_45%,var(--color-bone))]"
                 // sized by both width and height, so short screens (in-app browsers, landscape) never push it under the menu
                 className={`display text-bone uppercase max-md:[text-shadow:0_1px_6px_rgb(0_0_0/0.4)] sm:text-[min(11vw,9svh)] ${wide ? 'lg:text-[min(6.2vw,12svh)]' : 'lg:text-[min(7.4vw,12.5svh)]'} ${lang === 'es' ? 'text-[min(12.4vw,8.4svh)]' : 'text-[min(15vw,9.2svh)]'}`}
               />
@@ -321,4 +358,48 @@ function Count({ to, run, reduced, delay }: { to: number; run: boolean; reduced:
     return () => c.stop()
   }, [run, reduced, to, delay])
   return <>{String(n).padStart(2, '0')}</>
+}
+
+/** The opening through the letters: holds a moment, then flies through. Any scroll, touch or key hurries it. */
+function useLettersOpening(start: boolean, skip: boolean) {
+  const [opened, setOpened] = useState(skip)
+  const z = useMotionValue(0)
+  const maskScale = useTransform(z, (v) => 1 + Math.pow(v, 2.4) * 40)
+  const maskOpacity = useTransform(z, [0.62, 0.9], [1, 0])
+  useEffect(() => {
+    if (skip) setOpened(true)
+  }, [skip])
+  useEffect(() => {
+    if (opened || !start) return
+    let run: { stop: () => void } | undefined
+    const finish = () => setOpened(true)
+    const hold = window.setTimeout(() => {
+      run = animate(z, 1, { duration: 1.7, ease: [0.64, 0, 0.78, 0], onComplete: finish })
+    }, 900)
+    const events = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const
+    const off = () => events.forEach((e) => window.removeEventListener(e, hurry))
+    const hurry = () => {
+      off()
+      window.clearTimeout(hold)
+      run?.stop()
+      run = animate(z, 1, { duration: 0.45, ease: 'easeIn', onComplete: finish })
+    }
+    events.forEach((e) => window.addEventListener(e, hurry, { passive: true }))
+    return () => {
+      window.clearTimeout(hold)
+      run?.stop()
+      off()
+    }
+  }, [start, opened, z])
+  return { opened, maskScale, maskOpacity }
+}
+
+function useViewportWidth() {
+  const [w, setW] = useState(() => (typeof window === 'undefined' ? 1440 : window.innerWidth))
+  useEffect(() => {
+    const on = () => setW(window.innerWidth)
+    window.addEventListener('resize', on)
+    return () => window.removeEventListener('resize', on)
+  }, [])
+  return w
 }
