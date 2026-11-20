@@ -81,7 +81,7 @@ export const openWhatsApp = (text: string) => window.open(whatsappUrl(text), '_b
  * full-height panel beside the text.
  */
 export const heroVideo: { src: string; hd: string; hdHevc: string; poster: string; alt: { en: string; es: string } } | null = {
-  // the original film, its dropped frames filled and in-between frames computed from it (24 to 60 fps);
+  // the resort film (second cut, the dark slatted roof), its dropped frames filled and in-between frames computed from it (24 to 60 fps);
   // the camera travels out and back with gentle stops, so the loop has no seam.
   // 1080×1920, sharpened from the original by AI and steadied frame to frame: HEVC (Apple) or H.264
   hd: `${import.meta.env.BASE_URL}video/resort-hd.mp4`,
