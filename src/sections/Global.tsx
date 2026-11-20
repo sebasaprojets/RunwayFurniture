@@ -460,7 +460,7 @@ function Globe() {
               {p.name}
             </button>
           ))}
-        <span className="eyebrow ml-auto text-mineral/50">{t('Drag to explore · tap a point', 'Arrastra para explorar · toca un punto')}</span>
+        <span className="eyebrow ml-auto text-mineral/75">{t('Drag to explore · tap a point', 'Arrastra para explorar · toca un punto')}</span>
       </div>
     </div>
   )

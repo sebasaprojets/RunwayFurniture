@@ -1,7 +1,7 @@
-import { Armchair, BedDouble, Layers, Sofa } from 'lucide-react'
 import { Pic } from '../components/Pic'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
+import { Curtain } from '../components/Curtain'
 import { FadeIn } from '../components/FadeIn'
 import { MaskImage } from '../components/MaskImage'
 import { RevealText } from '../components/RevealText'
@@ -10,7 +10,6 @@ import { thumb } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe, useCalmScroll } from '../lib/motion'
 
-const icons = { bed: BedDouble, sofa: Sofa, chair: Armchair, layers: Layers }
 
 /**
  * "Our Story" from the company portfolio: the cover photograph with the Runway sign,
@@ -19,13 +18,14 @@ const icons = { bed: BedDouble, sofa: Sofa, chair: Armchair, layers: Layers }
  */
 export function Story() {
   const { t, tx } = useLang()
-  const ref = useRef<HTMLElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
   const calm = useCalmScroll()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const drift = useTransform(scrollYProgress, [0, 1], ['18%', '-22%'])
 
   return (
-    <section ref={ref} id="story" className="relative overflow-hidden bg-bone py-28 text-ink md:py-40" aria-labelledby="story-title">
+    <Curtain id="story" className="relative overflow-hidden bg-bone py-28 text-ink md:py-40" labelledBy="story-title">
+      <div ref={ref} className="pointer-events-none absolute inset-0" aria-hidden />
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <div className="grid gap-16 lg:grid-cols-12 lg:items-center">
           <div className="relative lg:col-span-7">
@@ -37,7 +37,7 @@ export function Story() {
             </motion.div>
           </div>
           <div className="lg:col-span-5">
-            <p className="eyebrow text-bronze">{t('Company portfolio · 2026 – 2027', 'Portafolio corporativo · 2026 – 2027')}</p>
+            <p className="eyebrow text-[#83603f]">{t('Company portfolio · 2026 – 2027', 'Portafolio corporativo · 2026 – 2027')}</p>
             <RevealText text={t('Our Story', 'Nuestra historia')} accent={['Story', 'historia']} accentClass="italic text-terracotta" as="h2" className="display mt-6 text-[16vw] uppercase sm:text-[10vw] lg:text-[5.6vw]" />
             <span className="mt-8 block h-px w-16 bg-terracotta" />
             <div className="mt-10 space-y-5 text-[1.02rem] leading-relaxed text-ink/70">
@@ -53,7 +53,6 @@ export function Story() {
         {/* services */}
         <ul className="mt-28 grid grid-cols-2 gap-px bg-ink/10 md:mt-36 lg:grid-cols-4">
           {services.map((s, i) => {
-            const Icon = icons[s.icon]
             return (
               <motion.li
                 key={s.icon}
@@ -63,8 +62,16 @@ export function Story() {
                 transition={{ duration: 0.9, ease: easeLuxe, delay: i * 0.08 }}
                 className="flex flex-col items-start gap-6 bg-bone p-6 md:p-10"
               >
-                <span className="grid size-14 place-items-center rounded-full border border-terracotta/40 text-terracotta">
-                  <Icon className="size-6" strokeWidth={1.2} />
+                {/* an editorial index with a hairline that draws itself, instead of stock icons */}
+                <span className="flex w-full items-center gap-4">
+                  <span className="font-display text-3xl text-terracotta italic md:text-4xl">{String(i + 1).padStart(2, '0')}</span>
+                  <motion.span
+                    className="h-px flex-1 origin-left bg-terracotta/40"
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+                    transition={{ duration: 1.2, ease: easeLuxe, delay: 0.3 + i * 0.08 }}
+                  />
                 </span>
                 <span className="font-display text-2xl leading-tight md:text-3xl">{tx(s.title)}</span>
               </motion.li>
@@ -106,6 +113,6 @@ export function Story() {
           </div>
         </div>
       </div>
-    </section>
+    </Curtain>
   )
 }

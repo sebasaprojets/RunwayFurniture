@@ -144,7 +144,7 @@ export function ConceptReality() {
             </AnimatePresence>
             <div className="mt-6 flex text-[0.6875rem] font-semibold tracking-[0.24em] uppercase">
               <span className="flex-1 border-t border-bone/20 pt-3 text-bone/50">{t('Sketch / study', 'Boceto / estudio')}</span>
-              <span className="flex-1 border-t border-terracotta pt-3 text-right text-terracotta">{t('Reality / Runway portfolio', 'Realidad / portafolio Runway')}</span>
+              <span className="flex-1 border-t border-terracotta pt-3 text-right text-[#c45c44]">{t('Reality / Runway portfolio', 'Realidad / portafolio Runway')}</span>
             </div>
           </div>
         </div>

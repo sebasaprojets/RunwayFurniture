@@ -19,7 +19,7 @@ const enquire = (t: Translate, subject: string) =>
 
 const subjectOf = (tx: (v: T) => string, l: Listing) => `${tx(l.name)} (${tx(l.location)})`
 
-/** Runway Sale — hotels, land, islands, condominiums and villas, each as a line drawing that sketches itself in. */
+/** Runway Sale — hotels, land, islands, condominiums and villas, each shown by a moment from its own film. */
 export function Elite() {
   const { t, tx } = useLang()
   const [open, setOpen] = useState<EliteKind | null>(null)
@@ -54,7 +54,27 @@ export function Elite() {
                   <span className="font-sans text-xs text-gold/80">{String(i + 1).padStart(2, '0')}</span>
                   <span className="eyebrow text-mineral/40">{t('Worldwide', 'Todo el mundo')}</span>
                 </span>
-                <Sketch drawing={k.drawing} label={tx(k.title)} />
+                {/* a moment from the kind's own film, unveiled from below as the row comes into view */}
+                <motion.div
+                  className="relative my-8 aspect-[4/5] overflow-hidden bg-graphite"
+                  initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
+                  whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
+                  viewport={{ once: true, margin: '0px 0px -12% 0px' }}
+                  transition={{ duration: 1.4, ease: easeLuxe, delay: i * 0.09 }}
+                >
+                  <motion.img
+                    src={k.card}
+                    alt={tx(k.title)}
+                    loading="lazy"
+                    decoding="async"
+                    className="grade h-full w-full object-cover"
+                    initial={{ scale: 1.18 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true, margin: '0px 0px -12% 0px' }}
+                    transition={{ duration: 1.9, ease: easeLuxe, delay: i * 0.09 }}
+                  />
+                  <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent" />
+                </motion.div>
                 <h3 className="display block text-4xl text-bone md:text-5xl xl:text-[2.6vw]">{tx(k.title)}</h3>
                 <span className="mt-4 block text-sm leading-relaxed text-bone/60">{tx(k.text)}</span>
                 <span className="mt-auto pt-8">

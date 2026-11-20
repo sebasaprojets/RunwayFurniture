@@ -1,3 +1,4 @@
+import { Curtain } from '../components/Curtain'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
 import { brand, clients } from '../data/site'
@@ -34,7 +35,7 @@ const placesEs: Record<string, string> = {
 export function Clients() {
   const { lang, t, tx } = useLang()
   return (
-    <section id="clients" className="relative bg-bone text-ink" aria-labelledby="clients-title">
+    <Curtain id="clients" className="relative bg-bone text-ink" labelledBy="clients-title">
       <div className="mx-auto max-w-[1600px] px-5 py-28 md:px-10 md:py-40">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
@@ -52,7 +53,7 @@ export function Clients() {
                 'Nuestro mobiliario está presente en algunos de los hoteles, resorts y residencias más bellos del mundo, entre ellos los siguientes.',
               )}
             </p>
-            <p className="eyebrow mt-6 text-bronze">{tx(brand.award)}</p>
+            <p className="eyebrow mt-6 text-[#83603f]">{tx(brand.award)}</p>
           </FadeIn>
         </div>
 
@@ -86,7 +87,7 @@ export function Clients() {
 
         <div className="mt-28 grid gap-10 border-t border-ink/10 pt-14 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <p className="eyebrow text-bronze">{t('Private clients', 'Clientes privados')}</p>
+            <p className="eyebrow text-[#83603f]">{t('Private clients', 'Clientes privados')}</p>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink/60">
               {t(
                 'Homes, suites and sets furnished for actors, musicians, athletes and heads of state.',
@@ -116,6 +117,6 @@ export function Clients() {
           </FadeIn>
         </div>
       </div>
-    </section>
+    </Curtain>
   )
 }

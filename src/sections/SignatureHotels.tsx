@@ -107,7 +107,7 @@ export function SignatureHotels() {
                     >
                       {h.name}
                     </span>
-                    <span className={`mt-1 block text-xs tracking-[0.18em] uppercase transition-all duration-700 ${i === active ? 'translate-x-3 text-gold/80' : 'text-bone/30'}`}>
+                    <span className={`mt-1 block text-xs tracking-[0.18em] uppercase transition-all duration-700 ${i === active ? 'translate-x-3 text-gold/80' : 'text-bone/55'}`}>
                       {tx(h.city)}
                     </span>
                   </span>

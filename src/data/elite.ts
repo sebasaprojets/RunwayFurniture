@@ -21,11 +21,14 @@ const film = (name: string): Media => ({ kind: 'video', src: `./media/elite/${na
 /** Card cover: the film's frame cropped to 4:5 below the caption burned into the video. */
 const poster = (name: string) => `./media/elite/${name}-cover.jpg`
 
-export type EliteKind = { key: string; title: T; text: T; drawing: Drawing; listings: Listing[] }
+/** The kind's card on the page: a moment from one of its own films (not the cover shown in the listings). */
+export type EliteKind = { key: string; title: T; text: T; drawing: Drawing; card: string; listings: Listing[] }
+const card = (name: string) => `./media/elite/${name}-card.jpg`
 
 export const eliteKinds: EliteKind[] = [
   {
     key: 'hotels',
+    card: card('resort-overwater'),
     title: { en: 'Hotels', es: 'Hoteles' },
     text: {
       en: 'Boutique and resort hotels, operating or ready for repositioning.',
@@ -69,6 +72,7 @@ export const eliteKinds: EliteKind[] = [
   },
   {
     key: 'land',
+    card: card('land-beach'),
     title: { en: 'Land', es: 'Terrenos' },
     text: {
       en: 'Coastal and hillside plots selected for development potential.',
@@ -100,6 +104,7 @@ export const eliteKinds: EliteKind[] = [
   },
   {
     key: 'islands',
+    card: card('island-tablas'),
     title: { en: 'Private islands', es: 'Islas privadas' },
     text: {
       en: 'Islands and cays for a private estate or an exclusive resort.',
@@ -133,6 +138,7 @@ export const eliteKinds: EliteKind[] = [
   },
   {
     key: 'condos',
+    card: card('condo-tower'),
     title: { en: 'Condominiums', es: 'Condominios' },
     text: {
       en: 'Residential towers and gated communities in prime locations.',
@@ -165,6 +171,7 @@ export const eliteKinds: EliteKind[] = [
   },
   {
     key: 'villas',
+    card: card('villa-mountain'),
     title: { en: 'Luxury villas', es: 'Villas de lujo' },
     text: {
       en: 'Architect-designed villas with views, privacy and land.',

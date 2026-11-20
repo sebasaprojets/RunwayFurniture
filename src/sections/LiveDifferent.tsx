@@ -185,7 +185,7 @@ function CauseScene() {
       <div data-bar className="absolute inset-x-0 top-0 h-[11vh] origin-top bg-ink" />
       <div data-bar className="absolute inset-x-0 bottom-0 h-[11vh] origin-bottom bg-ink" />
       <div data-line1 className="absolute inset-x-0 bottom-[16%] z-10 px-5 text-center md:px-10">
-        <p className="eyebrow text-terracotta">{t('Scene 08 — The Cause', 'Escena 08 — La causa')}</p>
+        <p className="eyebrow text-[#c45c44]">{t('Scene 08 — The Cause', 'Escena 08 — La causa')}</p>
         <p className="display mt-6 text-[10vw] uppercase md:text-[5.6vw]">
           {t('for a roof', 'por un techo')} <span className="italic text-bone/70">{t('against the rain.', 'contra la lluvia.')}</span>
         </p>
@@ -224,7 +224,7 @@ export function LiveDifferent() {
         {/* intro */}
         <div className="grid gap-12 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <p className="eyebrow flex items-center gap-3 text-terracotta">
+            <p className="eyebrow flex items-center gap-3 text-[#ad4b35]">
               <HeartHandshake className="size-4" strokeWidth={1.5} />
               {t('Giving back · Live Different', 'Causa social · Live Different')}
             </p>
@@ -286,7 +286,7 @@ export function LiveDifferent() {
             <MaskImage src={img.couple} alt={t('Josefina and Angel in front of their old home', 'Josefina y Ángel frente a su antigua casa')} className="aspect-[4/3]" sizes="(min-width: 1024px) 50vw, 100vw" />
           </div>
           <div className="lg:col-span-5 lg:col-start-8 lg:self-center">
-            <p className="eyebrow text-bronze">{t('Dominican Republic · July 2016', 'República Dominicana · Julio 2016')}</p>
+            <p className="eyebrow text-[#83603f]">{t('Dominican Republic · July 2016', 'República Dominicana · Julio 2016')}</p>
             <h3 className="mt-4 font-display text-5xl leading-none md:text-6xl">Josefina &amp; Ángel</h3>
             <FadeIn>
               <div className="mt-8 space-y-4 leading-relaxed text-ink/70">
@@ -324,7 +324,7 @@ export function LiveDifferent() {
             stagger={0.05}
             className="font-display text-[8.5vw] leading-[1.05] uppercase sm:text-[6vw] lg:text-[4.4vw]"
           />
-          <p className="eyebrow mt-6 text-bronze">— Josefina</p>
+          <p className="eyebrow mt-6 text-[#83603f]">— Josefina</p>
         </FadeIn>
 
         {/* story 2 — Olgaria */}
@@ -337,7 +337,7 @@ export function LiveDifferent() {
             </div>
           </div>
           <div className="lg:order-1 lg:col-span-5 lg:self-center">
-            <p className="eyebrow text-bronze">{t('Dominican Republic · 2016', 'República Dominicana · 2016')}</p>
+            <p className="eyebrow text-[#83603f]">{t('Dominican Republic · 2016', 'República Dominicana · 2016')}</p>
             <h3 className="mt-4 font-display text-5xl leading-none md:text-6xl">
               Olgaria <span className="italic text-terracotta">“Niña”</span> Hernández
             </h3>
