@@ -99,6 +99,20 @@ function useFilmPlayback(ref: React.RefObject<HTMLVideoElement | null>, active: 
   return { blocked, shown: visible && pageShown }
 }
 
+/**
+ * The sharpest film the device can carry: 1080p (HEVC where it plays, smaller; H.264 otherwise), or
+ * the 720p film on modest devices and connections, so they never stutter or wait.
+ */
+function pickFilm(v: NonNullable<typeof heroVideo>) {
+  if (typeof navigator === 'undefined') return v.src
+  const n = navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string }; deviceMemory?: number }
+  const weak =
+    !!n.connection?.saveData || /(^|-)(2g|3g)$/.test(n.connection?.effectiveType ?? '') || (n.deviceMemory ?? 8) <= 2 || (n.hardwareConcurrency || 8) <= 2
+  if (weak) return v.src
+  const probe = document.createElement('video')
+  return probe.canPlayType('video/mp4; codecs="hvc1.1.6.L120.90"') ? v.hdHevc : v.hd
+}
+
 /** Safari and every iPhone browser (all WebKit): they play an MP4 placed in an <img>, like a GIF. */
 const apple = typeof navigator !== 'undefined' && /Apple/.test(navigator.vendor)
 
@@ -126,6 +140,7 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
   const box = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLVideoElement>(null)
   const { blocked, shown } = useFilmPlayback(ref, active)
+  const [film] = useState(() => (heroVideo ? pickFilm(heroVideo) : ''))
   const [playing, setPlaying] = useState(false)
   const [frameH, setFrameH] = useState<number>()
   const over = useMotionValue(0)
@@ -151,7 +166,7 @@ export function HeroBackdrop({ active, slice }: { active: boolean; slice?: Motio
         <motion.div className="absolute inset-x-0 top-0 h-full will-change-transform" style={{ y, height: frameH }}>
           <video
             ref={ref}
-            src={heroVideo.src}
+            src={film}
             className="hero-film absolute inset-0 h-full w-full object-cover"
             muted
             autoPlay

@@ -80,9 +80,13 @@ export const openWhatsApp = (text: string) => window.open(whatsappUrl(text), '_b
  * Vertical (9:16), the original film as shot. Phones see it full screen; wide screens see it in a
  * full-height panel beside the text.
  */
-export const heroVideo: { src: string; poster: string; alt: { en: string; es: string } } | null = {
-  // the original film (720×1280), looped seamlessly (the last half second dissolves into the first);
-  // in-between frames computed from it (24 to 60 fps), so slow drone pans glide on 60 Hz screens
+export const heroVideo: { src: string; hd: string; hdHevc: string; poster: string; alt: { en: string; es: string } } | null = {
+  // the original film, its dropped frames filled and in-between frames computed from it (24 to 60 fps);
+  // the camera travels out and back with gentle stops, so the loop has no seam.
+  // 1080×1920, sharpened from the original by AI and steadied frame to frame: HEVC (Apple) or H.264
+  hd: `${import.meta.env.BASE_URL}video/resort-hd.mp4`,
+  hdHevc: `${import.meta.env.BASE_URL}video/resort-hd-hevc.mp4`,
+  // 720×1280: modest devices and data saver (and the still-image fallback on Safari)
   src: `${import.meta.env.BASE_URL}video/resort.mp4`,
   poster: `${import.meta.env.BASE_URL}video/resort-poster.jpg`,
   alt: {
