@@ -8,10 +8,11 @@ type Props = {
   variant?: 'solid' | 'ghost' | 'dark'
   className?: string
   type?: 'button' | 'submit'
+  disabled?: boolean
 }
 
 /** Pill button with a sliding fill and arrow that travels on hover. */
-export function Button({ children, href, onClick, variant = 'solid', className = '', type = 'button' }: Props) {
+export function Button({ children, href, onClick, variant = 'solid', className = '', type = 'button', disabled }: Props) {
   const styles = {
     solid: 'bg-bone text-ink [--fill:var(--color-gold)]',
     ghost: 'border border-bone/30 text-bone [--fill:var(--color-bone)] hover:text-ink',
@@ -43,7 +44,7 @@ export function Button({ children, href, onClick, variant = 'solid', className =
       </a>
     )
   return (
-    <button type={type} onClick={onClick} className={cls}>
+    <button type={type} onClick={onClick} disabled={disabled} aria-busy={disabled || undefined} className={`${cls} disabled:cursor-wait disabled:opacity-70`}>
       {inner}
     </button>
   )

@@ -183,16 +183,11 @@ export function Hero({ ready, revealed, reduced }: { ready: boolean; revealed: b
               )}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button
-                href="#projects"
-                onClick={() => {
-                  scrollToTarget('#projects')
-                }}
-              >
-                {t('Explore our work', 'Ver proyectos')}
+              <Button href="#contact" onClick={() => scrollToTarget('#contact')}>
+                {t('Start your project', 'Iniciar tu proyecto')}
               </Button>
-              <Button href="#founder" variant="ghost" onClick={() => scrollToTarget('#founder')}>
-                {t('Discover Runway', 'Conocer Runway')}
+              <Button href="#projects" variant="ghost" onClick={() => scrollToTarget('#projects')}>
+                {t('Explore our work', 'Ver proyectos')}
               </Button>
             </div>
           </motion.div>

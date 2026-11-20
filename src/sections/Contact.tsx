@@ -34,9 +34,13 @@ export function Contact() {
     return () => window.removeEventListener('contact:prefill', on)
   }, [t])
 
-  // No backend yet: the enquiry is composed into the visitor's email client.
-  const submit = (e: FormEvent<HTMLFormElement>) => {
+  // The enquiry is sent straight to the studio's inbox (FormSubmit). If that service cannot take it
+  // (offline, not yet activated, blocked), it falls back to the visitor's email app, so no enquiry is lost.
+  const [sending, setSending] = useState(false)
+  const [viaMail, setViaMail] = useState(false)
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (sending) return
     const form = e.currentTarget
     const f = new FormData(form)
     const get = (k: string) => String(f.get(k) ?? '').trim()
@@ -50,9 +54,43 @@ export function Contact() {
       form.querySelector<HTMLElement>(`#${first}`)?.focus()
       return
     }
+    // a hidden field only bots fill in
+    if (get('website')) return setSent(true)
     const type = get('type') || 'General'
-    const body = [`Name: ${get('name')}`, `Company: ${get('company') || '—'}`, `Email: ${get('email')}`, `Project type: ${type}`, '', get('message')].join('\n')
-    window.location.href = `mailto:${brand.contactEmail}?subject=${encodeURIComponent(`Project enquiry — ${type}`)}&body=${encodeURIComponent(body)}`
+    const subject = `Project enquiry — ${type}`
+    setSending(true)
+    let ok = false
+    try {
+      const ctl = new AbortController()
+      const timer = window.setTimeout(() => ctl.abort(), 12000)
+      const res = await fetch(`https://formsubmit.co/ajax/${brand.contactEmail}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: get('name'),
+          company: get('company') || '—',
+          email: get('email'),
+          'project type': type,
+          message: get('message'),
+          _subject: subject,
+          _replyto: get('email'),
+          _template: 'table',
+          _captcha: 'false',
+        }),
+        signal: ctl.signal,
+      })
+      window.clearTimeout(timer)
+      const data = (await res.json().catch(() => ({}))) as { success?: string | boolean }
+      ok = res.ok && String(data.success) === 'true'
+    } catch {
+      ok = false
+    }
+    setSending(false)
+    if (!ok) {
+      const body = [`Name: ${get('name')}`, `Company: ${get('company') || '—'}`, `Email: ${get('email')}`, `Project type: ${type}`, '', get('message')].join('\n')
+      window.location.href = `mailto:${brand.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    }
+    setViaMail(!ok)
     setSent(true)
   }
 
@@ -114,10 +152,15 @@ export function Contact() {
             <div className="flex h-full flex-col justify-center border border-bone/10 p-10" role="status">
               <p className="font-display text-5xl text-bone">{t('Thank you.', 'Gracias.')}</p>
               <p className="mt-4 max-w-sm text-bone/70">
-                {t(
-                  'Your email app should open with the enquiry ready — just press send. If it did not open, write to us directly:',
-                  'Tu aplicación de correo debería abrirse con la consulta lista: solo tienes que enviarla. Si no se abrió, escríbenos directamente:',
-                )}
+                {viaMail
+                  ? t(
+                      'Your email app should open with the enquiry ready — just press send. If it did not open, write to us directly:',
+                      'Tu aplicación de correo debería abrirse con la consulta lista: solo tienes que enviarla. Si no se abrió, escríbenos directamente:',
+                    )
+                  : t(
+                      'Your enquiry has reached our studio. We will reply to the email you gave us. For anything urgent:',
+                      'Tu consulta llegó a nuestro estudio. Te responderemos al correo que nos indicaste. Para algo urgente:',
+                    )}
               </p>
               <a href={`mailto:${brand.contactEmail}`} className="mt-4 self-start font-display text-2xl break-all text-bone transition-colors hover:text-gold">
                 {brand.contactEmail}
@@ -160,8 +203,9 @@ export function Contact() {
                 <label htmlFor="message" className={lbl}>{t('Tell us about your project *', 'Cuéntanos sobre tu proyecto *')}</label>
                 {err('message')}
               </div>
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="absolute -left-[9999px] h-px w-px opacity-0" />
               <div className="sm:col-span-2">
-                <Button type="submit">{t('Send enquiry', 'Enviar consulta')}</Button>
+                <Button type="submit" disabled={sending}>{sending ? t('Sending…', 'Enviando…') : t('Send enquiry', 'Enviar consulta')}</Button>
               </div>
             </form>
           )}

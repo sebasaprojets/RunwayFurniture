@@ -1,12 +1,14 @@
 import { motion, useScroll, useTransform } from 'motion/react'
 import { Pic } from '../components/Pic'
 import { useRef } from 'react'
+import { Button } from '../components/Button'
 import { FadeIn } from '../components/FadeIn'
 import { RevealText } from '../components/RevealText'
 import { factory } from '../data/portfolio'
 import { thumb } from '../data/site'
 import { useLang } from '../i18n'
 import { easeLuxe, useCalmScroll } from '../lib/motion'
+import { scrollToTarget } from '../lib/scroll'
 
 /** Factory & production: the five steps light up along a line as you scroll, beside the workshop photographs. */
 export function Factory() {
@@ -53,6 +55,11 @@ export function Factory() {
               </motion.li>
             ))}
           </ol>
+          <FadeIn className="mt-12">
+            <Button href="#contact" onClick={() => scrollToTarget('#contact')}>
+              {t('Start your project', 'Iniciar tu proyecto')}
+            </Button>
+          </FadeIn>
         </div>
 
         <div className="grid grid-cols-2 gap-4 self-center lg:col-span-7">
